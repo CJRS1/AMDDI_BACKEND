@@ -44,3 +44,135 @@ export const crearUsuario = async (req, res) => {
         res.status(500).json({ msg: "Error en el servidor." });
     }
 };
+
+export const listarUsuarios = async (req, res) => {
+    try {
+        const usuarios = await prisma.usuario.findMany();
+        return res.status(200).json({
+            message: "Usuarios encontrados",
+            content: usuarios,
+        });
+    } catch (err) {
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: err.message,
+        });
+    }
+}
+
+export const traerUsuarioPorId = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const usuario = await prisma.usuario.findUnique({
+            where: {
+                id: Number(id),
+            },
+        });
+        if (!usuario) {
+            return res.status(404).json({
+                message: "Usuario no encontrado",
+            });
+        }
+        return res.status(200).json({
+            message: "Usuario encontrado",
+            content: usuario,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: error.message,
+        });
+    }
+};
+
+export const actualizarUsuario = async (req, res) => {
+    const { id } = req.params;
+    const data = req.body;
+    try {
+        const findUsuario = await prisma.usuario.findUnique({
+            where: {
+                id: Number(id),
+            },
+        });
+        if (!findUsuario) {
+            return res.status(404).json({
+                message: "Usuario no encontrado",
+            });
+        }
+        const usuario = await prisma.usuario.update({
+            where: {
+                id: Number(id),
+            },
+            data: {
+                pwd_hash: data.pwd_hash,
+                email: data.email,
+                nombre: data.nombre,
+                apeMat: data.apeMat,
+                apePat: data.apePat,
+                dni: data.dni,
+                departamento: data.departamento,
+                carrera: data.carrera,
+            },
+            select: {
+                id: true,
+                ...(data.pwd_hash && { pwd_hash: true }),
+                ...(data.email && { email: true }),
+                ...(data.nombre && { nombre: true }),
+                ...(data.apeMat && { apeMat: true }),
+                ...(data.apePat && { apePat: true }),
+                ...(data.dni && { dni: true }),
+                ...(data.departamento && { departamento: true }),
+                ...(data.carrera && { carrera: true }),
+            },
+        });
+
+        return res.status(201).json({
+            message: "Usuario actualizado",
+            content: usuario,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: error.message,
+        });
+    }
+};
+
+export const eliminarUsuario = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const findUsuario = await prisma.usuario.findUnique({
+            where: {
+                id: Number(id),
+            },
+        });
+        if (!findUsuario) {
+            return res.status(404).json({
+                message: "Usuario no encontrado",
+            });
+        }
+
+        const usuario = await prisma.usuario.update({
+            where: {
+                id: Number(id),
+            },
+            data: {
+                disponibilidad: false,
+            },
+            select: {
+                id: true,
+                nombre: true,
+                disponibilidad: true,
+            },
+        });
+        return res.status(200).json({
+            message: "Usuario eliminado",
+            content: usuario,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: error.message,
+        });
+    }
+};

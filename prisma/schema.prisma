@@ -10,14 +10,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Usuario {
+model usuario {
   id                Int      @id @default(autoincrement())
   pwd_hash          String   @db.VarChar(100)
   email             String   @unique
   nombre            String   @db.VarChar(50)
   apeMat            String   @db.VarChar(50) @map("apellido_paterno")
   apePat            String   @db.VarChar(50) @map("apellido_materno")
-  dni           String   @db.VarChar(8)
+  dni           String   @db.VarChar(8) @unique
   departamento      String   @db.VarChar(50)
   carrera           String   @db.VarChar(30)
   rol               String   @default("usuario")
@@ -27,78 +27,78 @@ model Usuario {
   monto_pagado      Float?    @default(0) 
   createdAt         DateTime @default(now()) @map("created_at")
 
-  asignacion Asignacion[]
-  servicio   Servicio[]
+  asignacion asignacion[]
+  servicio   servicio[]
 
   @@map("usuarios")
 }
 
-model Asesor {
+model asesor {
   id        Int      @id @default(autoincrement())
   pwd_hash  String   @db.VarChar(100)
   email     String   @unique
   nombre    String   @db.VarChar(50) 
   apeMat    String   @db.VarChar(50) @map("apellido_materno")
   apePat    String   @db.VarChar(50) @map("apellido_paterno")
-  dni           String   @db.VarChar(8)
+  dni           String   @db.VarChar(8) @unique
   rol       String   @default("asesor")
   createdAt DateTime @default(now()) @map("created_at")
 
-  asignacion          Asignacion[]
-  asesor_especialidad Asesor_Especialidad[]
+  asignacion          asignacion[]
+  asesor_especialidad asesor_especialidad[]
 
   @@map("asesores")
 }
 
-model Especialidad {
+model especialidad {
   id     Int    @id @default(autoincrement())
-  nombre String @db.VarChar(100)
+  nombre_especialidad String @db.VarChar(100)
 
-  asesor_especialidad Asesor_Especialidad[]
+  asesor_especialidad asesor_especialidad[]
 
   @@map("especialidades")
 }
 
-model Servicio {
+model servicio {
   id          Int    @id @default(autoincrement())
   servicio    String @db.VarChar(200)
   monto_total Float
 
-  usuario Usuario @relation(fields: [id], references: [service_id])
+  usuario usuario @relation(fields: [id], references: [service_id])
 
   @@map("servicios")
 }
 
-model Asignacion {
+model asignacion {
   id          Int @id @default(autoincrement())
   id_asesor   Int
   id_usuarios Int
 
-  asesor  Asesor  @relation(fields: [id_asesor], references: [id])
-  usuario Usuario @relation(fields: [id_usuarios], references: [id])
+  asesor  asesor  @relation(fields: [id_asesor], references: [id])
+  usuario usuario @relation(fields: [id_usuarios], references: [id])
 
   @@map("asignaciones")
 }
 
-model Admin {
+model admin {
   id        Int      @id @default(autoincrement())
   pwd_hash  String   @db.VarChar(100)
   email     String   @unique
   nombre    String   @db.VarChar(50)
   apePat  String   @db.VarChar(50) @map("apellido_paterno")
   apeMat  String   @db.VarChar(50) @map("apellido_materno")
-  dni           String   @db.VarChar(8)
+  dni           String   @db.VarChar(8) @unique
   rol       String   @default("admin")
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("administradores")
 }
 
-model Asesor_Especialidad {
+model asesor_especialidad {
   id              Int @id @default(autoincrement())
   id_asesor       Int
   id_especialidad Int
 
-  asesor       Asesor       @relation(fields: [id_asesor], references: [id])
-  especialidad Especialidad @relation(fields: [id_especialidad], references: [id])
+  asesor       asesor       @relation(fields: [id_asesor], references: [id])
+  especialidad especialidad @relation(fields: [id_especialidad], references: [id])
 }

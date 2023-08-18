@@ -8,7 +8,7 @@ export const crearAsesor = async (req, res) => {
     try {
         const { email, pwd_hash, nombre, apeMat, apePat, dni } = req.body;
 
-        const existingUser = await prisma.usuario.findUnique({
+        const existingUser = await prisma.asesor.findUnique({
             where: {
                 email: email,
             },
@@ -21,7 +21,7 @@ export const crearAsesor = async (req, res) => {
 
         // Iniciar transacción
         await prisma.$transaction([
-            prisma.usuario.create({
+            prisma.asesor.create({
                 data: {
                     email,
                     pwd_hash: await bcrypt.hash(pwd_hash, 10),
@@ -42,3 +42,18 @@ export const crearAsesor = async (req, res) => {
         res.status(500).json({ msg: "Error en el servidor." });
     }
 };
+
+export const listarAsesores = async (req, res) => {
+    try {
+        const asesores = await prisma.asesor.findMany();
+        return res.status(200).json({
+            message: "Asesores encontrados",
+            content: asesores,
+        });
+    } catch (err) {
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: err.message,
+        });
+    }
+}
