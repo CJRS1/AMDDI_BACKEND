@@ -99,6 +99,11 @@ export const actualizarUsuario = async (req, res) => {
                 message: "Usuario no encontrado",
             });
         }
+                // Hash the password if it's provided
+                if (data.pwd_hash) {
+                    const hashedPassword = await bcrypt.hash(data.pwd_hash, 10);
+                    data.pwd_hash = hashedPassword;
+                }
         const usuario = await prisma.usuario.update({
             where: {
                 id: Number(id),
@@ -152,22 +157,13 @@ export const eliminarUsuario = async (req, res) => {
             });
         }
 
-        const usuario = await prisma.usuario.update({
+        await prisma.usuario.delete({
             where: {
                 id: Number(id),
-            },
-            data: {
-                disponibilidad: false,
-            },
-            select: {
-                id: true,
-                nombre: true,
-                disponibilidad: true,
             },
         });
         return res.status(200).json({
             message: "Usuario eliminado",
-            content: usuario,
         });
     } catch (error) {
         return res.status(500).json({

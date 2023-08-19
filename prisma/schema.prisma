@@ -13,7 +13,7 @@ datasource db {
 model usuario {
   id                Int      @id @default(autoincrement())
   pwd_hash          String   @db.VarChar(100)
-  email             String   @unique
+  email             String   @unique @db.VarChar(255)
   nombre            String   @db.VarChar(50)
   apeMat            String   @db.VarChar(50) @map("apellido_paterno")
   apePat            String   @db.VarChar(50) @map("apellido_materno")
@@ -36,7 +36,7 @@ model usuario {
 model asesor {
   id        Int      @id @default(autoincrement())
   pwd_hash  String   @db.VarChar(100)
-  email     String   @unique
+  email     String   @unique @db.VarChar(255)
   nombre    String   @db.VarChar(50) 
   apeMat    String   @db.VarChar(50) @map("apellido_materno")
   apePat    String   @db.VarChar(50) @map("apellido_paterno")
@@ -83,7 +83,7 @@ model asignacion {
 model admin {
   id        Int      @id @default(autoincrement())
   pwd_hash  String   @db.VarChar(100)
-  email     String   @unique
+  email     String   @unique @db.VarChar(255)
   nombre    String   @db.VarChar(50)
   apePat  String   @db.VarChar(50) @map("apellido_paterno")
   apeMat  String   @db.VarChar(50) @map("apellido_materno")
@@ -92,6 +92,7 @@ model admin {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("administradores")
+  
 }
 
 model asesor_especialidad {
