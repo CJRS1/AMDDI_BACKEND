@@ -15,20 +15,21 @@ model usuario {
   pwd_hash          String   @db.VarChar(100)
   email             String   @unique @db.VarChar(255)
   nombre            String   @db.VarChar(50)
-  apeMat            String   @db.VarChar(50) @map("apellido_paterno")
-  apePat            String   @db.VarChar(50) @map("apellido_materno")
-  dni           String   @db.VarChar(8) @unique
+  apeMat            String   @map("apellido_paterno") @db.VarChar(50)
+  apePat            String   @map("apellido_materno") @db.VarChar(50)
+  dni               String   @unique @db.VarChar(8)
+  celular           String?  @unique @db.VarChar(18)
   departamento      String   @db.VarChar(50)
   carrera           String   @db.VarChar(30)
   rol               String   @default("usuario")
-  verification_code String?   @db.VarChar(4)
-  pdf_url           String?   @db.VarChar(255)
-  service_id        Int?      @unique @map("servicio_id")
-  monto_pagado      Float?    @default(0) 
+  verification_code String?  @db.VarChar(4)
+  pdf_url           String?  @db.VarChar(255)
+  monto_pagado      Float?   @default(0)
+  monto_total       Float?   @default(0)
   createdAt         DateTime @default(now()) @map("created_at")
 
-  asignacion asignacion[]
-  servicio   servicio[]
+  asignacion       asignacion[]
+  usuario_servicio usuario_servicio[]
 
   @@map("usuarios")
 }
@@ -37,10 +38,10 @@ model asesor {
   id        Int      @id @default(autoincrement())
   pwd_hash  String   @db.VarChar(100)
   email     String   @unique @db.VarChar(255)
-  nombre    String   @db.VarChar(50) 
-  apeMat    String   @db.VarChar(50) @map("apellido_materno")
-  apePat    String   @db.VarChar(50) @map("apellido_paterno")
-  dni           String   @db.VarChar(8) @unique
+  nombre    String   @db.VarChar(50)
+  apeMat    String   @map("apellido_materno") @db.VarChar(50)
+  apePat    String   @map("apellido_paterno") @db.VarChar(50)
+  dni       String   @unique @db.VarChar(8)
   rol       String   @default("asesor")
   createdAt DateTime @default(now()) @map("created_at")
 
@@ -51,20 +52,30 @@ model asesor {
 }
 
 model especialidad {
-  id     Int    @id @default(autoincrement())
-  nombre_especialidad String @db.VarChar(100)
+  id                  Int    @id @default(autoincrement())
+  nombre_especialidad String @unique @db.VarChar(100)
 
   asesor_especialidad asesor_especialidad[]
 
   @@map("especialidades")
 }
 
-model servicio {
-  id          Int    @id @default(autoincrement())
-  servicio    String @db.VarChar(200)
-  monto_total Float
+model usuario_servicio {
+  id          Int @id @default(autoincrement())
+  id_usuario  Int
+  id_servicio Int
 
-  usuario usuario @relation(fields: [id], references: [service_id])
+  usuario  usuario  @relation(fields: [id_usuario], references: [id])
+  servicio servicio @relation(fields: [id_servicio], references: [id])
+
+  @@map("usuario_servicio")
+}
+
+model servicio {
+  id         Int    @id @default(autoincrement())
+  nombre_servicio   String @unique @db.VarChar(200)
+
+  usuario_servicio usuario_servicio[]
 
   @@map("servicios")
 }
@@ -85,14 +96,13 @@ model admin {
   pwd_hash  String   @db.VarChar(100)
   email     String   @unique @db.VarChar(255)
   nombre    String   @db.VarChar(50)
-  apePat  String   @db.VarChar(50) @map("apellido_paterno")
-  apeMat  String   @db.VarChar(50) @map("apellido_materno")
-  dni           String   @db.VarChar(8) @unique
+  apePat    String   @map("apellido_paterno") @db.VarChar(50)
+  apeMat    String   @map("apellido_materno") @db.VarChar(50)
+  dni       String   @unique @db.VarChar(8)
   rol       String   @default("admin")
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("administradores")
-  
 }
 
 model asesor_especialidad {
@@ -102,4 +112,6 @@ model asesor_especialidad {
 
   asesor       asesor       @relation(fields: [id_asesor], references: [id])
   especialidad especialidad @relation(fields: [id_especialidad], references: [id])
+
+  @@map("asesor_especialidad")
 }

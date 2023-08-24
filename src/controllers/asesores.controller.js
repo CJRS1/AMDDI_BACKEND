@@ -1,6 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
@@ -20,22 +18,19 @@ export const crearAsesor = async (req, res) => {
         }
 
         // Iniciar transacción
-        await prisma.$transaction([
-            prisma.asesor.create({
-                data: {
-                    email,
-                    pwd_hash: await bcrypt.hash(pwd_hash, 10),
-                    nombre,
-                    apeMat,
-                    apePat,
-                    dni,
-                },
-            }),
-        ]);
 
-        // Generar JWT y enviar respuesta
-        const token = jwt.sign({ email }, process.env.JWT_SECRET);
-        res.json({ token });
+        const nuevoAsesor = await prisma.asesor.create({
+            data: {
+                email,
+                pwd_hash,
+                nombre,
+                apeMat,
+                apePat,
+                dni,
+            },
+        });
+
+        res.json({ msg: "Asesor creado exitosamente", servicio: nuevoAsesor });
     } catch (error) {
         // Si hay un error, la transacción se revierte y el ID no aumentará
         console.error(error);
@@ -97,11 +92,7 @@ export const actualizarAsesor = async (req, res) => {
                 message: "Asesor no encontrado",
             });
         }
-                // Hash the password if it's provided
-                if (data.pwd_hash) {
-                    const hashedPassword = await bcrypt.hash(data.pwd_hash, 10);
-                    data.pwd_hash = hashedPassword;
-                }
+
         const asesor = await prisma.asesor.update({
             where: {
                 id: Number(id),

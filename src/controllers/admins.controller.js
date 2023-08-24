@@ -58,22 +58,22 @@ export const listarAdmins = async (req, res) => {
     }
 };
 
-export const traerAsesorPorId = async (req, res) => {
+export const traerAdminPorId = async (req, res) => {
     const { id } = req.params;
     try {
-        const asesor = await prisma.asesor.findUnique({
+        const admin = await prisma.admin.findUnique({
             where: {
                 id: Number(id),
             },
         });
-        if (!asesor) {
+        if (!admin) {
             return res.status(404).json({
-                message: "Asesor no encontrado",
+                message: "Admin no encontrado",
             });
         }
         return res.status(200).json({
-            message: "Asesor encontrado",
-            content: asesor,
+            message: "Admin encontrado",
+            content: admin,
         });
     } catch (error) {
         return res.status(500).json({
@@ -83,18 +83,18 @@ export const traerAsesorPorId = async (req, res) => {
     }
 };
 
-export const actualizarAsesor = async (req, res) => {
+export const actualizarAdmin = async (req, res) => {
     const { id } = req.params;
     const data = req.body;
     try {
-        const findAsesor = await prisma.asesor.findUnique({
+        const findAdmin = await prisma.admin.findUnique({
             where: {
                 id: Number(id),
             },
         });
-        if (!findAsesor) {
+        if (!findAdmin) {
             return res.status(404).json({
-                message: "Asesor no encontrado",
+                message: "Admin no encontrado",
             });
         }
                 // Hash the password if it's provided
@@ -107,7 +107,7 @@ export const actualizarAsesor = async (req, res) => {
                 //         message: "El correo electrónico no es válido",
                 //     });
                 // }
-        const asesor = await prisma.asesor.update({
+        const admin = await prisma.admin.update({
             where: {
                 id: Number(id),
             },
@@ -131,8 +131,8 @@ export const actualizarAsesor = async (req, res) => {
         });
 
         return res.status(201).json({
-            message: "Asesor actualizado",
-            content: asesor,
+            message: "Admin actualizado",
+            content: admin,
         });
     } catch (error) {
         return res.status(500).json({
@@ -142,21 +142,21 @@ export const actualizarAsesor = async (req, res) => {
     }
 };
 
-export const eliminarAsesor = async (req, res) => {
+export const eliminarAdmin = async (req, res) => {
     const { id } = req.params;
     try {
-        const findAsesor = await prisma.asesor.findUnique({
+        const findAdmin = await prisma.admin.findUnique({
             where: {
                 id: Number(id),
             },
         });
-        if (!findAsesor) {
+        if (!findAdmin) {
             return res.status(404).json({
                 message: "Usuario no encontrado",
             });
         }
 
-        await prisma.asesor.delete({
+        await prisma.admin.delete({
             where: {
                 id: Number(id),
             },

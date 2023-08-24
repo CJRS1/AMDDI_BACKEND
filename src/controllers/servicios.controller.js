@@ -4,11 +4,11 @@ const prisma = new PrismaClient();
 
 export const crearServicio = async (req, res) => {
     try {
-        const { servicio, monto_total } = req.body;
+        const { nombre_servicio } = req.body;
 
         const existingServicio = await prisma.servicio.findUnique({
             where: {
-                servicio: servicio,
+                nombre_servicio: nombre_servicio,
             },
         });
 
@@ -20,8 +20,7 @@ export const crearServicio = async (req, res) => {
         // Crear la servicio
         const nuevoServicio = await prisma.servicio.create({
             data: {
-                servicio,
-                monto_total,
+                nombre_servicio,
             },
         });
 
@@ -47,4 +46,88 @@ export const listarServicios = async (req, res) => {
             error: err.message,
         });
     }
-}
+};
+
+export const traerServicioPorId = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const servicio = await prisma.servicio.findUnique({
+            where: {
+                id: Number(id),
+            },
+        });
+        if (!servicio) {
+            return res.status(404).json({
+                message: "servicio no encontrado",
+            });
+        }
+        return res.status(200).json({
+            message: "servicio encontrado",
+            content: servicio,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: error.message,
+        });
+    }
+};
+
+export const actualizarServicio = async (req, res) => {
+    const { id } = req.params;
+    const data = req.body;
+    try {
+        const updatedServicio = await prisma.servicio.update({
+            where: {
+                id: Number(id),
+            },
+            data: {
+                servicio: data.servicio,
+                usuario_id:{
+                    set: data.usuario_id
+                },
+            },
+        });
+
+        return res.status(201).json({
+            message: "Servicio actualizado",
+            content: updatedServicio,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: error.message,
+        });
+    }
+};
+
+export const eliminarServicio = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const findServicio = await prisma.servicio.findUnique({
+            where: {
+                id: Number(id),
+            },
+        });
+        if (!findServicio) {
+            return res.status(404).json({
+                message: "Servicio no encontrado",
+            });
+        }
+
+        await prisma.servicio.delete({
+            where: {
+                id: Number(id),
+            },
+        });
+        return res.status(200).json({
+            message: "Servicio eliminado",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: error.message,
+        });
+    }
+};
+
