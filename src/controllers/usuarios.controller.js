@@ -2,11 +2,16 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+import { format } from 'date-fns';
+
 const prisma = new PrismaClient();
 
 export const crearUsuario = async (req, res) => {
     try {
-        const { email, pwd_hash, nombre, apeMat, apePat, dni, departamento, carrera } = req.body;
+        const { email, pwd_hash, nombre, apeMat, apePat, dni, celular, departamento, carrera } = req.body;
+        
+        const fechaActual = new Date();
+        const fechaFormateada = format(fechaActual, 'dd/MM/yyyy');
 
         const existingUser = await prisma.usuario.findUnique({
             where: {
@@ -29,15 +34,19 @@ export const crearUsuario = async (req, res) => {
                     apeMat,
                     apePat,
                     dni,
+                    celular,
                     departamento,
                     carrera,
+
+                    createdAt: fechaFormateada
                 },
             }),
         ]);
 
         // Generar JWT y enviar respuesta
         const token = jwt.sign({ email }, process.env.JWT_SECRET);
-        res.json({ token });
+        res.json({ token, 
+            createdAt: fechaFormateada });
     } catch (error) {
         // Si hay un error, la transacción se revierte y el ID no aumentará
         console.error(error);
@@ -47,11 +56,18 @@ export const crearUsuario = async (req, res) => {
 
 export const listarUsuarios = async (req, res) => {
     try {
+        console.log("Antes de obtener usuarios");
         const usuarios = await prisma.usuario.findMany();
-        return res.status(200).json({
+        // console.log("Después de obtener usuarios", usuarios);
+        res.json({
             message: "Usuarios encontrados",
             content: usuarios,
-        });
+            // usuarios: [...usuarios] 
+        })
+        // return res.status(200).json({
+        //     message: "Usuarios encontrados",
+        //     content: usuarios,
+        // });
     } catch (err) {
         return res.status(500).json({
             message: "Error en el servidor",
@@ -99,11 +115,11 @@ export const actualizarUsuario = async (req, res) => {
                 message: "Usuario no encontrado",
             });
         }
-                // Hash the password if it's provided
-                if (data.pwd_hash) {
-                    const hashedPassword = await bcrypt.hash(data.pwd_hash, 10);
-                    data.pwd_hash = hashedPassword;
-                }
+        // Hash the password if it's provided
+        if (data.pwd_hash) {
+            const hashedPassword = await bcrypt.hash(data.pwd_hash, 10);
+            data.pwd_hash = hashedPassword;
+        }
         const usuario = await prisma.usuario.update({
             where: {
                 id: Number(id),

@@ -26,7 +26,7 @@ model usuario {
   pdf_url           String?  @db.VarChar(255)
   monto_pagado      Float?   @default(0)
   monto_total       Float?   @default(0)
-  createdAt         DateTime @default(now()) @map("created_at")
+  createdAt         String @map("created_at")
 
   asignacion       asignacion[]
   usuario_servicio usuario_servicio[]
