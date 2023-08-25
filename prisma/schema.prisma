@@ -11,22 +11,22 @@ datasource db {
 }
 
 model usuario {
-  id                Int      @id @default(autoincrement())
-  pwd_hash          String   @db.VarChar(100)
-  email             String   @unique @db.VarChar(255)
-  nombre            String   @db.VarChar(50)
-  apeMat            String   @map("apellido_paterno") @db.VarChar(50)
-  apePat            String   @map("apellido_materno") @db.VarChar(50)
-  dni               String   @unique @db.VarChar(8)
-  celular           String?  @unique @db.VarChar(18)
-  departamento      String   @db.VarChar(50)
-  carrera           String   @db.VarChar(30)
-  rol               String   @default("usuario")
-  verification_code String?  @db.VarChar(4)
-  pdf_url           String?  @db.VarChar(255)
-  monto_pagado      Float?   @default(0)
-  monto_total       Float?   @default(0)
-  createdAt         String @map("created_at")
+  id                Int     @id @default(autoincrement())
+  pwd_hash          String  @db.VarChar(100)
+  email             String  @unique @db.VarChar(191)
+  nombre            String  @db.VarChar(50)
+  apeMat            String  @map("apellido_paterno") @db.VarChar(50)
+  apePat            String  @map("apellido_materno") @db.VarChar(50)
+  dni               String  @unique @db.VarChar(8)
+  celular           String? @unique @db.VarChar(18)
+  departamento      String  @db.VarChar(50)
+  carrera           String  @db.VarChar(30)
+  rol               String  @default("usuario")
+  verification_code String? @db.VarChar(4)
+  pdf_url           String? @db.VarChar(255)
+  monto_pagado      Float?  @default(0)
+  monto_total       Float?  @default(0)
+  createdAt         String  @map("created_at")
 
   asignacion       asignacion[]
   usuario_servicio usuario_servicio[]
@@ -37,7 +37,7 @@ model usuario {
 model asesor {
   id        Int      @id @default(autoincrement())
   pwd_hash  String   @db.VarChar(100)
-  email     String   @unique @db.VarChar(255)
+  email     String   @unique @db.VarChar(191)
   nombre    String   @db.VarChar(50)
   apeMat    String   @map("apellido_materno") @db.VarChar(50)
   apePat    String   @map("apellido_paterno") @db.VarChar(50)
@@ -72,8 +72,8 @@ model usuario_servicio {
 }
 
 model servicio {
-  id         Int    @id @default(autoincrement())
-  nombre_servicio   String @unique @db.VarChar(200)
+  id              Int    @id @default(autoincrement())
+  nombre_servicio String @unique @db.VarChar(200)
 
   usuario_servicio usuario_servicio[]
 
@@ -94,7 +94,7 @@ model asignacion {
 model admin {
   id        Int      @id @default(autoincrement())
   pwd_hash  String   @db.VarChar(100)
-  email     String   @unique @db.VarChar(255)
+  email     String   @unique @db.VarChar(191)
   nombre    String   @db.VarChar(50)
   apePat    String   @map("apellido_paterno") @db.VarChar(50)
   apeMat    String   @map("apellido_materno") @db.VarChar(50)

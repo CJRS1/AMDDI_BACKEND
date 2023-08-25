@@ -188,3 +188,24 @@ export const eliminarUsuario = async (req, res) => {
         });
     }
 };
+
+export const obtenerUsuariosConServicios = async (req, res) => {
+    console.log("Obtener")
+    //Realiza un left join
+    try {
+        const usuarios = await prisma.usuario.findMany({
+            include: {
+                usuario_servicio: {
+                    include: {
+                        servicio: true
+                    }
+                }
+            }
+        });
+
+        res.json({ content: usuarios });
+    } catch (error) {
+        console.error('Error al obtener usuarios con servicios:', error);
+        res.status(500).json({ message: 'Error al obtener usuarios con servicios' });
+    }
+};
