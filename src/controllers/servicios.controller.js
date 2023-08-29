@@ -1,10 +1,14 @@
 import { PrismaClient } from "@prisma/client";
+// import { format } from 'date-fns';
 
 const prisma = new PrismaClient();
 
 export const crearServicio = async (req, res) => {
     try {
         const { nombre_servicio } = req.body;
+
+        // const fechaActual = new Date();
+        // const fechaFormateada = format(fechaActual, 'dd/MM/yyyy');
 
         const existingServicio = await prisma.servicio.findUnique({
             where: {
@@ -21,6 +25,7 @@ export const crearServicio = async (req, res) => {
         const nuevoServicio = await prisma.servicio.create({
             data: {
                 nombre_servicio,
+                // fecha_servicio: fechaFormateada,
             },
         });
 

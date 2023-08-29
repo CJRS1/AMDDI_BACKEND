@@ -5,20 +5,25 @@ const prisma = new PrismaClient();
 export const crearAsesor = async (req, res) => {
     try {
         const { email, pwd_hash, nombre, apeMat, apePat, dni } = req.body;
-
         const existingUser = await prisma.asesor.findUnique({
             where: {
                 email: email,
             },
         });
-
         if (existingUser) {
             // El correo electrónico ya está en uso
             return res.status(400).json({ msg: "El correo electrónico ya está registrado." });
         }
-
+        const existingDNI = await prisma.asesor.findUnique({
+            where: {
+                dni: dni,
+            },
+        });
+        if (existingDNI) {
+            // El correo electrónico ya está en uso
+            return res.status(400).json({ msg: "El DNI ya está registrado." });
+        }
         // Iniciar transacción
-
         const nuevoAsesor = await prisma.asesor.create({
             data: {
                 email,
@@ -29,7 +34,6 @@ export const crearAsesor = async (req, res) => {
                 dni,
             },
         });
-
         res.json({ msg: "Asesor creado exitosamente", servicio: nuevoAsesor });
     } catch (error) {
         // Si hay un error, la transacción se revierte y el ID no aumentará
@@ -155,5 +159,31 @@ export const eliminarAsesor = async (req, res) => {
             message: "Error en el servidor",
             error: error.message,
         });
+    }
+};
+
+export const obtenerAsesoresConAsignados = async (req, res) => {
+    console.log("Obtener")
+    //Realiza un left join
+    try {
+        const asesores = await prisma.asesor.findMany({
+            include: {
+                asignacion:{
+                    include:{
+                        asesor: true
+                    }
+                },
+                asesor_especialidad:{
+                    include:{
+                        especialidad: true
+                    }
+                }
+            }
+        });
+
+        res.json({ content: asesores });
+    } catch (error) {
+        console.error('Error al obtener asesors con servicios:', error);
+        res.status(500).json({ message: 'Error al obtener asesors con servicios' });
     }
 };

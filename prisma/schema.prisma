@@ -26,6 +26,8 @@ model usuario {
   pdf_url           String? @db.VarChar(255)
   monto_pagado      Float?  @default(0)
   monto_total       Float?  @default(0)
+  fecha_servivio_monto String?
+  fecha_estimada String?  
   createdAt         String  @map("created_at")
 
   asignacion       asignacion[]
@@ -74,6 +76,7 @@ model usuario_servicio {
 model servicio {
   id              Int    @id @default(autoincrement())
   nombre_servicio String @unique @db.VarChar(200)
+  // fecha_servicio String? @map("fecha_servicio")
 
   usuario_servicio usuario_servicio[]
 

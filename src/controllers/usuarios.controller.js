@@ -199,6 +199,11 @@ export const obtenerUsuariosConServicios = async (req, res) => {
                     include: {
                         servicio: true
                     }
+                },
+                asignacion:{
+                    include:{
+                        asesor: true
+                    }
                 }
             }
         });

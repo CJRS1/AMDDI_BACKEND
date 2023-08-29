@@ -10,31 +10,25 @@ export const crearAsesorEspecialidad = async (req, res) => {
                 id: id_asesor
             }
         });
-
         if (!asesorExiste) {
             return res.status(400).json({ msg: "No existe el asesor" });
         }
-
         // Validar que especialidad exista
         const especialidadExiste = await prisma.especialidad.findUnique({
             where: {
                 id: id_especialidad
             }
         });
-
         if (!especialidadExiste) {
             return res.status(400).json({ msg: "No existe la especialidad" });
         }
-
         const asesorEspecialidad = await prisma.asesor_especialidad.create({
             data: {
                 id_asesor: id_asesor,
                 id_especialidad: id_especialidad
             }
         });
-
         res.json(asesorEspecialidad);
-
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: "Error al asignar especialidad" });
