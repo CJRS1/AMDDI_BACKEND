@@ -49,6 +49,7 @@ export const listarAsesores = async (req, res) => {
             message: "Asesores encontrados",
             content: asesores,
         });
+        
     } catch (err) {
         return res.status(500).json({
             message: "Error en el servidor",

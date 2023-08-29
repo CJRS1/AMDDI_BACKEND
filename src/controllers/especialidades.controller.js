@@ -35,6 +35,7 @@ export const crearEspecialidad = async (req, res) => {
 
 export const listarEspecialidades = async (req, res) => {
     try {
+        console.log("Hay espacialidades");
         const especialidades = await prisma.especialidad.findMany();
         return res.status(200).json({
             message: "Especialidades encontrados",
@@ -62,9 +63,11 @@ export const traerEspecialidadPorId = async (req, res) => {
             });
         }
         return res.status(200).json({
+            
             message: "Especialidad encontrada",
             content: especialidad,
         });
+        
     } catch (error) {
         return res.status(500).json({
             message: "Error en el servidor",
