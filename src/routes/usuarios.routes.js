@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
     crearUsuario,
     listarUsuarios,
-    traerUsuarioPorId,
+    traerUsuarioPorDNI,
     actualizarUsuario,
     eliminarUsuario,
     obtenerUsuariosConServicios,
@@ -11,7 +11,7 @@ import {
 export const usuariosRouter = Router();
 usuariosRouter.post("/usuarios", crearUsuario);
 usuariosRouter.get("/usuarios", listarUsuarios);
-usuariosRouter.get("/usuarios/:id", traerUsuarioPorId);
+usuariosRouter.get("/usuarios/:dni", traerUsuarioPorDNI);
 usuariosRouter.put("/usuarios/:id", actualizarUsuario);
 usuariosRouter.delete("/usuarios/:id", eliminarUsuario);
 usuariosRouter.get("/usuarios_con_servicio", obtenerUsuariosConServicios);

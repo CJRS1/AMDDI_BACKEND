@@ -21,6 +21,7 @@ model usuario {
   celular           String? @unique @db.VarChar(18)
   departamento      String  @db.VarChar(50)
   carrera           String  @db.VarChar(30)
+  tema String? @db.VarChar(191)
   rol               String  @default("usuario")
   verification_code String? @db.VarChar(4)
   pdf_url           String? @db.VarChar(255)
@@ -87,12 +88,23 @@ model asignacion {
   id          Int @id @default(autoincrement())
   id_asesor   Int
   id_usuarios Int
+  estado_asignacion String @default("Etapa 1")
+
+  estado estado @relation(fields:[estado_asignacion], references: [estado])
 
   asesor  asesor  @relation(fields: [id_asesor], references: [id])
   usuario usuario @relation(fields: [id_usuarios], references: [id])
 
   @@map("asignaciones")
 }
+
+model estado {
+  id Int @id @default(autoincrement())
+  estado String @unique
+
+  asignacion asignacion[]
+}
+
 
 model admin {
   id        Int      @id @default(autoincrement())

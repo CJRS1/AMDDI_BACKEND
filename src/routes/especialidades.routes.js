@@ -10,6 +10,8 @@ import {
 export const especialidadesRouter = Router();
 especialidadesRouter.post("/especialidades", crearEspecialidad);
 especialidadesRouter.get("/especialidades", listarEspecialidades); 
-especialidadesRouter.get("/especialidads/:id", traerEspecialidadPorId);
-especialidadesRouter.put("/especialidads/:id", actualizarEspecialidad);
-especialidadesRouter.delete("/especialidads/:id", eliminarEspecialidad);
+
+especialidadesRouter.get("/especialidades/:id", traerEspecialidadPorId);
+
+especialidadesRouter.put("/especialidades/:id", actualizarEspecialidad);
+especialidadesRouter.delete("/especialidades/:id", eliminarEspecialidad);

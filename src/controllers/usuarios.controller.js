@@ -76,12 +76,12 @@ export const listarUsuarios = async (req, res) => {
     }
 }
 
-export const traerUsuarioPorId = async (req, res) => {
-    const { id } = req.params;
+export const traerUsuarioPorDNI = async (req, res) => {
+    const { dni } = req.params;
     try {
         const usuario = await prisma.usuario.findUnique({
             where: {
-                id: Number(id),
+                dni: dni,
             },
         });
         if (!usuario) {

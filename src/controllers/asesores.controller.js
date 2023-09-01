@@ -83,6 +83,133 @@ export const traerAsesorPorId = async (req, res) => {
     }
 };
 
+// export const traerAsesorPorEspecialidad = async (req, res) => {
+//     const { especialidad } = req.params;
+//     try {
+//         const asesores = await prisma.especialidad.findUnique({
+//             where: {
+//                 nombre_especialidad: especialidad,
+//             },
+//             select: {
+//                 asesor_especialidad: {
+//                     select: {
+//                         asesor: {
+//                             include: {
+//                                 asignacion: true,
+//                             },
+//                         },
+//                     },
+//                 },
+//             },
+//         });
+
+//         if (!asesores) {
+//             return res.status(404).json({
+//                 message: "Especialidad no encontrada",
+//             });
+//         }
+
+//         // const asesoresConEspecialidad = asesores.asesor_especialidad.map(item => item.asesor);
+//         const asesoresConEspecialidad = asesores.asesor_especialidad.map(item => {
+//             const asesorData = item.asesor;
+//             const asesoradoData = asesorData.asignacion.map(asignacion => asignacion.usuario);
+//             return {
+//                 asesor: asesorData,
+//                 asesorados: asesoradoData,
+//                 especialidad: asesores, // Aquí se guarda la información de la especialidad
+//             };
+//         });
+
+//         if (asesoresConEspecialidad.length === 0) {
+//             return res.status(404).json({
+//                 message: "No se encontraron asesores con esa especialidad",
+//             });
+//         }
+
+//         return res.status(200).json({
+//             message: "Asesores encontrados",
+//             content: asesoresConEspecialidad,
+//         });
+//     } catch (error) {
+//         return res.status(500).json({
+//             message: "Error en el servidor",
+//             error: error.message,
+//         });
+//     }
+// };
+
+export const traerAsesorPorEspecialidad = async (req, res) => {
+    const { especialidad } = req.params;
+    try {
+        const asesores = await prisma.asesor.findMany({
+            where: {
+                asesor_especialidad: {
+                    some: {
+                        especialidad: {
+                            nombre_especialidad: especialidad,
+                        },
+                    },
+                },
+
+            },
+            include: {
+                asignacion: {
+                    include: {
+                        usuario: true,
+                    }
+                },
+                asesor_especialidad: {
+                    include: {
+                        especialidad: true,
+                    },
+                },
+            },
+        });
+
+        if (!asesores || asesores.length === 0) {
+            return res.status(404).json({
+                message: "No se encontraron asesores con esa especialidad",
+            });
+        }
+
+        return res.status(200).json({
+            message: "Asesores encontrados",
+            content: asesores,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: error.message,
+        });
+    }
+};
+
+
+export const traerUltimoAsesor = async (req,res) =>{
+    try{
+        const asesor = await prisma.asesor.findFirst({
+            orderBy: {
+                id: 'desc'
+            }
+        })
+        if (!asesor) {
+            return res.status(404).json({
+                message: "No se encontró ningún asesor",
+            });
+        }
+        return res.status(200).json({
+            message: "Asesor encontrado",
+            content: asesor,
+        });
+
+    }catch(error){
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: error.message 
+        })
+    }
+}
+
 export const actualizarAsesor = async (req, res) => {
     const { id } = req.params;
     const data = req.body;

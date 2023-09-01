@@ -4,37 +4,66 @@ const prisma = new PrismaClient();
 
 export const crearAsesorEspecialidad = async (req, res) => {
     try {
-        const { id_asesor, id_especialidad } = req.body;
+        const { id_asesor, id_especialidades } = req.body;
+        console.log(id_asesor, id_especialidades);
         const asesorExiste = await prisma.asesor.findUnique({
             where: {
                 id: id_asesor
             }
         });
+
         if (!asesorExiste) {
             return res.status(400).json({ msg: "No existe el asesor" });
         }
-        // Validar que especialidad exista
-        const especialidadExiste = await prisma.especialidad.findUnique({
+
+        const asesorEspecialidadesActuales = await prisma.asesor_especialidad.findMany({
             where: {
-                id: id_especialidad
-            }
-        });
-        if (!especialidadExiste) {
-            return res.status(400).json({ msg: "No existe la especialidad" });
-        }
-        const asesorEspecialidad = await prisma.asesor_especialidad.create({
-            data: {
                 id_asesor: id_asesor,
-                id_especialidad: id_especialidad
+                id_especialidad: { in: id_especialidades }
             }
         });
-        res.json(asesorEspecialidad);
+
+        const especialidadesExistentes = new Set();
+        asesorEspecialidadesActuales.forEach(asesorEspecialidad => {
+            especialidadesExistentes.add(asesorEspecialidad.id_especialidad);
+        });
+
+        const nuevasEspecialidades = [];
+        for (const id_especialidad of id_especialidades) {
+            if (!especialidadesExistentes.has(id_especialidad)) {
+                nuevasEspecialidades.push(id_especialidad);
+            }
+        }
+
+        for (const id_especialidad of nuevasEspecialidades) {
+            const especialidadExiste = await prisma.especialidad.findUnique({
+                where: {
+                    id: id_especialidad
+                }
+            });
+
+            if (!especialidadExiste) {
+                console.error(`No existe la especialidad con ID ${id_especialidad}`);
+                continue;
+            }
+
+            const asesorEspecialidad = await prisma.asesor_especialidad.create({
+                data: {
+                    id_asesor: id_asesor,
+                    id_especialidad: id_especialidad
+                }
+            });
+
+            console.log(`Especialidad ${id_especialidad} asignada al asesor ${id_asesor}`);
+        }
+
+        res.json({ msg: "Especialidades asignadas correctamente" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error al asignar especialidad" });
+        res.status(500).json({ msg: "Error al asignar especialidades" });
     }
+};
 
-}
 
 export const eliminarAsesor_Especialidad = async (req, res) => {
     const { id } = req.params;

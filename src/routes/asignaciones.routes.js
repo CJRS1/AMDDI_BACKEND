@@ -5,5 +5,5 @@ import {
 } from "../controllers/asignaciones.controller.js";
 
 export const asignacionesRouter = Router();
-asignacionesRouter.post("/asignaciones", crearAsignaciones);
+asignacionesRouter.post("/asignaciones/:id_asesor/:id_usuarios", crearAsignaciones);
 asignacionesRouter.delete("/asignaciones", eliminarAsignaciones);
