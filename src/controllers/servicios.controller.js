@@ -87,10 +87,7 @@ export const actualizarServicio = async (req, res) => {
                 id: Number(id),
             },
             data: {
-                servicio: data.servicio,
-                usuario_id:{
-                    set: data.usuario_id
-                },
+                nombre_servicio: data.nombre_servicio
             },
         });
 
@@ -105,6 +102,7 @@ export const actualizarServicio = async (req, res) => {
         });
     }
 };
+
 
 export const eliminarServicio = async (req, res) => {
     const { id } = req.params;

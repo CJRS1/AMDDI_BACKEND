@@ -38,10 +38,23 @@ const prisma = new PrismaClient();
 export const crearAsignaciones = async (req, res) => {
     try {
         const { id_asesor, id_usuarios } = req.params; // Cambio aquí
+
+        // Check if the user already has an advisor
+        const existingAsignacion = await prisma.asignacion.findFirst({
+            where: {
+                id_usuarios: parseInt(id_usuarios),
+            },
+        });
+
+        if (existingAsignacion) {
+            console.log("existe")
+            return res.status(400).json({ msg: "El usuario ya tiene un asesor asignado" });
+        }
+
         const asesorExiste = await prisma.asesor.findUnique({
             where: {
-                id: parseInt(id_asesor) // Parsea el valor a entero si es necesario
-            }
+                id: parseInt(id_asesor), // Parsea el valor a entero si es necesario
+            },
         });
         if (!asesorExiste) {
             return res.status(400).json({ msg: "No existe el asesor" });
@@ -49,8 +62,8 @@ export const crearAsignaciones = async (req, res) => {
 
         const usuarioExiste = await prisma.usuario.findUnique({
             where: {
-                id: parseInt(id_usuarios) // Parsea el valor a entero si es necesario
-            }
+                id: parseInt(id_usuarios), // Parsea el valor a entero si es necesario
+            },
         });
         if (!usuarioExiste) {
             return res.status(400).json({ msg: "No existe la especialidad" });
@@ -59,8 +72,8 @@ export const crearAsignaciones = async (req, res) => {
         const asesorUsuario = await prisma.asignacion.create({
             data: {
                 id_asesor: parseInt(id_asesor), // Parsea el valor a entero si es necesario
-                id_usuarios: parseInt(id_usuarios) // Parsea el valor a entero si es necesario
-            }
+                id_usuarios: parseInt(id_usuarios), // Parsea el valor a entero si es necesario
+            },
         });
 
         res.json(asesorUsuario);
@@ -68,7 +81,8 @@ export const crearAsignaciones = async (req, res) => {
         console.error(error);
         res.status(500).json({ msg: "Error al asignar usuario_asesor" });
     }
-}
+};
+
 
 
 export const eliminarAsignaciones = async (req, res) => {
