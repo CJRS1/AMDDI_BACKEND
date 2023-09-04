@@ -85,6 +85,118 @@ export const crearAsignaciones = async (req, res) => {
 
 
 
+export const editarAsignaciones = async (req, res) => {
+    try {
+        const { id_asesor, nombres_usuarios } = req.body;
+
+        // Verificar si el asesor existe
+        const asesorExiste = await prisma.asesor.findUnique({
+            where: {
+                id: id_asesor,
+            },
+        });
+
+        if (!asesorExiste) {
+            return res.status(400).json({ msg: "No existe el asesor" });
+        }
+
+        // Obtener una lista de IDs de usuarios por sus nombres
+        const usuariosPorNombres = await prisma.usuario.findMany({
+            where: {
+                nombre: {
+                    in: nombres_usuarios,
+                },
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        // Crear asignaciones para cada usuario
+        const asignaciones = usuariosPorNombres.map(usuario => ({
+            id_asesor: id_asesor,
+            id_usuarios: usuario.id,
+        }));
+
+        // Crear o actualizar las asignaciones en la base de datos
+        for (const asignacion of asignaciones) {
+            await prisma.asignacion.upsert({
+                where: {
+                    id_asesor_id_usuarios: {
+                        id_asesor: id_asesor,
+                        id_usuarios: asignacion.id_usuarios,
+                    },
+                },
+                update: {},
+                create: asignacion,
+            });
+        }
+
+        res.json({ msg: "Asignaciones de usuarios actualizadas correctamente" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error al editar las asignaciones de usuarios" });
+    }
+};
+
+
+export const editarAsignacionesUsuarios = async (req, res) => {
+    try {
+        const { id_usuario, nombre_asesor } = req.body;
+
+        // Verificar si el asesor existe por su nombre
+        const asesorExiste = await prisma.asesor.findUnique({
+            where: {
+                nombre: nombre_asesor,
+            },
+        });
+
+        if (!asesorExiste) {
+            return res.status(400).json({ msg: "No existe el asesor" });
+        }
+
+        // Verificar si el usuario existe por su ID
+        const usuarioExiste = await prisma.usuario.findUnique({
+            where: {
+                id: id_usuario,
+            },
+        });
+
+        if (!usuarioExiste) {
+            return res.status(400).json({ msg: "No existe el usuario" });
+        }
+
+        // Verificar si la asignación ya existe
+        const asignacionExistente = await prisma.asignacion.findFirst({
+            where: {
+                id_usuarios: id_usuario,
+                id_asesor: asesorExiste.id,
+            },
+        });
+
+        if (asignacionExistente) {
+            return res.status(400).json({ msg: "La asignación ya existe" });
+        }
+
+        // Crear la asignación en la base de datos
+        const nuevaAsignacion = await prisma.asignacion.create({
+            data: {
+                id_usuarios: id_usuario,
+                id_asesor: asesorExiste.id,
+            },
+        });
+
+        res.json({ msg: "Asignación de usuario actualizada correctamente" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error al editar la asignación de usuario" });
+    }
+};
+
+
+
+
+
 export const eliminarAsignaciones = async (req, res) => {
     const { id } = req.params;
     try {

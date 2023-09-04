@@ -64,6 +64,50 @@ export const crearAsesorEspecialidad = async (req, res) => {
     }
 };
 
+export const editarEspecialidadesAsesor = async (req, res) => {
+    try {
+        const { id_asesor, especialidades } = req.body;
+
+        // Verificar si el asesor existe
+        const asesorExiste = await prisma.asesor.findUnique({
+            where: {
+                id: id_asesor
+            }
+        });
+
+        if (!asesorExiste) {
+            return res.status(400).json({ msg: "No existe el asesor" });
+        }
+
+        // Obtener un objeto de mapeo entre nombres de especialidades e IDs
+        const especialidadesMap = {}; // Puedes llenar este objeto con una consulta a la base de datos
+
+        // Transformar los nombres de especialidades en IDs
+        const id_especialidades = especialidades.map(nombre => especialidadesMap[nombre]);
+
+        // Eliminar todas las especialidades anteriores del asesor
+        await prisma.asesor_especialidad.deleteMany({
+            where: {
+                id_asesor: id_asesor
+            }
+        });
+
+        // Asignar las nuevas especialidades al asesor
+        const nuevasEspecialidades = id_especialidades.map(id => ({
+            id_asesor,
+            id_especialidad: id
+        }));
+
+        await prisma.asesor_especialidad.createMany({
+            data: nuevasEspecialidades
+        });
+
+        res.json({ msg: "Especialidades del asesor actualizadas correctamente" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error al actualizar las especialidades del asesor" });
+    }
+};
 
 export const eliminarAsesor_Especialidad = async (req, res) => {
     const { id } = req.params;
