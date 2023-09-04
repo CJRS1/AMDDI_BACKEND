@@ -44,56 +44,46 @@ export const crearUsuario_Servicio = async (req, res) => {
 
 export const editarUsuarioServicio = async (req, res) => {
     try {
-        const { id_usuario, id_servicio } = req.body;
+        const { id_usuario, id_servicio } = req.params;
 
-        // Verificar si el usuario existe por su ID
-        const usuarioExiste = await prisma.usuario.findUnique({
+        // Verificar si el asesor existe
+        const usuarioExiste = await prisma.usuario_servicio.findFirst({
             where: {
-                id: id_usuario,
-            },
+                id_usuario: Number(id_usuario)
+            }
         });
 
         if (!usuarioExiste) {
-            return res.status(400).json({ msg: "No existe el usuario" });
+            return res.status(400).json({ msg: "No existe el asesor" });
         }
 
-        // Validar que el servicio exista
-        const servicioExiste = await prisma.servicio.findUnique({
+        // Eliminar todos los registros relacionados con el id_usuario
+        await prisma.usuario_servicio.deleteMany({
             where: {
-                id: id_servicio,
-            },
+                id_usuario: Number(id_usuario)
+            }
         });
 
-        if (!servicioExiste) {
-            return res.status(400).json({ msg: "No existe el servicio" });
-        }
-
-        // Verificar si el usuario ya tiene el servicio asignado
-        const usuarioTieneServicio = await prisma.usuario_servicio.findFirst({
-            where: {
-                id_usuario: usuarioExiste.id,
-                id_servicio: id_servicio,
-            },
-        });
-
-        if (usuarioTieneServicio) {
-            return res.status(400).json({ msg: "El usuario ya tiene este servicio asignado" });
-        }
-
-        const usuarioServicio = await prisma.usuario_servicio.create({
+        // Asignar el nuevo servicio al asesor
+        await prisma.usuario_servicio.create({
             data: {
-                id_usuario: usuarioExiste.id,
-                id_servicio: id_servicio,
-            },
+                id_usuario: Number(id_usuario),
+                id_servicio: Number(id_servicio),
+            }
         });
 
-        res.json(usuarioServicio);
+        // Cerrar la conexión de Prisma después de usarla
+        await prisma.$disconnect();
 
+        res.json({ msg: "Servicios del asesor actualizados correctamente" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error al editar el servicio del usuario" });
+        res.status(500).json({ msg: "Error al actualizar los servicios del asesor" });
     }
 };
+
+
+
 
 export const eliminarUsuario_Servicio = async (req, res) => {
     const { id } = req.params;

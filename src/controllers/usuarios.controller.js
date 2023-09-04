@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 export const crearUsuario = async (req, res) => {
     try {
-        const { email, pwd_hash, nombre, apeMat, apePat, dni, celular, departamento, carrera } = req.body;
+        const { email, pwd_hash, nombre, apeMat, apePat, dni, celular, departamento, carrera} = req.body;
         
         const fechaActual = new Date();
         const fechaFormateada = format(fechaActual, 'dd/MM/yyyy');
@@ -38,7 +38,7 @@ export const crearUsuario = async (req, res) => {
                     departamento,
                     carrera,
 
-                    createdAt: fechaFormateada
+                    createdAt: fechaFormateada,
                 },
             }),
         ]);
@@ -120,6 +120,15 @@ export const actualizarUsuario = async (req, res) => {
             const hashedPassword = await bcrypt.hash(data.pwd_hash, 10);
             data.pwd_hash = hashedPassword;
         }
+
+        if ('monto_pagado' in data) {
+            data.monto_pagado = parseFloat(data.monto_pagado);
+        }
+
+        if ('monto_total' in data) {
+            data.monto_total = parseFloat(data.monto_total);
+        }
+        
         const usuario = await prisma.usuario.update({
             where: {
                 id: Number(id),
@@ -133,6 +142,9 @@ export const actualizarUsuario = async (req, res) => {
                 dni: data.dni,
                 departamento: data.departamento,
                 carrera: data.carrera,
+                pdf_url: data.pdf_url,
+                monto_pagado: data.monto_pagado,
+                monto_total: data.monto_total,
             },
             select: {
                 id: true,
@@ -144,6 +156,9 @@ export const actualizarUsuario = async (req, res) => {
                 ...(data.dni && { dni: true }),
                 ...(data.departamento && { departamento: true }),
                 ...(data.carrera && { carrera: true }),
+                ...(data.pdf_url && { pdf_url: true }),
+                ...(data.monto_pagado && { monto_pagado: true }),
+                ...(data.monto_total && { monto_total: true }),
             },
         });
 

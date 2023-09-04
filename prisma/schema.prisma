@@ -27,8 +27,8 @@ model usuario {
   pdf_url           String? @db.VarChar(255)
   monto_pagado      Float?  @default(0)
   monto_total       Float?  @default(0)
-  fecha_servivio_monto String?
-  fecha_estimada String?  
+  // fecha_servicio_monto String?
+  // fecha_estimada String?  
   createdAt         String  @map("created_at")
 
   asignacion       asignacion[]
@@ -65,8 +65,8 @@ model especialidad {
 
 model usuario_servicio {
   id          Int @id @default(autoincrement())
-  id_usuario  Int
-  id_servicio Int
+  id_usuario  Int @unique
+  id_servicio Int 
 
   usuario  usuario  @relation(fields: [id_usuario], references: [id])
   servicio servicio @relation(fields: [id_servicio], references: [id])
