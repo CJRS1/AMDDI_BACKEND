@@ -6,10 +6,12 @@ import {
     actualizarUsuario,
     eliminarUsuario,
     obtenerUsuariosConServicios,
+    verificationCode ,
 } from "../controllers/usuarios.controller.js";
 
 export const usuariosRouter = Router();
-usuariosRouter.post("/usuarios", crearUsuario);
+usuariosRouter.post("/user_t", crearUsuario);
+usuariosRouter.post("/verificacion", verificationCode );
 usuariosRouter.get("/usuarios", listarUsuarios);
 usuariosRouter.get("/usuarios/:dni", traerUsuarioPorDNI);
 usuariosRouter.put("/usuarios/:id", actualizarUsuario);

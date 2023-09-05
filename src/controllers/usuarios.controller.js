@@ -1,58 +1,138 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
 
-import { format } from 'date-fns';
+import { format, addMinutes } from 'date-fns';
 
 const prisma = new PrismaClient();
 
+const generarCodigoVerificacion = () => {
+    // Genera un código de verificación aleatorio (puedes personalizar la lógica según tus necesidades)
+    return Math.floor(1000 + Math.random() * 9000).toString();
+};
+
+const tiempoExpiracionCodigo = 15; // 15 minutos
+
 export const crearUsuario = async (req, res) => {
     try {
-        const { email, pwd_hash, nombre, apeMat, apePat, dni, celular, departamento, carrera} = req.body;
-        
-        const fechaActual = new Date();
-        const fechaFormateada = format(fechaActual, 'dd/MM/yyyy');
+        console.log(req.body);
+        const { email, pwd_hash, nombre, apeMat, apePat, dni, celular, departamento, carrera } = req.body;
 
-        const existingUser = await prisma.usuario.findUnique({
+        const usuarioExistente = await prisma.usuario.findUnique({
             where: {
-                email: email,
+                email,
             },
         });
 
-        if (existingUser) {
-            // El correo electrónico ya está en uso
+        if (usuarioExistente) {
             return res.status(400).json({ msg: "El correo electrónico ya está registrado." });
         }
 
-        // Iniciar transacción
-        await prisma.$transaction([
-            prisma.usuario.create({
-                data: {
+        const usuarioTemp = await prisma.usuarioTemporal.findUnique({
+            where: {
+                email,
+            },
+        })
+
+        if (usuarioTemp){
+            await prisma.usuarioTemporal.delete({
+                where: {
                     email,
-                    pwd_hash: await bcrypt.hash(pwd_hash, 10),
-                    nombre,
-                    apeMat,
-                    apePat,
-                    dni,
-                    celular,
-                    departamento,
-                    carrera,
-
-                    createdAt: fechaFormateada,
                 },
-            }),
-        ]);
+            });
+        }
 
-        // Generar JWT y enviar respuesta
-        const token = jwt.sign({ email }, process.env.JWT_SECRET);
-        res.json({ token, 
-            createdAt: fechaFormateada });
+        const fechaActual = new Date();
+        const fechaFormateada = format(fechaActual, 'dd/MM/yyyy');
+
+        const codigoVerificacion = generarCodigoVerificacion();
+
+        // Calcular la fecha de expiración
+        const fechaExpiracion = addMinutes(fechaActual, tiempoExpiracionCodigo);
+
+        const usuarioTemporal = await prisma.usuarioTemporal.create({
+            data: {
+                email,
+                pwd_hash: await bcrypt.hash(pwd_hash, 10),
+                nombre,
+                apeMat,
+                apePat,
+                dni,
+                celular,
+                departamento,
+                carrera,
+                verification_code: codigoVerificacion,
+                createdAt: fechaFormateada,
+                fecha_expiracion: fechaExpiracion,
+            },
+        });
+
+        // Respuesta exitosa con el código de verificación
+        res.json({ codigoVerificacion, createdAt: fechaFormateada, usuarioTemporal });
     } catch (error) {
-        // Si hay un error, la transacción se revierte y el ID no aumentará
         console.error(error);
         res.status(500).json({ msg: "Error en el servidor." });
     }
 };
+
+export const verificationCode = async (req, res) => {
+    try {
+        const { email, codigoVerificacion } = req.body;
+        console.log(email, codigoVerificacion)
+        console.log(email, codigoVerificacion)
+        console.log(email, codigoVerificacion)
+        console.log(email, codigoVerificacion)
+        const fechaActual = new Date();
+
+        const usuarioTemporal = await prisma.usuarioTemporal.findUnique({
+            where: {
+                email,
+                verification_code: codigoVerificacion,
+                fecha_expiracion: {
+                    gte: fechaActual, // Verificar que el código no haya expirado
+                },
+            },
+        });
+
+        if (!usuarioTemporal) {
+            await prisma.usuarioTemporal.delete({
+                where: {
+                    email,
+                },
+            });
+            return res.status(400).json({ msg: "Código de verificación no válido o ha expirado." });
+        }
+
+        // Mover los datos de usuarioTemporal a usuario
+        await prisma.usuario.create({
+            data: {
+                email: usuarioTemporal.email,
+                pwd_hash: usuarioTemporal.pwd_hash,
+                nombre: usuarioTemporal.nombre,
+                apeMat: usuarioTemporal.apeMat,
+                apePat: usuarioTemporal.apePat,
+                dni: usuarioTemporal.dni,
+                celular: usuarioTemporal.celular,
+                departamento: usuarioTemporal.departamento,
+                carrera: usuarioTemporal.carrera,
+                createdAt: usuarioTemporal.createdAt,
+            },
+        });
+
+        // Eliminar la entrada en usuarioTemporal
+        await prisma.usuarioTemporal.delete({
+            where: {
+                email,
+            },
+        });
+
+        res.json({ msg: "Cuenta creada exitosamente." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error en el servidor." });
+    }
+};
+
 
 export const listarUsuarios = async (req, res) => {
     try {
@@ -128,7 +208,7 @@ export const actualizarUsuario = async (req, res) => {
         if ('monto_total' in data) {
             data.monto_total = parseFloat(data.monto_total);
         }
-        
+
         const usuario = await prisma.usuario.update({
             where: {
                 id: Number(id),
@@ -215,8 +295,8 @@ export const obtenerUsuariosConServicios = async (req, res) => {
                         servicio: true
                     }
                 },
-                asignacion:{
-                    include:{
+                asignacion: {
+                    include: {
                         asesor: true
                     }
                 }

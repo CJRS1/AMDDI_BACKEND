@@ -14,6 +14,12 @@ const server = express();
 server.use(json());
 server.use(cors());
 
+// Después de server.use(cors());
+server.use(cors({
+    origin: 'http://localhost:3000', // Reemplaza con el origen correcto de tu aplicación de frontend
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  }));
+  
 //ESTO SERVIRÁ PARA CUANDO SE LLEVE A PRODUCCIÓN
 // const allowedOrigins = ['https://tu-dominio.com', 'https://www.tu-dominio.com'];
 // app.use(cors({

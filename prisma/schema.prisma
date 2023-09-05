@@ -11,30 +11,50 @@ datasource db {
 }
 
 model usuario {
-  id                Int     @id @default(autoincrement())
-  pwd_hash          String  @db.VarChar(100)
-  email             String  @unique @db.VarChar(191)
-  nombre            String  @db.VarChar(50)
-  apeMat            String  @map("apellido_paterno") @db.VarChar(50)
-  apePat            String  @map("apellido_materno") @db.VarChar(50)
-  dni               String  @unique @db.VarChar(8)
-  celular           String? @unique @db.VarChar(18)
-  departamento      String  @db.VarChar(50)
-  carrera           String  @db.VarChar(30)
-  tema String? @db.VarChar(191)
-  rol               String  @default("usuario")
-  verification_code String? @db.VarChar(4)
-  pdf_url           String? @db.VarChar(255)
-  monto_pagado      Float?  @default(0)
-  monto_total       Float?  @default(0)
-  // fecha_servicio_monto String?
-  // fecha_estimada String?  
-  createdAt         String  @map("created_at")
+  id                   Int     @id @default(autoincrement())
+  pwd_hash             String  @db.VarChar(100)
+  email                String  @unique @db.VarChar(191)
+  nombre               String  @db.VarChar(50)
+  apeMat               String  @map("apellido_paterno") @db.VarChar(50)
+  apePat               String  @map("apellido_materno") @db.VarChar(50)
+  dni                  String  @unique @db.VarChar(8)
+  celular              String? @unique @db.VarChar(18)
+  pais                 String? @db.VarChar(50)
+  departamento         String  @db.VarChar(50)
+  carrera              String  @db.VarChar(30)
+  tema                 String? @db.VarChar(191)
+  rol                  String  @default("usuario")
+  verification_code    String? @db.VarChar(4)
+  pdf_url              String? @db.VarChar(255)
+  monto_pagado         Float?  @default(0)
+  monto_total          Float?  @default(0)
+  fecha_servicio_monto String?
+  fecha_estimada       String?
+  createdAt            String  @map("created_at")
 
   asignacion       asignacion[]
   usuario_servicio usuario_servicio[]
 
   @@map("usuarios")
+}
+
+model usuarioTemporal {
+  id                Int      @id @default(autoincrement())
+  pwd_hash          String   @db.VarChar(100)
+  email             String   @unique @db.VarChar(191)
+  nombre            String   @db.VarChar(50)
+  apeMat            String   @map("apellido_paterno") @db.VarChar(50)
+  apePat            String   @map("apellido_materno") @db.VarChar(50)
+  dni               String   @unique @db.VarChar(8)
+  celular           String?  @unique @db.VarChar(18)
+  pais              String?  @db.VarChar(50)
+  departamento      String   @db.VarChar(50)
+  carrera           String   @db.VarChar(30)
+  verification_code String?  @db.VarChar(4)
+  createdAt         String   @map("created_at")
+  fecha_expiracion  DateTime // Campo para el tiempo de expiración
+
+  @@map("usuarios_temporal")
 }
 
 model asesor {
@@ -66,7 +86,7 @@ model especialidad {
 model usuario_servicio {
   id          Int @id @default(autoincrement())
   id_usuario  Int @unique
-  id_servicio Int 
+  id_servicio Int
 
   usuario  usuario  @relation(fields: [id_usuario], references: [id])
   servicio servicio @relation(fields: [id_servicio], references: [id])
@@ -85,12 +105,12 @@ model servicio {
 }
 
 model asignacion {
-  id          Int @id @default(autoincrement())
-  id_asesor   Int
-  id_usuarios Int
+  id                Int    @id @default(autoincrement())
+  id_asesor         Int
+  id_usuarios       Int
   estado_asignacion String @default("Etapa 1")
 
-  estado estado @relation(fields:[estado_asignacion], references: [estado])
+  estado estado @relation(fields: [estado_asignacion], references: [estado])
 
   asesor  asesor  @relation(fields: [id_asesor], references: [id])
   usuario usuario @relation(fields: [id_usuarios], references: [id])
@@ -99,12 +119,11 @@ model asignacion {
 }
 
 model estado {
-  id Int @id @default(autoincrement())
+  id     Int    @id @default(autoincrement())
   estado String @unique
 
   asignacion asignacion[]
 }
-
 
 model admin {
   id        Int      @id @default(autoincrement())

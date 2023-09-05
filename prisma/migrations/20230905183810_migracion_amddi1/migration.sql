@@ -8,13 +8,17 @@ CREATE TABLE `usuarios` (
     `apellido_materno` VARCHAR(50) NOT NULL,
     `dni` VARCHAR(8) NOT NULL,
     `celular` VARCHAR(18) NULL,
+    `pais` VARCHAR(50) NULL,
     `departamento` VARCHAR(50) NOT NULL,
     `carrera` VARCHAR(30) NOT NULL,
+    `tema` VARCHAR(191) NULL,
     `rol` VARCHAR(191) NOT NULL DEFAULT 'usuario',
     `verification_code` VARCHAR(4) NULL,
     `pdf_url` VARCHAR(255) NULL,
     `monto_pagado` DOUBLE NULL DEFAULT 0,
     `monto_total` DOUBLE NULL DEFAULT 0,
+    `fecha_servicio_monto` VARCHAR(191) NULL,
+    `fecha_estimada` VARCHAR(191) NULL,
     `created_at` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `usuarios_email_key`(`email`),
@@ -55,6 +59,7 @@ CREATE TABLE `usuario_servicio` (
     `id_usuario` INTEGER NOT NULL,
     `id_servicio` INTEGER NOT NULL,
 
+    UNIQUE INDEX `usuario_servicio_id_usuario_key`(`id_usuario`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -72,7 +77,17 @@ CREATE TABLE `asignaciones` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `id_asesor` INTEGER NOT NULL,
     `id_usuarios` INTEGER NOT NULL,
+    `estado_asignacion` VARCHAR(191) NOT NULL DEFAULT 'Etapa 1',
 
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `estado` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `estado` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `estado_estado_key`(`estado`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -107,6 +122,9 @@ ALTER TABLE `usuario_servicio` ADD CONSTRAINT `usuario_servicio_id_usuario_fkey`
 
 -- AddForeignKey
 ALTER TABLE `usuario_servicio` ADD CONSTRAINT `usuario_servicio_id_servicio_fkey` FOREIGN KEY (`id_servicio`) REFERENCES `servicios`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `asignaciones` ADD CONSTRAINT `asignaciones_estado_asignacion_fkey` FOREIGN KEY (`estado_asignacion`) REFERENCES `estado`(`estado`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `asignaciones` ADD CONSTRAINT `asignaciones_id_asesor_fkey` FOREIGN KEY (`id_asesor`) REFERENCES `asesores`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
