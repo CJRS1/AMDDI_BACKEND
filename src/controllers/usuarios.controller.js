@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-// import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 import { format, addMinutes } from 'date-fns';
 
@@ -119,6 +119,19 @@ export const verificationCode = async (req, res) => {
             },
         });
 
+        const userEmail = email;
+
+        const secretKey = process.env.JWT_SECRET; // Reemplaza con tu clave secreta real
+        
+        // Generar un token JWT solo con el correo electrónico en el payload
+        const payload = {
+            email: userEmail,
+        };
+        
+        // Generar el token JWT
+        const token = jwt.sign(payload, secretKey);
+        console.log(token);
+        
         // Eliminar la entrada en usuarioTemporal
         await prisma.usuarioTemporal.delete({
             where: {
