@@ -1,5 +1,6 @@
 import express, { json } from "express";
 import cors from 'cors';
+import session from 'express-session';
 import { usuariosRouter } from "./routes/usuarios.routes.js";
 import { adminsRouter } from "./routes/admins.routes.js";
 import { asesoresRouter } from "./routes/asesores.routes.js";
@@ -8,6 +9,7 @@ import { serviciosRouter } from "./routes/servicios.routes.js";
 import { asesoresespecialidadesRouter } from "./routes/asesores_especialidades.routes.js"
 import { usuariosserviciosRouter } from "./routes/usuarios_servicios.routes.js"
 import { asignacionesRouter } from "./routes/asignaciones.routes.js";
+
 
 const server = express();
 
@@ -31,6 +33,19 @@ server.use(cors({
 //         }
 //     }
 // }));
+
+
+server.use(
+  session({
+    secret: process.env.SESSION_SECRET, // Cambia esto a una cadena secreta segura
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: false, // Cambia esto según tus necesidades
+      maxAge: 1000 * 60 * 60 * 24, // Duración de la sesión (en milisegundos), cambia según tus necesidades
+    },
+  })
+);
 
 
 const PORT = process.env.PORT ?? 5000;
