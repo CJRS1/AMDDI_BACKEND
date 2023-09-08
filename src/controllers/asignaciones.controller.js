@@ -38,7 +38,7 @@ const prisma = new PrismaClient();
 export const crearAsignaciones = async (req, res) => {
     try {
         const { id_asesor, id_usuarios } = req.params; // Cambio aquí
-
+        console.log(id_usuarios, id_usuarios);
         // Check if the user already has an advisor
         const existingAsignacion = await prisma.asignacion.findFirst({
             where: {
@@ -143,7 +143,7 @@ export const editarAsignaciones = async (req, res) => {
 export const editarAsignacionesUsuarios = async (req, res) => {
     try {
         const { id_usuario, nombre_asesor } = req.body;
-
+        console.log(id_usuario, nombre_asesor);
         // Verificar si el asesor existe por su nombre
         const asesorExiste = await prisma.asesor.findUnique({
             where: {

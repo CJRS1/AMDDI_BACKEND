@@ -108,9 +108,9 @@ model asignacion {
   id                Int    @id @default(autoincrement())
   id_asesor         Int
   id_usuarios       Int
-  estado_asignacion String @default("Etapa 1")
+  id_estado Int @unique
 
-  estado estado @relation(fields: [estado_asignacion], references: [estado])
+  estado estado @relation(fields: [id_estado], references: [id])
 
   asesor  asesor  @relation(fields: [id_asesor], references: [id])
   usuario usuario @relation(fields: [id_usuarios], references: [id])
@@ -120,7 +120,7 @@ model asignacion {
 
 model estado {
   id     Int    @id @default(autoincrement())
-  estado String @unique
+  estado String
 
   asignacion asignacion[]
 }
