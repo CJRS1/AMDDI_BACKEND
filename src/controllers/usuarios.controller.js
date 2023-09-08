@@ -169,6 +169,7 @@ export const loginUser = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ msg: 'Correo electrónico o contraseña incorrectos.' });
         }
+        console.log(!isPasswordValid);
 
         // Genera un token JWT con el correo electrónico en el payload
         const secretKey = 'tu-clave-secreta'; // Reemplaza con tu clave secreta real
@@ -209,6 +210,54 @@ export const logoutUser = (req, res) => {
     }
 };
 
+export const sendVerificationCode = async (req, res) => {
+    console.log("hola")
+    try {
+        const { email } = req.params;
+
+        // Generar un código de verificación aleatorio (puedes personalizarlo según tus necesidades)
+        const codigoVerificacion = Math.floor(1000 + Math.random() * 9000);
+
+        // Guardar el código de verificación en la base de datos asociado al correo electrónico
+        await prisma.usuario.update({
+            where: {
+                email: email,
+            },
+            data: {
+                verification_code: codigoVerificacion.toString(),
+            },
+        });
+
+        res.json({ msg: "Código de verificación generado exitosamente." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error en el servidor." });
+    }
+};
+
+export const verificationCodeCC = async (req, res) => {
+    console.log("Verification Code");
+    try {
+        const { email, codigoVerificacion } = req.body;
+        console.log(email, codigoVerificacion)
+
+        const usuarioTemporal = await prisma.usuario.findUnique({
+            where: {
+                email,
+                verification_code: codigoVerificacion,
+            },
+        });
+
+        if (!usuarioTemporal) {
+            return res.status(400).json({ msg: "Código de verificación no válido o ha expirado." });
+        }
+
+        res.json({ msg: "Cuenta verificada exitosamente" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error en el servidor." });
+    }
+};
 
 
 export const listarUsuarios = async (req, res) => {
@@ -268,6 +317,7 @@ export const traerUsuarioPorEmail = async (req, res) => {
                 email: email,
             },
             select: {
+                id: true,
                 nombre: true, // Selecciona el nombre del usuario
                 apeMat: true, // Selecciona el apellido materno del usuario
                 apePat: true, // Selecciona el apellido paterno del usuario
@@ -298,12 +348,14 @@ export const traerUsuarioPorEmail = async (req, res) => {
 export const actualizarUsuario = async (req, res) => {
     const { id } = req.params;
     const data = req.body;
+    console.log(data);
     try {
         const findUsuario = await prisma.usuario.findUnique({
             where: {
                 id: Number(id),
             },
         });
+        console.log(findUsuario);
         if (!findUsuario) {
             return res.status(404).json({
                 message: "Usuario no encontrado",
@@ -355,11 +407,12 @@ export const actualizarUsuario = async (req, res) => {
                 ...(data.monto_total && { monto_total: true }),
             },
         });
-
+        console.log("Usuario actualizado:", usuario);
         return res.status(201).json({
             message: "Usuario actualizado",
             content: usuario,
         });
+
     } catch (error) {
         return res.status(500).json({
             message: "Error en el servidor",
@@ -367,6 +420,54 @@ export const actualizarUsuario = async (req, res) => {
         });
     }
 };
+
+export const actualizarUsuarioCC = async (req, res) => {
+    const { email } = req.params;
+    const data = req.body;
+    console.log("holaaa");
+    console.log("xdd",data);
+    try {
+        const findUsuario = await prisma.usuario.findUnique({
+            where: {
+                email: email,
+            },
+        });
+        console.log(findUsuario);
+        if (!findUsuario) {
+            return res.status(404).json({
+                message: "Usuario no encontrado",
+            });
+        }
+        // Hash the password if it's provided
+        if (data.pwd_hash) {
+            const hashedPassword = await bcrypt.hash(data.pwd_hash, 10);
+            data.pwd_hash = hashedPassword;
+        }
+
+
+        const usuario = await prisma.usuario.update({
+            where: {
+                email: email,
+            },
+            data: {
+                pwd_hash: data.pwd_hash,
+
+            },
+        });
+        console.log("Usuario actualizado:", usuario);
+        return res.status(201).json({
+            message: "Usuario actualizado",
+            content: usuario,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: error.message,
+        });
+    }
+};
+
 
 export const eliminarUsuario = async (req, res) => {
     const { id } = req.params;
@@ -421,5 +522,41 @@ export const obtenerUsuariosConServicios = async (req, res) => {
     } catch (error) {
         console.error('Error al obtener usuarios con servicios:', error);
         res.status(500).json({ message: 'Error al obtener usuarios con servicios' });
+    }
+};
+
+
+export const obtenerServicioPorEmail = async (req, res) => {
+    const { email } = req.params;
+
+    try {
+        // Buscar el usuario por email
+        const usuario = await prisma.usuario.findUnique({
+            where: { email },
+        });
+
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        // Buscar el usuario_servicio relacionado con el usuario
+        const usuarioServicio = await prisma.usuario_servicio.findUnique({
+            where: { id_usuario: usuario.id },
+            include: {
+                servicio: true,
+            },
+        });
+
+        if (!usuarioServicio) {
+            return res.status(404).json({ message: 'Usuario no tiene un servicio relacionado' });
+        }
+
+        // El servicio relacionado está en usuarioServicio.servicio
+        const servicio = usuarioServicio.servicio;
+
+        res.json({ content: servicio });
+    } catch (error) {
+        console.error('Error al obtener servicio por email:', error);
+        res.status(500).json({ message: 'Error al obtener servicio por email' });
     }
 };

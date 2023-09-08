@@ -10,6 +10,10 @@ import {
     loginUser,
     logoutUser,
     traerUsuarioPorEmail, 
+    obtenerServicioPorEmail,
+    sendVerificationCode,
+    verificationCodeCC,
+    actualizarUsuarioCC,
 } from "../controllers/usuarios.controller.js";
 
 export const usuariosRouter = Router();
@@ -17,11 +21,17 @@ usuariosRouter.post("/user_t", crearUsuario);
 usuariosRouter.post("/login", loginUser);
 usuariosRouter.post("/logout", logoutUser);
 usuariosRouter.post("/verificacion", verificationCode );
+usuariosRouter.post("/cv_por_email/:email", sendVerificationCode);
+usuariosRouter.post("/verificar_code/:email", verificationCodeCC);
+
 usuariosRouter.get("/usuarios", listarUsuarios);
-
-usuariosRouter.get("/usuario_por_email/:email", traerUsuarioPorEmail);
-
 usuariosRouter.get("/usuarios/:dni", traerUsuarioPorDNI);
-usuariosRouter.put("/usuarios/:id", actualizarUsuario);
-usuariosRouter.delete("/usuarios/:id", eliminarUsuario);
+usuariosRouter.get("/usuario_por_email/:email", traerUsuarioPorEmail);
+usuariosRouter.get("/servicio_por_email/:email", obtenerServicioPorEmail);
 usuariosRouter.get("/usuarios_con_servicio", obtenerUsuariosConServicios);
+
+
+usuariosRouter.put("/usuarios/:id", actualizarUsuario);
+usuariosRouter.put("/usuario/:email", actualizarUsuarioCC);
+
+usuariosRouter.delete("/usuarios/:id", eliminarUsuario);
