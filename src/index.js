@@ -18,7 +18,7 @@ server.use(cors());
 
 // Después de server.use(cors());
 server.use(cors({
-    origin: 'http://localhost:3000', // Reemplaza con el origen correcto de tu aplicación de frontend
+    origin: ['http://localhost:3000', 'http://localhost:3001'], // Reemplaza con el origen correcto de tu aplicación de frontend
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   }));
   

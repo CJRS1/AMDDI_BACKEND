@@ -298,17 +298,23 @@ export const obtenerAsesoresConAsignados = async (req, res) => {
             include: {
                 asignacion:{
                     include:{
-                        asesor: true
+                        asesor: true,
+                        usuario: true
                     }
                 },
                 asesor_especialidad:{
                     include:{
                         especialidad: true
                     }
+                },
+                asignacion_secundaria:{
+                    include:{
+                        asesor: true
+                    }
                 }
             }
         });
-
+        // console.log(asesores);
         res.json({ content: asesores });
     } catch (error) {
         console.error('Error al obtener asesors con servicios:', error);

@@ -28,6 +28,29 @@ CREATE TABLE `usuarios` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `usuarios_temporal` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `pwd_hash` VARCHAR(100) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `nombre` VARCHAR(50) NOT NULL,
+    `apellido_paterno` VARCHAR(50) NOT NULL,
+    `apellido_materno` VARCHAR(50) NOT NULL,
+    `dni` VARCHAR(8) NOT NULL,
+    `celular` VARCHAR(18) NULL,
+    `pais` VARCHAR(50) NULL,
+    `departamento` VARCHAR(50) NOT NULL,
+    `carrera` VARCHAR(30) NOT NULL,
+    `verification_code` VARCHAR(4) NULL,
+    `created_at` VARCHAR(191) NOT NULL,
+    `fecha_expiracion` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `usuarios_temporal_email_key`(`email`),
+    UNIQUE INDEX `usuarios_temporal_dni_key`(`dni`),
+    UNIQUE INDEX `usuarios_temporal_celular_key`(`celular`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `asesores` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `pwd_hash` VARCHAR(100) NOT NULL,
@@ -77,7 +100,16 @@ CREATE TABLE `asignaciones` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `id_asesor` INTEGER NOT NULL,
     `id_usuarios` INTEGER NOT NULL,
-    `estado_asignacion` VARCHAR(191) NOT NULL DEFAULT 'Etapa 1',
+    `id_estado` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `asignaciones_secundarias` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id_asesor` INTEGER NOT NULL,
+    `id_usuarios` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -87,7 +119,6 @@ CREATE TABLE `estado` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `estado` VARCHAR(191) NOT NULL,
 
-    UNIQUE INDEX `estado_estado_key`(`estado`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -124,13 +155,19 @@ ALTER TABLE `usuario_servicio` ADD CONSTRAINT `usuario_servicio_id_usuario_fkey`
 ALTER TABLE `usuario_servicio` ADD CONSTRAINT `usuario_servicio_id_servicio_fkey` FOREIGN KEY (`id_servicio`) REFERENCES `servicios`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `asignaciones` ADD CONSTRAINT `asignaciones_estado_asignacion_fkey` FOREIGN KEY (`estado_asignacion`) REFERENCES `estado`(`estado`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `asignaciones` ADD CONSTRAINT `asignaciones_id_estado_fkey` FOREIGN KEY (`id_estado`) REFERENCES `estado`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `asignaciones` ADD CONSTRAINT `asignaciones_id_asesor_fkey` FOREIGN KEY (`id_asesor`) REFERENCES `asesores`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `asignaciones` ADD CONSTRAINT `asignaciones_id_usuarios_fkey` FOREIGN KEY (`id_usuarios`) REFERENCES `usuarios`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `asignaciones_secundarias` ADD CONSTRAINT `asignaciones_secundarias_id_asesor_fkey` FOREIGN KEY (`id_asesor`) REFERENCES `asesores`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `asignaciones_secundarias` ADD CONSTRAINT `asignaciones_secundarias_id_usuarios_fkey` FOREIGN KEY (`id_usuarios`) REFERENCES `usuarios`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `asesor_especialidad` ADD CONSTRAINT `asesor_especialidad_id_asesor_fkey` FOREIGN KEY (`id_asesor`) REFERENCES `asesores`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

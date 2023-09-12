@@ -2,43 +2,47 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// export const crearAsignaciones = async (req, res) => {
-//     try {
-//         const { id_asesor, id_usuarios } = req.body;
-//         const asesorExiste = await prisma.asesor.findUnique({
-//             where: {
-//                 id: id_asesor
-//             }
-//         });
-//         if (!asesorExiste) {
-//             return res.status(400).json({ msg: "No existe el asesor" });
-//         }
-//         // Validar que usuario exista
-//         const usuarioExiste = await prisma.usuario.findUnique({
-//             where: {
-//                 id: id_usuarios
-//             }
-//         });
-//         if (!usuarioExiste) {
-//             return res.status(400).json({ msg: "No existe la especialidad" });
-//         }
-//         const asesorUsuario = await prisma.asignacion.create({
-//             data: {
-//                 id_asesor: id_asesor,
-//                 id_usuarios: id_usuarios
-//             }
-//         });
-//         res.json(asesorUsuario);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ msg: "Error al asignar usuario_asesor" });
-//     }
-// }
+export const crearAsignacionesSec = async (req, res) => {
+    try {
+        const { id_asesor, id_usuarios } = req.params; // Cambio aquí
+        console.log(id_asesor, id_usuarios);
+
+        const asesorExiste = await prisma.asesor.findUnique({
+            where: {
+                id: parseInt(id_asesor), // Parsea el valor a entero si es necesario
+            },
+        });
+        if (!asesorExiste) {
+            return res.status(400).json({ msg: "No existe el asesor" });
+        }
+
+        const usuarioExiste = await prisma.usuario.findUnique({
+            where: {
+                id: parseInt(id_usuarios), // Parsea el valor a entero si es necesario
+            },
+        });
+        if (!usuarioExiste) {
+            return res.status(400).json({ msg: "No existe el usuario" });
+        }
+
+        const asesorUsuario = await prisma.asignacion_secundaria.create({
+            data: {
+                id_asesor: parseInt(id_asesor), // Parsea el valor a entero si es necesario
+                id_usuarios: parseInt(id_usuarios), // Parsea el valor a entero si es necesario
+            },
+        });
+
+        res.json(asesorUsuario);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error al asignar usuario_asesor" });
+    }
+};
 
 export const crearAsignaciones = async (req, res) => {
     try {
         const { id_asesor, id_usuarios } = req.params; // Cambio aquí
-        console.log(id_usuarios, id_usuarios);
+        console.log(id_asesor, id_usuarios);
         // Check if the user already has an advisor
         const existingAsignacion = await prisma.asignacion.findFirst({
             where: {
@@ -66,13 +70,14 @@ export const crearAsignaciones = async (req, res) => {
             },
         });
         if (!usuarioExiste) {
-            return res.status(400).json({ msg: "No existe la especialidad" });
+            return res.status(400).json({ msg: "No existe el usuario" });
         }
 
         const asesorUsuario = await prisma.asignacion.create({
             data: {
                 id_asesor: parseInt(id_asesor), // Parsea el valor a entero si es necesario
                 id_usuarios: parseInt(id_usuarios), // Parsea el valor a entero si es necesario
+                id_estado: 1, 
             },
         });
 

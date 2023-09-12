@@ -32,8 +32,9 @@ model usuario {
   fecha_estimada       String?
   createdAt            String  @map("created_at")
 
-  asignacion       asignacion[]
-  usuario_servicio usuario_servicio[]
+  asignacion_secundaria asignacion_secundaria[]
+  asignacion            asignacion[]
+  usuario_servicio      usuario_servicio[]
 
   @@map("usuarios")
 }
@@ -68,8 +69,9 @@ model asesor {
   rol       String   @default("asesor")
   createdAt DateTime @default(now()) @map("created_at")
 
-  asignacion          asignacion[]
-  asesor_especialidad asesor_especialidad[]
+  asignacion_secundaria asignacion_secundaria[]
+  asignacion            asignacion[]
+  asesor_especialidad   asesor_especialidad[]
 
   @@map("asesores")
 }
@@ -105,10 +107,10 @@ model servicio {
 }
 
 model asignacion {
-  id                Int    @id @default(autoincrement())
-  id_asesor         Int
-  id_usuarios       Int
-  id_estado Int @unique
+  id          Int @id @default(autoincrement())
+  id_asesor   Int
+  id_usuarios Int
+  id_estado   Int 
 
   estado estado @relation(fields: [id_estado], references: [id])
 
@@ -116,6 +118,17 @@ model asignacion {
   usuario usuario @relation(fields: [id_usuarios], references: [id])
 
   @@map("asignaciones")
+}
+
+model asignacion_secundaria {
+  id          Int @id @default(autoincrement())
+  id_asesor   Int
+  id_usuarios Int
+
+  asesor  asesor  @relation(fields: [id_asesor], references: [id])
+  usuario usuario @relation(fields: [id_usuarios], references: [id])
+
+  @@map("asignaciones_secundarias")
 }
 
 model estado {

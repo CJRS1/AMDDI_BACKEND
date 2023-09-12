@@ -386,6 +386,7 @@ export const actualizarUsuario = async (req, res) => {
                 apeMat: data.apeMat,
                 apePat: data.apePat,
                 dni: data.dni,
+                celular: data.celular,
                 departamento: data.departamento,
                 carrera: data.carrera,
                 pdf_url: data.pdf_url,
@@ -400,6 +401,7 @@ export const actualizarUsuario = async (req, res) => {
                 ...(data.apeMat && { apeMat: true }),
                 ...(data.apePat && { apePat: true }),
                 ...(data.dni && { dni: true }),
+                ...(data.celular && { celular: true }),
                 ...(data.departamento && { departamento: true }),
                 ...(data.carrera && { carrera: true }),
                 ...(data.pdf_url && { pdf_url: true }),
@@ -512,6 +514,11 @@ export const obtenerUsuariosConServicios = async (req, res) => {
                 },
                 asignacion: {
                     include: {
+                        asesor: true
+                    }
+                },
+                asignacion_secundaria: {
+                    include:{
                         asesor: true
                     }
                 }
