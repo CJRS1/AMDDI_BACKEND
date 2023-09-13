@@ -9,7 +9,8 @@ import { serviciosRouter } from "./routes/servicios.routes.js";
 import { asesoresespecialidadesRouter } from "./routes/asesores_especialidades.routes.js"
 import { usuariosserviciosRouter } from "./routes/usuarios_servicios.routes.js"
 import { asignacionesRouter } from "./routes/asignaciones.routes.js";
-
+import { montoRouter} from "./routes/monto.routes.js";
+import {pdf_urlRouter} from "./routes/pdf_url.routes.js";
 
 const server = express();
 
@@ -58,6 +59,8 @@ server.use(serviciosRouter);
 server.use(asesoresespecialidadesRouter);
 server.use(usuariosserviciosRouter);
 server.use(asignacionesRouter);
+server.use(montoRouter);
+server.use(pdf_urlRouter);
 
 
 server.listen(PORT, () => {

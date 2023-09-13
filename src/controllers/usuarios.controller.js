@@ -506,7 +506,25 @@ export const obtenerUsuariosConServicios = async (req, res) => {
     //Realiza un left join
     try {
         const usuarios = await prisma.usuario.findMany({
-            include: {
+            select: {
+                id: true,
+                nombre: true,
+                email: true,
+                apeMat: true,
+                apePat: true,
+                dni: true,
+                celular: true,
+                pais: true,
+                departamento: true,
+                carrera: true,
+                tema: true,
+                monto_total: true,
+                pdf_url: {
+                    select: {
+                        pdf_url: true,
+                        fecha_pdf_url: true
+                    }
+                },
                 usuario_servicio: {
                     include: {
                         servicio: true

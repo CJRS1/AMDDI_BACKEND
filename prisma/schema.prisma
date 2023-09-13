@@ -25,13 +25,16 @@ model usuario {
   tema                 String? @db.VarChar(191)
   rol                  String  @default("usuario")
   verification_code    String? @db.VarChar(4)
-  pdf_url              String? @db.VarChar(255)
-  monto_pagado         Float?  @default(0)
+  link_reunion         String? @db.VarChar(255)
+  // pdf_url              String? @db.VarChar(255)
+  // monto_pagado         Float?  @default(0)
   monto_total          Float?  @default(0)
-  fecha_servicio_monto String?
-  fecha_estimada       String?
+  // fecha_servicio_monto String?
+  // fecha_estimada       String?
   createdAt            String  @map("created_at")
 
+  monto_pagado          monto_pagado[]
+  pdf_url               pdf_url[]
   asignacion_secundaria asignacion_secundaria[]
   asignacion            asignacion[]
   usuario_servicio      usuario_servicio[]
@@ -110,7 +113,7 @@ model asignacion {
   id          Int @id @default(autoincrement())
   id_asesor   Int
   id_usuarios Int
-  id_estado   Int 
+  id_estado   Int
 
   estado estado @relation(fields: [id_estado], references: [id])
 
@@ -161,4 +164,26 @@ model asesor_especialidad {
   especialidad especialidad @relation(fields: [id_especialidad], references: [id])
 
   @@map("asesor_especialidad")
+}
+
+model monto_pagado {
+  id           Int     @id @default(autoincrement())
+  monto_pagado Float?  @default(0)
+  fecha_pago   String?
+  usuarioId    Int     
+
+  usuario usuario @relation(fields: [usuarioId], references: [id])
+
+  @@map("monto_pagado")
+}
+
+model pdf_url {
+  id            Int     @id @default(autoincrement())
+  pdf_url       String? @db.VarChar(255)
+  fecha_pdf_url String
+  usuarioId     Int      
+
+  usuario usuario @relation(fields: [usuarioId], references: [id])
+
+  @@map("pdf_url")
 }
