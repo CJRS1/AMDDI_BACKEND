@@ -63,8 +63,8 @@ export const descargarPDF = async (req, res) => {
     try {
         const { nombreArchivo } = req.params;
         console.log(nombreArchivo);
-        const rutaArchivo = path.join(__dirname, '..', 'uploads', 'pdfs', nombreArchivo);
-
+        const rutaArchivo = path.join(__dirname, '..', '..', 'uploads', 'pdfs', nombreArchivo);
+        console.log(rutaArchivo);
         console.log('Ruta del archivo:', rutaArchivo); // Agregar registro de depuración
 
         // Enviar el archivo al cliente para descargar
