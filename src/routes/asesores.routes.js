@@ -3,6 +3,7 @@ import {
     crearAsesor,
     listarAsesores,
     traerAsesorPorId,
+    traerAsesorPorEmail,
     actualizarAsesor,
     eliminarAsesor,
     obtenerAsesoresConAsignados,
@@ -19,6 +20,7 @@ asesoresRouter.post("/logoutA", logoutA);
 
 asesoresRouter.get("/asesores", listarAsesores);
 asesoresRouter.get("/asesores/:id", traerAsesorPorId);
+asesoresRouter.get("/asesoress/:email", traerAsesorPorEmail);
 asesoresRouter.get("/asesores_usuarios", obtenerAsesoresConAsignados);
 asesoresRouter.get("/ultimo_asesor", traerUltimoAsesor);
 asesoresRouter.get("/asesor/:especialidad", traerAsesorPorEspecialidad);

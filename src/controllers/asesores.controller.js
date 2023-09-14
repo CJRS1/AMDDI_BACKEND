@@ -160,6 +160,50 @@ export const traerAsesorPorId = async (req, res) => {
             where: {
                 id: Number(id),
             },
+            select: {
+                id:true,
+                email: true,
+                nombre: true,
+                apeMat: true,
+                apePat: true,
+                dni: true,
+                rol: true
+            }
+        });
+        if (!asesor) {
+            return res.status(404).json({
+                message: "Asesor no encontrado",
+            });
+        }
+        return res.status(200).json({
+            message: "Asesor encontrado",
+            content: asesor,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: error.message,
+        });
+    }
+};
+
+export const traerAsesorPorEmail = async (req, res) => {
+    const { email } = req.params;
+    console.log(email);
+    try {
+        const asesor = await prisma.asesor.findUnique({
+            where: {
+                email: email,
+            },
+            select: {
+                id:true,
+                email: true,
+                nombre: true,
+                apeMat: true,
+                apePat: true,
+                dni: true,
+                rol: true
+            }
         });
         if (!asesor) {
             return res.status(404).json({
