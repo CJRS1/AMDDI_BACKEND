@@ -9,8 +9,8 @@ import { serviciosRouter } from "./routes/servicios.routes.js";
 import { asesoresespecialidadesRouter } from "./routes/asesores_especialidades.routes.js"
 import { usuariosserviciosRouter } from "./routes/usuarios_servicios.routes.js"
 import { asignacionesRouter } from "./routes/asignaciones.routes.js";
-import { montoRouter} from "./routes/monto.routes.js";
-import {pdf_urlRouter} from "./routes/pdf_url.routes.js";
+import { montoRouter } from "./routes/monto.routes.js";
+import { pdf_urlRouter } from "./routes/pdf_url.routes.js";
 
 const server = express();
 
@@ -19,10 +19,10 @@ server.use(cors());
 
 // Después de server.use(cors());
 server.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'], // Reemplaza con el origen correcto de tu aplicación de frontend
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  }));
-  
+  origin: ['http://localhost:3000', 'http://localhost:3001'], // Reemplaza con el origen correcto de tu aplicación de frontend
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+}));
+
 //ESTO SERVIRÁ PARA CUANDO SE LLEVE A PRODUCCIÓN
 // const allowedOrigins = ['https://tu-dominio.com', 'https://www.tu-dominio.com'];
 // app.use(cors({
@@ -64,7 +64,7 @@ server.use(pdf_urlRouter);
 
 
 server.listen(PORT, () => {
-    console.log(`Conectado al servidor ${PORT}`);
+  console.log(`Conectado al servidor ${PORT}`);
 })
 
 // server.route('/')

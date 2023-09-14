@@ -22,7 +22,7 @@ model usuario {
   pais                 String? @db.VarChar(50)
   departamento         String  @db.VarChar(50)
   carrera              String  @db.VarChar(30)
-  tema                 String? @db.VarChar(191)
+  tema                 String? @db.VarChar(255)
   rol                  String  @default("usuario")
   verification_code    String? @db.VarChar(4)
   link_reunion         String? @db.VarChar(255)
@@ -30,7 +30,7 @@ model usuario {
   // monto_pagado         Float?  @default(0)
   monto_total          Float?  @default(0)
   // fecha_servicio_monto String?
-  // fecha_estimada       String?
+  fecha_estimada       String?
   createdAt            String  @map("created_at")
 
   monto_pagado          monto_pagado[]

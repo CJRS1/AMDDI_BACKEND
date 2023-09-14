@@ -1,6 +1,101 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from 'bcrypt';
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
+
+
+export const loginA = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Busca al asesor por su correo electrónico en la base de datos
+        const asesor = await prisma.asesor.findUnique({
+            where: {
+                email,
+            },
+        });
+
+        // Si no se encuentra al asesor, busca al administrador
+        if (!asesor) {
+            const admin = await prisma.admin.findUnique({
+                where: {
+                    email,
+                },
+            });
+
+            // Comprueba si el administrador existe
+            if (!admin) {
+                return res.status(401).json({ msg: 'El correo no existe' });
+            }
+
+            // Compara la contraseña proporcionada con la contraseña del administrador
+            if (password !== admin.pwd_hash) {
+                return res.status(401).json({ msg: 'Correo electrónico o contraseña incorrectos.' });
+            }
+
+            // Genera un token JWT con el correo electrónico y rol en el payload
+            const secretKey = process.env.SESSION_SECRET;
+            const payload = {
+                email,
+                rol: 'admin', // Rol del administrador
+            };
+            const token = jwt.sign(payload, secretKey);
+
+            // Almacena el token JWT en la sesión del usuario (opcional)
+            req.session.token = token;
+
+            // Devuelve el token y el rol en la respuesta
+            return res.json({ token, rol: 'admin' });
+        }
+
+        // Compara la contraseña proporcionada con la contraseña del asesor
+        if (password !== asesor.pwd_hash) {
+            return res.status(401).json({ msg: 'Correo electrónico o contraseña incorrectos.' });
+        }
+
+        // Genera un token JWT con el correo electrónico y rol en el payload
+        const secretKey = process.env.SESSION_SECRET;
+        const payload = {
+            email,
+            rol: 'asesor', // Rol del asesor
+        };
+        const token = jwt.sign(payload, secretKey);
+
+        // Almacena el token JWT en la sesión del usuario (opcional)
+        req.session.token = token;
+
+        // Devuelve el token y el rol en la respuesta
+        res.json({ token, rol: 'asesor' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Error en el servidor.' });
+    }
+};
+
+
+
+
+export const logoutA = (req, res) => {
+    try {
+        // Si estás utilizando tokens JWT, puedes invalidar el token aquí
+        // Opcionalmente, puedes borrar el token de la sesión si lo almacenaste allí
+
+        // Destruye la sesión en el servidor
+        req.session.destroy((err) => {
+            if (err) {
+                console.error(err);
+                res.status(500).json({ msg: 'Error al cerrar sesión.' });
+            } else {
+                res.clearCookie('sessionCookie'); // Elimina la cookie de sesión (cambia el nombre según tu configuración)
+                res.json({ msg: 'Sesión cerrada con éxito' });
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Error en el servidor.' });
+    }
+};
 
 export const crearAsesor = async (req, res) => {
     try {
@@ -49,7 +144,7 @@ export const listarAsesores = async (req, res) => {
             message: "Asesores encontrados",
             content: asesores,
         });
-        
+
     } catch (err) {
         return res.status(500).json({
             message: "Error en el servidor",
@@ -185,8 +280,8 @@ export const traerAsesorPorEspecialidad = async (req, res) => {
 };
 
 
-export const traerUltimoAsesor = async (req,res) =>{
-    try{
+export const traerUltimoAsesor = async (req, res) => {
+    try {
         const asesor = await prisma.asesor.findFirst({
             orderBy: {
                 id: 'desc'
@@ -202,10 +297,10 @@ export const traerUltimoAsesor = async (req,res) =>{
             content: asesor,
         });
 
-    }catch(error){
+    } catch (error) {
         return res.status(500).json({
             message: "Error en el servidor",
-            error: error.message 
+            error: error.message
         })
     }
 }
@@ -296,19 +391,19 @@ export const obtenerAsesoresConAsignados = async (req, res) => {
     try {
         const asesores = await prisma.asesor.findMany({
             include: {
-                asignacion:{
-                    include:{
+                asignacion: {
+                    include: {
                         asesor: true,
                         usuario: true
                     }
                 },
-                asesor_especialidad:{
-                    include:{
+                asesor_especialidad: {
+                    include: {
                         especialidad: true
                     }
                 },
-                asignacion_secundaria:{
-                    include:{
+                asignacion_secundaria: {
+                    include: {
                         asesor: true
                     }
                 }
@@ -321,3 +416,5 @@ export const obtenerAsesoresConAsignados = async (req, res) => {
         res.status(500).json({ message: 'Error al obtener asesors con servicios' });
     }
 };
+
+// Controlador de inicio de sesión en el servidor

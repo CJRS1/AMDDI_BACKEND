@@ -169,10 +169,10 @@ export const loginUser = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ msg: 'Correo electrónico o contraseña incorrectos.' });
         }
-        console.log(!isPasswordValid);
+        // console.log(!isPasswordValid);
 
         // Genera un token JWT con el correo electrónico en el payload
-        const secretKey = 'tu-clave-secreta'; // Reemplaza con tu clave secreta real
+        const secretKey = process.env.SESSION_SECRET; // Reemplaza con tu clave secreta real
         const payload = {
             email: user.email,
         };
@@ -519,6 +519,7 @@ export const obtenerUsuariosConServicios = async (req, res) => {
                 carrera: true,
                 tema: true,
                 monto_total: true,
+                fecha_estimada: true,
                 pdf_url: {
                     select: {
                         pdf_url: true,
@@ -532,12 +533,19 @@ export const obtenerUsuariosConServicios = async (req, res) => {
                 },
                 asignacion: {
                     include: {
-                        asesor: true
+                        asesor: true,
+                        estado: true
                     }
                 },
                 asignacion_secundaria: {
                     include:{
                         asesor: true
+                    }
+                },
+                monto_pagado:{
+                    select: {
+                        monto_pagado: true,
+                        fecha_pago: true
                     }
                 }
             }
