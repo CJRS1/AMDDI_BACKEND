@@ -1,6 +1,9 @@
 import express, { json } from "express";
 import cors from 'cors';
 import session from 'express-session';
+
+import { setCSPHeader } from "./middleware/cspMiddleware.js"; // Importa el middleware CSP
+
 import { usuariosRouter } from "./routes/usuarios.routes.js";
 import { adminsRouter } from "./routes/admins.routes.js";
 import { asesoresRouter } from "./routes/asesores.routes.js";
@@ -16,6 +19,9 @@ const server = express();
 
 server.use(json());
 server.use(cors());
+
+server.use(setCSPHeader);
+
 
 // Después de server.use(cors());
 server.use(cors({

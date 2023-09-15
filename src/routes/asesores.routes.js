@@ -11,6 +11,7 @@ import {
     traerAsesorPorEspecialidad,
     loginA,
     logoutA,
+    traerAsesorPorToken
 } from "../controllers/asesores.controller.js";
 
 export const asesoresRouter = Router();
@@ -24,6 +25,7 @@ asesoresRouter.get("/asesoress/:email", traerAsesorPorEmail);
 asesoresRouter.get("/asesores_usuarios", obtenerAsesoresConAsignados);
 asesoresRouter.get("/ultimo_asesor", traerUltimoAsesor);
 asesoresRouter.get("/asesor/:especialidad", traerAsesorPorEspecialidad);
+asesoresRouter.get("/asesor", traerAsesorPorToken);
 
 asesoresRouter.put("/asesores/:id", actualizarAsesor);
 

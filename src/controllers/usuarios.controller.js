@@ -149,7 +149,7 @@ export const verificationCode = async (req, res) => {
 export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
-
+        console.log(email, password);
         // Busca al usuario por su correo electrónico en la base de datos
         const user = await prisma.usuario.findUnique({
             where: {
@@ -180,6 +180,7 @@ export const loginUser = async (req, res) => {
 
         // Almacena el token JWT en la sesión del usuario (opcional)
         req.session.token = token;
+        console.log(token);
 
         // Devuelve el token en la respuesta
         res.json({ token });
@@ -188,6 +189,7 @@ export const loginUser = async (req, res) => {
         res.status(500).json({ msg: 'Error en el servidor.' });
     }
 };
+
 
 export const logoutUser = (req, res) => {
     try {
@@ -427,7 +429,7 @@ export const actualizarUsuarioCC = async (req, res) => {
     const { email } = req.params;
     const data = req.body;
     console.log("holaaa");
-    console.log("xdd",data);
+    console.log("xdd", data);
     try {
         const findUsuario = await prisma.usuario.findUnique({
             where: {
@@ -538,11 +540,11 @@ export const obtenerUsuariosConServicios = async (req, res) => {
                     }
                 },
                 asignacion_secundaria: {
-                    include:{
+                    include: {
                         asesor: true
                     }
                 },
-                monto_pagado:{
+                monto_pagado: {
                     select: {
                         monto_pagado: true,
                         fecha_pago: true
@@ -593,3 +595,4 @@ export const obtenerServicioPorEmail = async (req, res) => {
         res.status(500).json({ message: 'Error al obtener servicio por email' });
     }
 };
+

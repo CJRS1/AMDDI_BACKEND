@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 
 
 export const loginA = async (req, res) => {
+    console.log("Ingresó al login")
     try {
         const { email, password } = req.body;
 
@@ -35,7 +36,7 @@ export const loginA = async (req, res) => {
             }
 
             // Genera un token JWT con el correo electrónico y rol en el payload
-            const secretKey = process.env.SESSION_SECRET;
+            const secretKey = process.env.SESSION_SECRET_A;
             const payload = {
                 email,
                 rol: 'admin', // Rol del administrador
@@ -50,18 +51,23 @@ export const loginA = async (req, res) => {
         }
 
         // Compara la contraseña proporcionada con la contraseña del asesor
-        if (password !== asesor.pwd_hash) {
+        // if (password !== asesor.pwd_hash) {
+        //     return res.status(401).json({ msg: 'Correo electrónico o contraseña incorrectos.' });
+        // }
+        // Compara la contraseña proporcionada con la contraseña hasheada del asesor
+        if (!(await bcrypt.compare(password, asesor.pwd_hash))) {
             return res.status(401).json({ msg: 'Correo electrónico o contraseña incorrectos.' });
         }
 
+
         // Genera un token JWT con el correo electrónico y rol en el payload
-        const secretKey = process.env.SESSION_SECRET;
+        const secretKey = process.env.SESSION_SECRET_A;
         const payload = {
             email,
             rol: 'asesor', // Rol del asesor
         };
         const token = jwt.sign(payload, secretKey);
-
+        console.log(token);
         // Almacena el token JWT en la sesión del usuario (opcional)
         req.session.token = token;
 
@@ -73,8 +79,66 @@ export const loginA = async (req, res) => {
     }
 };
 
+export const traerAsesorPorToken = async (req, res) => {
+    try {
+        // Obtiene el token del encabezado de la solicitud
+        const token = req.header('Authorization');
+        console.log(token);
+        // Verifica si el token existe
+        if (!token) {
+            return res.status(401).json({ message: 'Token no proporcionado' });
+        }
+
+        // Verifica y decodifica el token utilizando tu clave secreta
+        const secretKey = process.env.SESSION_SECRET_A; // Reemplaza con tu clave secreta real
+        const tokenWithoutBearer = token.replace('Bearer ', ''); // Elimina "Bearer "
+        const decoded = jwt.verify(tokenWithoutBearer, secretKey);
+
+        console.log("hola", decoded);
+
+        // Utiliza la información del token para buscar los datos del asesor en tu base de datos
+        const asesor = await prisma.asesor.findUnique({
+            where: {
+                email: decoded.email,
+            },
+            select: {
+                id: true,
+                nombre: true,
+                apeMat: true,
+                apePat: true,
+                email: true,
+                dni: true,
+                rol: true,
+                asesor_especialidad: {
+                    include: {
+                        especialidad: true,
+                    },
+                },
+                asignacion: {
+                    include: {
+                        usuario: true,
+                    },
+                },
+            },
+        });
 
 
+        console.log("asesor", asesor);
+        // Verifica si se encontraron los datos del asesor
+        if (!asesor) {
+            return res.status(404).json({ message: 'Asesor no encontrado' });
+        }
+
+        // Devuelve los datos del asesor en la respuesta
+        res.status(200).json({
+            message: "Asesor encontrado",
+            content: asesor,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(401).json({ message: 'Token no válido' });
+    }
+};
 
 export const logoutA = (req, res) => {
     try {
@@ -115,14 +179,19 @@ export const crearAsesor = async (req, res) => {
             },
         });
         if (existingDNI) {
-            // El correo electrónico ya está en uso
+            // El DNI ya está en uso
             return res.status(400).json({ msg: "El DNI ya está registrado." });
         }
+
+        // Hashea la contraseña antes de almacenarla
+        const saltRounds = 10; // Número de rondas de hashing (ajusta según tu necesidad)
+        const hashedPwd = await bcrypt.hash(pwd_hash, saltRounds);
+
         // Iniciar transacción
         const nuevoAsesor = await prisma.asesor.create({
             data: {
                 email,
-                pwd_hash,
+                pwd_hash: hashedPwd, // Almacena la contraseña hasheada
                 nombre,
                 apeMat,
                 apePat,
@@ -139,7 +208,17 @@ export const crearAsesor = async (req, res) => {
 
 export const listarAsesores = async (req, res) => {
     try {
-        const asesores = await prisma.asesor.findMany();
+        const asesores = await prisma.asesor.findMany({
+            select: {
+                id: true,
+                email: true,
+                nombre: true,
+                apeMat: true,
+                apePat: true,
+                dni: true,
+                rol: true
+            }
+        });
         return res.status(200).json({
             message: "Asesores encontrados",
             content: asesores,
@@ -161,7 +240,7 @@ export const traerAsesorPorId = async (req, res) => {
                 id: Number(id),
             },
             select: {
-                id:true,
+                id: true,
                 email: true,
                 nombre: true,
                 apeMat: true,
@@ -196,7 +275,7 @@ export const traerAsesorPorEmail = async (req, res) => {
                 email: email,
             },
             select: {
-                id:true,
+                id: true,
                 email: true,
                 nombre: true,
                 apeMat: true,
@@ -437,8 +516,28 @@ export const obtenerAsesoresConAsignados = async (req, res) => {
             include: {
                 asignacion: {
                     include: {
-                        asesor: true,
-                        usuario: true
+                        asesor: {
+                            select: {
+                                // Enumera todos los campos que deseas incluir de la tabla usuario
+                                id: true,
+                                email: true,
+                                nombre: true,
+                                apeMat: true,
+                                apePat: true,
+                                dni: true,
+                                // Excluye el campo pwd_hash
+                            },
+                        },
+                        usuario: {
+                            select: {
+                                id: true,
+                                email: true,
+                                nombre: true,
+                                apeMat: true,
+                                apePat: true,
+                                dni: true,
+                            }
+                        }
                     }
                 },
                 asesor_especialidad: {
@@ -448,7 +547,18 @@ export const obtenerAsesoresConAsignados = async (req, res) => {
                 },
                 asignacion_secundaria: {
                     include: {
-                        asesor: true
+                        asesor: {
+                            select: {
+                                // Enumera todos los campos que deseas incluir de la tabla usuario
+                                id: true,
+                                email: true,
+                                nombre: true,
+                                apeMat: true,
+                                apePat: true,
+                                dni: true,
+                                // Excluye el campo pwd_hash
+                            },
+                        }
                     }
                 }
             }
