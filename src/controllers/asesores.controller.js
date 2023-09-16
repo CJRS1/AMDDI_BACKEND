@@ -83,7 +83,7 @@ export const traerAsesorPorToken = async (req, res) => {
     try {
         // Obtiene el token del encabezado de la solicitud
         const token = req.header('Authorization');
-        console.log(token);
+        // console.log(token);
         // Verifica si el token existe
         if (!token) {
             return res.status(401).json({ message: 'Token no proporcionado' });
@@ -94,7 +94,7 @@ export const traerAsesorPorToken = async (req, res) => {
         const tokenWithoutBearer = token.replace('Bearer ', ''); // Elimina "Bearer "
         const decoded = jwt.verify(tokenWithoutBearer, secretKey);
 
-        console.log("hola", decoded);
+        // console.log("hola", decoded);
 
         // Utiliza la información del token para buscar los datos del asesor en tu base de datos
         const asesor = await prisma.asesor.findUnique({
@@ -116,14 +116,24 @@ export const traerAsesorPorToken = async (req, res) => {
                 },
                 asignacion: {
                     include: {
-                        usuario: true,
+                        usuario: {
+                            select: {
+                                id: true,
+                                nombre: true,
+                                apeMat: true,
+                                apePat: true,
+                                email: true,
+                                dni: true,
+                                rol: true,
+                            }
+                        }
                     },
                 },
             },
         });
 
 
-        console.log("asesor", asesor);
+        // console.log("asesor", asesor);
         // Verifica si se encontraron los datos del asesor
         if (!asesor) {
             return res.status(404).json({ message: 'Asesor no encontrado' });
@@ -408,6 +418,14 @@ export const traerUltimoAsesor = async (req, res) => {
         const asesor = await prisma.asesor.findFirst({
             orderBy: {
                 id: 'desc'
+            },
+            select: {
+                id: true,
+                email: true,
+                nombre: true,
+                apeMat: true,
+                apePat: true,
+                dni: true,
             }
         })
         if (!asesor) {
@@ -509,7 +527,7 @@ export const eliminarAsesor = async (req, res) => {
 };
 
 export const obtenerAsesoresConAsignados = async (req, res) => {
-    console.log("Obtener")
+    // console.log("Obtener")
     //Realiza un left join
     try {
         const asesores = await prisma.asesor.findMany({

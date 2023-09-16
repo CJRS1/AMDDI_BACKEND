@@ -7,41 +7,48 @@ const prisma = new PrismaClient();
 export const crearAdmin = async (req, res) => {
     try {
         const { email, pwd_hash, nombre, apeMat, apePat, dni } = req.body;
-
-        const existingUser = await prisma.admin.findUnique({
+        const existingAdmin = await prisma.admin.findUnique({
             where: {
                 email: email,
             },
         });
-
-        if (existingUser) {
+        if (existingAdmin) {
             // El correo electrónico ya está en uso
             return res.status(400).json({ msg: "El correo electrónico ya está registrado." });
         }
+        const existingDNI = await prisma.admin.findUnique({
+            where: {
+                dni: dni,
+            },
+        });
+        if (existingDNI) {
+            // El DNI ya está en uso
+            return res.status(400).json({ msg: "El DNI ya está registrado." });
+        }
+
+        // Hashea la contraseña antes de almacenarla
+        const saltRounds = 10; // Número de rondas de hashing (ajusta según tu necesidad)
+        const hashedPwd = await bcrypt.hash(pwd_hash, saltRounds);
 
         // Iniciar transacción
-        await prisma.$transaction([
-            prisma.admin.create({
-                data: {
-                    email,
-                    pwd_hash: await bcrypt.hash(pwd_hash, 10),
-                    nombre,
-                    apeMat,
-                    apePat,
-                    dni,
-                },
-            }),
-        ]);
-
-        // Generar JWT y enviar respuesta
-        const token = jwt.sign({ email }, process.env.JWT_SECRET);
-        res.json({ token });
+        const nuevoadmin = await prisma.admin.create({
+            data: {
+                email,
+                pwd_hash: hashedPwd, // Almacena la contraseña hasheada
+                nombre,
+                apeMat,
+                apePat,
+                dni,
+            },
+        });
+        res.json({ msg: "admin creado exitosamente", servicio: nuevoadmin });
     } catch (error) {
         // Si hay un error, la transacción se revierte y el ID no aumentará
         console.error(error);
         res.status(500).json({ msg: "Error en el servidor." });
     }
 };
+
 
 export const listarAdmins = async (req, res) => {
     try {

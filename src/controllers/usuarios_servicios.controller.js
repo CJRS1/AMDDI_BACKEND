@@ -40,7 +40,7 @@ export const crearUsuario_Servicio = async (req, res) => {
         res.status(500).json({ msg: "Error al asignar especialidad" });
     }
 
-}
+};
 
 export const editarUsuarioServicio = async (req, res) => {
     try {
@@ -81,9 +81,6 @@ export const editarUsuarioServicio = async (req, res) => {
         res.status(500).json({ msg: "Error al actualizar los servicios del asesor" });
     }
 };
-
-
-
 
 export const eliminarUsuario_Servicio = async (req, res) => {
     const { id } = req.params;

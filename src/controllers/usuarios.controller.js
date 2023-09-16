@@ -350,6 +350,7 @@ export const traerUsuarioPorEmail = async (req, res) => {
 export const actualizarUsuario = async (req, res) => {
     const { id } = req.params;
     const data = req.body;
+    console.log(id);
     console.log(data);
     try {
         const findUsuario = await prisma.usuario.findUnique({
@@ -357,7 +358,7 @@ export const actualizarUsuario = async (req, res) => {
                 id: Number(id),
             },
         });
-        console.log(findUsuario);
+        console.log("usuario encontrado",findUsuario);
         if (!findUsuario) {
             return res.status(404).json({
                 message: "Usuario no encontrado",
@@ -367,10 +368,6 @@ export const actualizarUsuario = async (req, res) => {
         if (data.pwd_hash) {
             const hashedPassword = await bcrypt.hash(data.pwd_hash, 10);
             data.pwd_hash = hashedPassword;
-        }
-
-        if ('monto_pagado' in data) {
-            data.monto_pagado = parseFloat(data.monto_pagado);
         }
 
         if ('monto_total' in data) {
@@ -391,8 +388,9 @@ export const actualizarUsuario = async (req, res) => {
                 celular: data.celular,
                 departamento: data.departamento,
                 carrera: data.carrera,
-                pdf_url: data.pdf_url,
-                monto_pagado: data.monto_pagado,
+                tema: data.tema,
+                // pdf_url: data.pdf_url,
+                // monto_pagado: data.monto_pagado,
                 monto_total: data.monto_total,
             },
             select: {
@@ -404,6 +402,7 @@ export const actualizarUsuario = async (req, res) => {
                 ...(data.apePat && { apePat: true }),
                 ...(data.dni && { dni: true }),
                 ...(data.celular && { celular: true }),
+                ...(data.tema && { tema: true }),
                 ...(data.departamento && { departamento: true }),
                 ...(data.carrera && { carrera: true }),
                 ...(data.pdf_url && { pdf_url: true }),
