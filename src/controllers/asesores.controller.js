@@ -527,23 +527,27 @@ export const eliminarAsesor = async (req, res) => {
 };
 
 export const obtenerAsesoresConAsignados = async (req, res) => {
-    // console.log("Obtener")
+    console.log("Entró aquí")
     //Realiza un left join
     try {
         const asesores = await prisma.asesor.findMany({
-            include: {
+            select: {
+                id: true,
+                email: true,
+                nombre: true,
+                apeMat: true,
+                apePat: true,
+                dni: true,
                 asignacion: {
                     include: {
                         asesor: {
                             select: {
-                                // Enumera todos los campos que deseas incluir de la tabla usuario
                                 id: true,
                                 email: true,
                                 nombre: true,
                                 apeMat: true,
                                 apePat: true,
                                 dni: true,
-                                // Excluye el campo pwd_hash
                             },
                         },
                         usuario: {
@@ -554,33 +558,33 @@ export const obtenerAsesoresConAsignados = async (req, res) => {
                                 apeMat: true,
                                 apePat: true,
                                 dni: true,
-                            }
-                        }
-                    }
+                            },
+                        },
+                    },
                 },
                 asesor_especialidad: {
                     include: {
-                        especialidad: true
-                    }
+                        especialidad: true,
+                    },
                 },
                 asignacion_secundaria: {
                     include: {
                         asesor: {
                             select: {
-                                // Enumera todos los campos que deseas incluir de la tabla usuario
                                 id: true,
                                 email: true,
                                 nombre: true,
                                 apeMat: true,
                                 apePat: true,
                                 dni: true,
-                                // Excluye el campo pwd_hash
                             },
-                        }
-                    }
-                }
-            }
+                        },
+                    },
+                },
+            },
         });
+        
+        
         // console.log(asesores);
         res.json({ content: asesores });
     } catch (error) {
