@@ -4,6 +4,7 @@ import {
     eliminarAsignaciones,
     // editarAsignaciones,
     editarAsignacionesUsuarios,
+    editarAsignacionesUsuariosSec,
     crearAsignacionesSec,
 } from "../controllers/asignaciones.controller.js";
 
@@ -13,3 +14,4 @@ asignacionesRouter.post("/asignaciones_sec/:id_asesor/:id_usuarios", crearAsigna
 asignacionesRouter.delete("/asignaciones", eliminarAsignaciones);
 // asignacionesRouter.put("/asignaciones", editarAsignaciones);
 asignacionesRouter.put("/asignaciones", editarAsignacionesUsuarios);
+asignacionesRouter.put("/asignacionesSec", editarAsignacionesUsuariosSec);
