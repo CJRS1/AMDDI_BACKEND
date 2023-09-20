@@ -2,7 +2,9 @@
 import { Router } from "express";
 import {
     crearPDFURL,
-    descargarPDF
+    descargarPDF,
+    actualizarPDFURL,
+    eliminarLink
 } from "../controllers/pdf_url.controller.js";
 import multer from "multer";
 import { nanoid } from "nanoid";
@@ -23,3 +25,5 @@ const upload = multer({ storage }); // Crea un objeto de configuración de multe
 export const pdf_urlRouter = Router(); // Crea un enrutador de Express llamado 'pdf_urlRouter'
 pdf_urlRouter.post("/subir-pdf/:id", upload.single("pdf"), crearPDFURL);
 pdf_urlRouter.get('/uploads/pdfs/:nombreArchivo', descargarPDF);
+pdf_urlRouter.put("/actualizar-pdf/:id", upload.single("pdf"), actualizarPDFURL);
+pdf_urlRouter.delete("/eliminar-pdf/:id",eliminarLink)

@@ -544,8 +544,10 @@ export const obtenerUsuariosConServicios = async (req, res) => {
                 fecha_estimada: true,
                 pdf_url: {
                     select: {
+                        id: true,
                         pdf_url: true,
-                        fecha_pdf_url: true
+                        fecha_pdf_url: true,
+                        usuarioId: true
                     }
                 },
                 usuario_servicio: {

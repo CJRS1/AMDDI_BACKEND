@@ -227,27 +227,13 @@ export const editarAsignacionesUsuariosSec = async (req, res) => {
             return res.status(400).json({ msg: "No existe una asignación previa" });
         }
 
-        console.log(asignacionExistente);
-
-        const asignacionesAActualizar = asignacionExistente.slice(0, id_asesor.length);
-
-        // for (let i = 0; i < asignacionesAActualizar.length; i++) {
-        //     await prisma.asignacion_secundaria.update({
-        //         where: {
-        //             id: asignacionesAActualizar[i].id,
-        //         },
-        //         data: {
-        //             id_asesor: id_asesor[i],
-        //         },
-        //     });
-        // }
-        for (let i = 0; i < asignacionesAActualizar.length; i++) {
+        for (let i = 0; i < asignacionExistente.length; i++) {
             const posicion = i; // Usar el índice actual para identificar la asignación
-            const valor = id_asesor[i].toString(); // Obtener el valor del objeto y convertirlo a cadena
-            console.log(posicion,valor)
+            const valor = id_asesor.hasOwnProperty(posicion.toString()) ? id_asesor[posicion.toString()] : id_asesor['0']; // Obtener el valor correspondiente según la posición
+
             await prisma.asignacion_secundaria.update({
                 where: {
-                    id: asignacionesAActualizar[posicion].id, // Usar la posición para identificar la asignación
+                    id: asignacionExistente[i].id, // Usar la posición actual para identificar la asignación
                 },
                 data: {
                     id_asesor: Number(valor), // Convertir el valor a número
@@ -261,10 +247,6 @@ export const editarAsignacionesUsuariosSec = async (req, res) => {
         res.status(500).json({ msg: "Error al editar las asignaciones de usuario" });
     }
 };
-
-
-
-
 
 export const eliminarAsignaciones = async (req, res) => {
     const { id } = req.params;
@@ -280,6 +262,26 @@ export const eliminarAsignaciones = async (req, res) => {
             });
         }
         await prisma.asesor_especialidad.delete({
+            where: {
+                id: Number(id),
+            },
+        });
+        return res.status(200).json({
+            message: "Asesor_Especialidad eliminado",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: error.message,
+        });
+    }
+};
+
+export const eliminarAsignacionesSec = async (req, res) => {
+    const { id } = req.params;
+    try {
+
+        await prisma.asignacion_secundaria.delete({
             where: {
                 id: Number(id),
             },
