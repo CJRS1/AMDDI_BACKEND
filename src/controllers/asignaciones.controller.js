@@ -193,7 +193,9 @@ export const editarAsignacionesUsuarios = async (req, res) => {
             },
         });
 
-        res.json({ msg: "Asignación de usuario actualizada correctamente" });
+        // res.json({ msg: "Asignación de usuario actualizada correctamente" });
+        res.status(200).json({ msg: "Asignación de usuario actualizada correctamente" });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: "Error al editar la asignación de usuario" });
@@ -241,12 +243,47 @@ export const editarAsignacionesUsuariosSec = async (req, res) => {
             });
         }
 
-        res.json({ msg: "Asignaciones de usuario actualizadas correctamente" });
+        return res.json({ msg: "Asignaciones de usuario actualizadas correctamente" });
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: "Error al editar las asignaciones de usuario" });
     }
 };
+
+export const editarAsignacionEstado = async (req, res) => {
+    
+    try {
+        const { id } = req.params;
+        const { estado } = req.body;
+        console.log("elll",id,estado);
+        const usuarioEncontado = await prisma.asignacion.findFirst({
+            where: {
+                id_usuarios: Number(id),
+            }
+        });
+        console.log(usuarioEncontado);
+
+        if (!usuarioEncontado) {
+            return res.status(404).json({ msg: ' Usuario no encontrado' })
+        };
+
+        await prisma.asignacion.update({
+            where: {
+                id: usuarioEncontado.id, // Utiliza el id de la asignación encontrada
+            },
+            data: {
+                id_estado: Number(estado),
+            }
+        })
+
+        return res.json({ msg: "Se cambió el estado correctamente"})
+    } catch (err) {
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: err.message,
+        });
+    }
+}
 
 export const eliminarAsignaciones = async (req, res) => {
     const { id } = req.params;

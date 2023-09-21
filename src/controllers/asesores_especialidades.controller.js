@@ -67,7 +67,7 @@ export const crearAsesorEspecialidad = async (req, res) => {
 export const editarEspecialidadesAsesor = async (req, res) => {
     try {
         const { id_asesor, especialidades } = req.body;
-
+        console.log(id_asesor,especialidades);
         // Verificar si el asesor existe
         const asesorExiste = await prisma.asesor.findUnique({
             where: {
@@ -80,10 +80,10 @@ export const editarEspecialidadesAsesor = async (req, res) => {
         }
 
         // Obtener un objeto de mapeo entre nombres de especialidades e IDs
-        const especialidadesMap = {}; // Puedes llenar este objeto con una consulta a la base de datos
+        // const especialidadesMap = {}; // Puedes llenar este objeto con una consulta a la base de datos
 
-        // Transformar los nombres de especialidades en IDs
-        const id_especialidades = especialidades.map(nombre => especialidadesMap[nombre]);
+        // // Transformar los nombres de especialidades en IDs
+        // const id_especialidades = especialidades.map(nombre => especialidadesMap[nombre]);
 
         // Eliminar todas las especialidades anteriores del asesor
         await prisma.asesor_especialidad.deleteMany({
@@ -93,10 +93,12 @@ export const editarEspecialidadesAsesor = async (req, res) => {
         });
 
         // Asignar las nuevas especialidades al asesor
-        const nuevasEspecialidades = id_especialidades.map(id => ({
+        const nuevasEspecialidades = especialidades.map(id_especialidad => ({
             id_asesor,
-            id_especialidad: id
+            id_especialidad
         }));
+
+        // console.log(nuevasEspecialidades);
 
         await prisma.asesor_especialidad.createMany({
             data: nuevasEspecialidades

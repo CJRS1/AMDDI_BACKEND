@@ -7,6 +7,7 @@ import {
     editarAsignacionesUsuarios,
     editarAsignacionesUsuariosSec,
     crearAsignacionesSec,
+    editarAsignacionEstado
 } from "../controllers/asignaciones.controller.js";
 
 export const asignacionesRouter = Router();
@@ -17,3 +18,5 @@ asignacionesRouter.delete("/asignacionesSec/:id", eliminarAsignacionesSec);
 // asignacionesRouter.put("/asignaciones", editarAsignaciones);
 asignacionesRouter.put("/asignaciones", editarAsignacionesUsuarios);
 asignacionesRouter.put("/asignacionesSec", editarAsignacionesUsuariosSec);
+
+asignacionesRouter.put("/asignacionesEstados/:id", editarAsignacionEstado);

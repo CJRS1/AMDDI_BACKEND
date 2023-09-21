@@ -286,7 +286,7 @@ export const listarUsuarios = async (req, res) => {
 
 export const traerUsuarioPorDNI = async (req, res) => {
     const { dni } = req.params;
-
+    console.log(dni);
     try {
         const usuario = await prisma.usuario.findUnique({
             where: {
@@ -297,7 +297,10 @@ export const traerUsuarioPorDNI = async (req, res) => {
                 nombre: true,
                 apeMat: true,
                 apePat: true,
-                tema:true,
+                dni: true,
+                celular: true,
+                carrera: true,
+                tema: true,
                 pdf_url: {
                     select: {
                         pdf_url: true,
@@ -309,6 +312,11 @@ export const traerUsuarioPorDNI = async (req, res) => {
                         servicio: true
                     }
                 },
+                asignacion: {
+                    include: {
+                        estado: true
+                    }
+                }
             }
         });
 
@@ -378,7 +386,7 @@ export const actualizarUsuario = async (req, res) => {
                 id: Number(id),
             },
         });
-        console.log("usuario encontrado",findUsuario);
+        console.log("usuario encontrado", findUsuario);
         if (!findUsuario) {
             return res.status(404).json({
                 message: "Usuario no encontrado",

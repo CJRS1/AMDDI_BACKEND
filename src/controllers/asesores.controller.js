@@ -129,6 +129,24 @@ export const traerAsesorPorToken = async (req, res) => {
                         }
                     },
                 },
+                asignacion_secundaria: {
+                    include: {
+                        usuario: {
+                            select: {
+                                id: true,
+                                nombre: true,
+                                apeMat: true,
+                                apePat: true,
+                                email: true,
+                                dni: true,
+                                rol: true,
+                                tema: true,
+                                link_reunion: true,
+                                fecha_estimada: true,
+                            }
+                        }
+                    }
+                }
             },
         });
 
@@ -392,6 +410,7 @@ export const traerAsesorPorEspecialidad = async (req, res) => {
                     },
                 },
             },
+
         });
 
         if (!asesores || asesores.length === 0) {
@@ -560,6 +579,12 @@ export const obtenerAsesoresConAsignados = async (req, res) => {
                                 dni: true,
                             },
                         },
+                        estado: {
+                            select: {
+                                id: true,
+                                estado: true,
+                            }
+                        }
                     },
                 },
                 asesor_especialidad: {
@@ -579,12 +604,25 @@ export const obtenerAsesoresConAsignados = async (req, res) => {
                                 dni: true,
                             },
                         },
+                        usuario: {
+                            select: {
+                                id: true,
+                                email: true,
+                                nombre: true,
+                                apeMat: true,
+                                apePat: true,
+                                dni: true,
+                                tema: true,
+                                link_reunion: true,
+                                fecha_estimada: true,
+                            },
+                        },
                     },
                 },
             },
         });
-        
-        
+
+
         // console.log(asesores);
         res.json({ content: asesores });
     } catch (error) {
