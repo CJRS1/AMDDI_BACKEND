@@ -19,17 +19,18 @@ model usuario {
   apePat               String  @map("apellido_materno") @db.VarChar(50)
   dni                  String  @unique @db.VarChar(8)
   celular              String? @unique @db.VarChar(18)
-  pais                 String? @db.VarChar(50)
+  pais                 String? 
   departamento         String  @db.VarChar(50)
   carrera              String  @db.VarChar(30)
   tema                 String? @db.VarChar(255)
   rol                  String  @default("usuario")
   verification_code    String? @db.VarChar(4)
   link_reunion         String? @db.VarChar(255)
-  // pdf_url              String? @db.VarChar(255)
-  // monto_pagado         Float?  @default(0)
+  institucion_educativa String? @db.VarChar(255)
+  id_amddi             Int?
+  monto_restante       Float? @default(0)
   monto_total          Float?  @default(0)
-  // fecha_servicio_monto String?
+  estado               String?
   fecha_estimada       String?
   createdAt            String  @map("created_at")
 
@@ -92,6 +93,7 @@ model usuario_servicio {
   id          Int @id @default(autoincrement())
   id_usuario  Int @unique
   id_servicio Int
+  id_estado Int
 
   usuario  usuario  @relation(fields: [id_usuario], references: [id])
   servicio servicio @relation(fields: [id_servicio], references: [id])
@@ -103,7 +105,7 @@ model servicio {
   id              Int    @id @default(autoincrement())
   nombre_servicio String @unique @db.VarChar(200)
   // fecha_servicio String? @map("fecha_servicio")
-
+  
   usuario_servicio usuario_servicio[]
 
   @@map("servicios")
@@ -113,9 +115,9 @@ model asignacion {
   id          Int @id @default(autoincrement())
   id_asesor   Int
   id_usuarios Int
-  id_estado   Int
+  // id_estado   Int
 
-  estado estado @relation(fields: [id_estado], references: [id])
+  // estado estado @relation(fields: [id_estado], references: [id])
 
   asesor  asesor  @relation(fields: [id_asesor], references: [id])
   usuario usuario @relation(fields: [id_usuarios], references: [id])
@@ -134,11 +136,20 @@ model asignacion_secundaria {
   @@map("asignaciones_secundarias")
 }
 
-model estado {
+model estadoTesis {
   id     Int    @id @default(autoincrement())
   estado String
 
-  asignacion asignacion[]
+  // asignacion asignacion[]
+  @@map("estado_tesis")
+}
+
+model estadoObservacion {
+  id     Int    @id @default(autoincrement())
+  estado String
+
+  // asignacion asignacion[]
+  @@map("estado_observacion")
 }
 
 model admin {

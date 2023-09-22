@@ -503,6 +503,7 @@ export const actualizarUsuarioCC = async (req, res) => {
 
 export const eliminarUsuario = async (req, res) => {
     const { id } = req.params;
+    console.log(id);
     try {
         const findUsuario = await prisma.usuario.findUnique({
             where: {
@@ -514,6 +515,7 @@ export const eliminarUsuario = async (req, res) => {
                 message: "Usuario no encontrado",
             });
         }
+        console.log(findUsuario)
 
         await prisma.usuario.delete({
             where: {

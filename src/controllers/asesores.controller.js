@@ -80,10 +80,11 @@ export const loginA = async (req, res) => {
 };
 
 export const traerAsesorPorToken = async (req, res) => {
+    
     try {
         // Obtiene el token del encabezado de la solicitud
         const token = req.header('Authorization');
-        // console.log(token);
+        console.log(token);
         // Verifica si el token existe
         if (!token) {
             return res.status(401).json({ message: 'Token no proporcionado' });
@@ -94,7 +95,7 @@ export const traerAsesorPorToken = async (req, res) => {
         const tokenWithoutBearer = token.replace('Bearer ', ''); // Elimina "Bearer "
         const decoded = jwt.verify(tokenWithoutBearer, secretKey);
 
-        // console.log("hola", decoded);
+        console.log("hola", decoded);
 
         // Utiliza la información del token para buscar los datos del asesor en tu base de datos
         const asesor = await prisma.asesor.findUnique({
@@ -529,11 +530,30 @@ export const eliminarAsesor = async (req, res) => {
             });
         }
 
+        await prisma.asignacion_secundaria.deleteMany({
+            where: {
+                id_asesor: Number(id)
+            }
+        })
+
+        await prisma.asignacion.deleteMany({
+            where: {
+                id_asesor: Number(id)
+            }
+        })
+
+        await prisma.asesor_especialidad.deleteMany({
+            where: {
+                id_asesor: Number(id)
+            }
+        })
+
         await prisma.asesor.delete({
             where: {
                 id: Number(id),
             },
         });
+
         return res.status(200).json({
             message: "Usuario eliminado",
         });
