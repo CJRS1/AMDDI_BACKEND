@@ -35,7 +35,7 @@ export const loginA = async (req, res) => {
             if (!(await bcrypt.compare(password, admin.pwd_hash))) {
                 console.log(password);
                 console.log(admin.pwd_hash);
-                return res.status(401).json({ msg: 'Correo electrónico o contraseña incorrectos.' });
+                return res.status(401).json({ msg: 'Admin: Correo electrónico o contraseña incorrectos.' });
             }
 
             // Genera un token JWT con el correo electrónico y rol en el payload
@@ -52,15 +52,18 @@ export const loginA = async (req, res) => {
             // Devuelve el token y el rol en la respuesta
             return res.json({ token, rol: 'admin' });
         }
-        
+
         const pw = await bcrypt.compare(password, asesor.pwd_hash);
-        console.log(pw);
+        console.log('Password ingresada:', password);
+        console.log('Hash de contraseña almacenado:', asesor.pwd_hash);
+        console.log('Resultado de bcrypt.compare():', pw);
+
 
         if (!(await bcrypt.compare(password, asesor.pwd_hash))) {
             console.log(password);
             console.log(asesor.pwd_hash);
             console.log(asesor.pwd_hash);
-            return res.status(401).json({ msg: 'Correo electrónico o contraseña incorrectos.' });
+            return res.status(401).json({ msg: 'Asesor: Correo electrónico o contraseña incorrectos.' });
         }
 
         const secretKey = process.env.SESSION_SECRET_A;
@@ -74,7 +77,7 @@ export const loginA = async (req, res) => {
         req.session.token = token;
 
         // Devuelve el token y el rol en la respuesta
-        res.json({ token, rol: 'asesor'});
+        res.json({ token, rol: 'asesor' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: 'Error en el servidor.' });
@@ -82,7 +85,7 @@ export const loginA = async (req, res) => {
 };
 
 export const traerAsesorPorToken = async (req, res) => {
-    
+
     try {
         // Obtiene el token del encabezado de la solicitud
         const token = req.header('Authorization');
