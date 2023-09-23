@@ -16,7 +16,7 @@ export const loginA = async (req, res) => {
                 email,
             },
         });
-
+        console.log(asesor);
         // Si no se encuentra al asesor, busca al administrador
         if (!asesor) {
             const admin = await prisma.admin.findUnique({
@@ -24,6 +24,7 @@ export const loginA = async (req, res) => {
                     email,
                 },
             });
+            console.log(admin);
 
             // Comprueba si el administrador existe
             if (!admin) {
@@ -31,12 +32,14 @@ export const loginA = async (req, res) => {
             }
 
             // Compara la contraseña proporcionada con la contraseña del administrador
-            if (password !== admin.pwd_hash) {
+            if (!(await bcrypt.compare(password, admin.pwd_hash))) {
+                console.log(password);
+                console.log(admin.pwd_hash);
                 return res.status(401).json({ msg: 'Correo electrónico o contraseña incorrectos.' });
             }
 
             // Genera un token JWT con el correo electrónico y rol en el payload
-            const secretKey = process.env.SESSION_SECRET_A;
+            const secretKey = process.env.SESSION_SECRET_AD;
             const payload = {
                 email,
                 rol: 'admin', // Rol del administrador
@@ -49,18 +52,17 @@ export const loginA = async (req, res) => {
             // Devuelve el token y el rol en la respuesta
             return res.json({ token, rol: 'admin' });
         }
+        
+        const pw = await bcrypt.compare(password, asesor.pwd_hash);
+        console.log(pw);
 
-        // Compara la contraseña proporcionada con la contraseña del asesor
-        // if (password !== asesor.pwd_hash) {
-        //     return res.status(401).json({ msg: 'Correo electrónico o contraseña incorrectos.' });
-        // }
-        // Compara la contraseña proporcionada con la contraseña hasheada del asesor
         if (!(await bcrypt.compare(password, asesor.pwd_hash))) {
+            console.log(password);
+            console.log(asesor.pwd_hash);
+            console.log(asesor.pwd_hash);
             return res.status(401).json({ msg: 'Correo electrónico o contraseña incorrectos.' });
         }
 
-
-        // Genera un token JWT con el correo electrónico y rol en el payload
         const secretKey = process.env.SESSION_SECRET_A;
         const payload = {
             email,
@@ -72,7 +74,7 @@ export const loginA = async (req, res) => {
         req.session.token = token;
 
         // Devuelve el token y el rol en la respuesta
-        res.json({ token, rol: 'asesor' });
+        res.json({ token, rol: 'asesor'});
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: 'Error en el servidor.' });

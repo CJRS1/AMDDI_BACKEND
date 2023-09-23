@@ -191,25 +191,21 @@ export const loginUser = async (req, res) => {
     }
 };
 
-/* export const traerUsuarioPorToken = async (req, res) => {
+export const traerUsuarioPorToken = async (req, res) => {
     
     try {
-        // Obtiene el token del encabezado de la solicitud
         const token = req.header('Authorization');
         console.log(token);
-        // Verifica si el token existe
         if (!token) {
             return res.status(401).json({ message: 'Token no proporcionado' });
         }
 
-        // Verifica y decodifica el token utilizando tu clave secreta
         const secretKey = process.env.SESSION_SECRET; // Reemplaza con tu clave secreta real
         const tokenWithoutBearer = token.replace('Bearer ', ''); // Elimina "Bearer "
         const decoded = jwt.verify(tokenWithoutBearer, secretKey);
 
         console.log("hola", decoded);
 
-        // Utiliza la información del token para buscar los datos del asesor en tu base de datos
         const usuario = await prisma.usuario.findUnique({
             where: {
                 email: decoded.email,
@@ -264,13 +260,11 @@ export const loginUser = async (req, res) => {
         });
 
 
-        // console.log("asesor", asesor);
-        // Verifica si se encontraron los datos del asesor
+        console.log("usuario", usuario);
         if (!usuario) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
-        // Devuelve los datos del Usuario en la respuesta
         res.status(200).json({
             message: "Usuario encontrado",
             content: usuario,
@@ -279,7 +273,7 @@ export const loginUser = async (req, res) => {
         console.error(error);
         res.status(401).json({ message: 'Token no válido' });
     }
-}; */
+};
 
 
 
