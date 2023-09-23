@@ -113,6 +113,7 @@ export const verificationCode = async (req, res) => {
                 apePat: usuarioTemporal.apePat,
                 dni: usuarioTemporal.dni,
                 celular: usuarioTemporal.celular,
+                pais: usuarioTemporal.pais,
                 departamento: usuarioTemporal.departamento,
                 carrera: usuarioTemporal.carrera,
                 createdAt: usuarioTemporal.createdAt,
@@ -183,12 +184,103 @@ export const loginUser = async (req, res) => {
         console.log(token);
 
         // Devuelve el token en la respuesta
-        res.json({ token });
+        res.json({ token, rol: 'user' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: 'Error en el servidor.' });
     }
 };
+
+/* export const traerUsuarioPorToken = async (req, res) => {
+    
+    try {
+        // Obtiene el token del encabezado de la solicitud
+        const token = req.header('Authorization');
+        console.log(token);
+        // Verifica si el token existe
+        if (!token) {
+            return res.status(401).json({ message: 'Token no proporcionado' });
+        }
+
+        // Verifica y decodifica el token utilizando tu clave secreta
+        const secretKey = process.env.SESSION_SECRET; // Reemplaza con tu clave secreta real
+        const tokenWithoutBearer = token.replace('Bearer ', ''); // Elimina "Bearer "
+        const decoded = jwt.verify(tokenWithoutBearer, secretKey);
+
+        console.log("hola", decoded);
+
+        // Utiliza la información del token para buscar los datos del asesor en tu base de datos
+        const usuario = await prisma.usuario.findUnique({
+            where: {
+                email: decoded.email,
+            },
+            select: {
+                id: true,
+                nombre: true,
+                apeMat: true,
+                apePat: true,
+                email: true,
+                dni: true,
+                rol: true,
+                usuario_servicio: {
+                    include: {
+                        servicio: true,
+                    },
+                },
+                // asignacion: {
+                //     include: {
+                //         usuario: {
+                //             select: {
+                //                 id: true,
+                //                 nombre: true,
+                //                 apeMat: true,
+                //                 apePat: true,
+                //                 email: true,
+                //                 dni: true,
+                //                 rol: true,
+                //             }
+                //         }
+                //     },
+                // },
+                // asignacion_secundaria: {
+                //     include: {
+                //         usuario: {
+                //             select: {
+                //                 id: true,
+                //                 nombre: true,
+                //                 apeMat: true,
+                //                 apePat: true,
+                //                 email: true,
+                //                 dni: true,
+                //                 rol: true,
+                //                 tema: true,
+                //                 link_reunion: true,
+                //                 fecha_estimada: true,
+                //             }
+                //         }
+                //     }
+                // }
+            },
+        });
+
+
+        // console.log("asesor", asesor);
+        // Verifica si se encontraron los datos del asesor
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        // Devuelve los datos del Usuario en la respuesta
+        res.status(200).json({
+            message: "Usuario encontrado",
+            content: usuario,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(401).json({ message: 'Token no válido' });
+    }
+}; */
+
 
 
 export const logoutUser = (req, res) => {
@@ -355,6 +447,7 @@ export const traerUsuarioPorEmail = async (req, res) => {
                 dni: true,
                 carrera: true,
                 departamento: true,
+                pais: true,
             },
         });
         if (!usuario) {

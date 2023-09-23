@@ -93,7 +93,6 @@ model usuario_servicio {
   id          Int @id @default(autoincrement())
   id_usuario  Int @unique
   id_servicio Int
-  id_estado Int
 
   usuario  usuario  @relation(fields: [id_usuario], references: [id])
   servicio servicio @relation(fields: [id_servicio], references: [id])

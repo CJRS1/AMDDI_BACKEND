@@ -72,7 +72,7 @@ server.use(pdf_urlRouter);
 
 
 server.listen(PORT, () => {
-  console.log(`Conectado al servidor ${PORT}`);
+  console.log(`Servidor ${PORT}`);
 })
 
 // server.route('/')
