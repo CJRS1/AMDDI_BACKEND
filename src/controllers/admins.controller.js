@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-// import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
@@ -46,6 +46,52 @@ export const crearAdmin = async (req, res) => {
         // Si hay un error, la transacción se revierte y el ID no aumentará
         console.error(error);
         res.status(500).json({ msg: "Error en el servidor." });
+    }
+};
+
+export const traerAdminPorToken = async (req, res) => {
+
+    try {
+        const token = req.header('Authorization');
+        console.log(token);
+        if (!token) {
+            return res.status(401).json({ message: 'Token no proporcionado' });
+        }
+
+        const secretKey = process.env.SESSION_SECRET_AD; // Reemplaza con tu clave secreta real
+        const tokenWithoutBearer = token.replace('Bearer ', ''); // Elimina "Bearer "
+        const decoded = jwt.verify(tokenWithoutBearer, secretKey);
+
+        console.log("hola", decoded);
+
+        const admin = await prisma.admin.findUnique({
+            where: {
+                email: decoded.email,
+            },
+            select: {
+                id: true,
+                nombre: true,
+                apeMat: true,
+                apePat: true,
+                email: true,
+                dni: true,
+                rol: true,
+            },
+        });
+
+
+        console.log("admin", admin);
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin no encontrado' });
+        }
+
+        res.status(200).json({
+            message: "Admin encontrado",
+            content: admin,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(401).json({ message: 'Token no válido' });
     }
 };
 
@@ -104,16 +150,16 @@ export const actualizarAdmin = async (req, res) => {
                 message: "Admin no encontrado",
             });
         }
-                // Hash the password if it's provided
-                if (data.pwd_hash) {
-                    const hashedPassword = await bcrypt.hash(data.pwd_hash, 10);
-                    data.pwd_hash = hashedPassword;
-                }
-                // if (data.email && !isValidEmail(data.email)) {
-                //     return res.status(400).json({
-                //         message: "El correo electrónico no es válido",
-                //     });
-                // }
+        // Hash the password if it's provided
+        if (data.pwd_hash) {
+            const hashedPassword = await bcrypt.hash(data.pwd_hash, 10);
+            data.pwd_hash = hashedPassword;
+        }
+        // if (data.email && !isValidEmail(data.email)) {
+        //     return res.status(400).json({
+        //         message: "El correo electrónico no es válido",
+        //     });
+        // }
         const admin = await prisma.admin.update({
             where: {
                 id: Number(id),

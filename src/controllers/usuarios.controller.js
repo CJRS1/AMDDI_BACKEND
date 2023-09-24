@@ -192,7 +192,7 @@ export const loginUser = async (req, res) => {
 };
 
 export const traerUsuarioPorToken = async (req, res) => {
-    
+
     try {
         const token = req.header('Authorization');
         console.log(token);
@@ -489,6 +489,8 @@ export const actualizarUsuario = async (req, res) => {
             data.monto_total = parseFloat(data.monto_total);
         }
 
+
+
         const usuario = await prisma.usuario.update({
             where: {
                 id: Number(id),
@@ -504,7 +506,10 @@ export const actualizarUsuario = async (req, res) => {
                 departamento: data.departamento,
                 carrera: data.carrera,
                 tema: data.tema,
+                pais: data.pais,
+                id_amddi: parseInt(data.id_amddi),
                 fecha_estimada: data.fecha_estimada,
+                institucion_educativa: data.institucion_educativa,
                 // pdf_url: data.pdf_url,
                 // monto_pagado: data.monto_pagado,
                 monto_total: data.monto_total,
@@ -517,8 +522,10 @@ export const actualizarUsuario = async (req, res) => {
                 ...(data.apeMat && { apeMat: true }),
                 ...(data.apePat && { apePat: true }),
                 ...(data.dni && { dni: true }),
+                ...(data.pais && { pais: true }),
+                ...(data.id_amddi && { id_amddi: true }),
                 ...(data.celular && { celular: true }),
-                ...(data.tema && { tema: true }),
+                ...(data.institucion_educativa && { institucion_educativa: true }),
                 ...(data.departamento && { departamento: true }),
                 ...(data.carrera && { carrera: true }),
                 ...(data.pdf_url && { pdf_url: true }),
@@ -638,7 +645,10 @@ export const obtenerUsuariosConServicios = async (req, res) => {
                 carrera: true,
                 tema: true,
                 monto_total: true,
+                monto_restante: true,
                 fecha_estimada: true,
+                institucion_educativa: true,
+                id_amddi: true,
                 pdf_url: {
                     select: {
                         id: true,
@@ -654,8 +664,7 @@ export const obtenerUsuariosConServicios = async (req, res) => {
                 },
                 asignacion: {
                     include: {
-                        asesor: true,
-                        estado: true
+                        asesor: true
                     }
                 },
                 asignacion_secundaria: {
@@ -671,6 +680,13 @@ export const obtenerUsuariosConServicios = async (req, res) => {
                 }
             }
         });
+
+        // Calcular y actualizar monto_restante para cada usuario
+        for (const usuario of usuarios) {
+            const montosPagados = usuario.monto_pagado.map((pago) => pago.monto_pagado);
+            const montoRestante = usuario.monto_total - (montosPagados.reduce((a, b) => a + b, 0) || 0);
+            usuario.monto_restante = montoRestante;
+        }
 
         res.json({ content: usuarios });
     } catch (error) {
