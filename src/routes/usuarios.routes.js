@@ -33,8 +33,6 @@ usuariosRouter.get("/servicio_por_email/:email", obtenerServicioPorEmail);
 usuariosRouter.get("/usuarios_con_servicio", obtenerUsuariosConServicios);
 usuariosRouter.get("/usuario", traerUsuarioPorToken);
 
-
-
 usuariosRouter.put("/usuarios/:id", actualizarUsuario);
 usuariosRouter.put("/usuario/:email", actualizarUsuarioCC);
 

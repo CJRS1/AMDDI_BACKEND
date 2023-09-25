@@ -8,10 +8,14 @@ export const crearMontoPagado = async (req, res) => {
 
         console.log(monto_pagado, id_usuarios, id_servicio, tema, monto_total);
 
+        console.log("monto", monto_pagado);
+        console.log("usu", id_usuarios);
+        console.log("serv", id_servicio);
+        console.log("tema", tema);
+        console.log("total", monto_total);
 
         const montoPagadoFloat = parseFloat(monto_pagado);
         const montoTotalFloat = parseFloat(monto_total);
-
 
         const usuarioExiste = await prisma.usuario.findUnique({
             where: {
@@ -20,6 +24,18 @@ export const crearMontoPagado = async (req, res) => {
         });
         if (!usuarioExiste) {
             return res.status(400).json({ msg: "No existe el usuario" });
+        }
+
+        const montoPagadoCount = await prisma.monto_pagado.count({
+            where: {
+                usuarioId: parseInt(id_usuarios),
+            },
+        });
+
+        console.log(montoPagadoCount); 
+
+        if (montoPagadoCount >= 4) {
+            return res.status(400).json({ msg: "El usuario ya tiene las 4 cuotas pagadas" });
         }
 
         const fecha_pago = new Date();
@@ -36,24 +52,28 @@ export const crearMontoPagado = async (req, res) => {
                 usuarioId: parseInt(id_usuarios),
             },
         });
-
-        const usuarioServicio = await prisma.usuario_servicio.create({
-            data: {
-                id_usuario: parseInt(id_usuarios),
-                id_servicio: parseInt(id_servicio),
-            }
-        })
-
-        const usuarioTema = await prisma.usuario.update({
-            where: {
-                id: id_usuarios,
-            },
-            data: {
-                tema: tema,
-                monto_total: montoTotalFloat,
-                fecha_estimada: fechaEntregaFormateada
-            }
-        })
+        let usuarioServicio = null;
+        if (id_servicio) {
+            const usuarioServicio = await prisma.usuario_servicio.create({
+                data: {
+                    id_usuario: parseInt(id_usuarios),
+                    id_servicio: parseInt(id_servicio),
+                }
+            })
+        }
+        let usuarioTema = null;
+        if (tema) {
+            const usuarioTema = await prisma.usuario.update({
+                where: {
+                    id: id_usuarios,
+                },
+                data: {
+                    tema: tema,
+                    monto_total: montoTotalFloat,
+                    fecha_estimada: fechaEntregaFormateada
+                }
+            })
+        }
 
         res.json({
             usuarioTema: usuarioTema,
@@ -263,9 +283,9 @@ export const editarMontoPagado = async (req, res) => {
         for (let i = 0; i < montoPagadoRecords.length; i++) {
             const existingMontoPagado = montoPagadoRecords[i];
             const montoPagadoObj = data.monto_pagado[i];
-            
+
             console.log(existingMontoPagado);
-            
+
             if (existingMontoPagado) {
                 await prisma.monto_pagado.update({
                     where: {
@@ -287,5 +307,5 @@ export const editarMontoPagado = async (req, res) => {
             message: "Error en el servidor",
             error: error.message,
         });
-    } 
+    }
 };

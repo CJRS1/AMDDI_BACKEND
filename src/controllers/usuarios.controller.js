@@ -387,6 +387,8 @@ export const traerUsuarioPorDNI = async (req, res) => {
                 celular: true,
                 carrera: true,
                 tema: true,
+                monto_total: true,
+                monto_restante: true,
                 pdf_url: {
                     select: {
                         pdf_url: true,
@@ -400,9 +402,20 @@ export const traerUsuarioPorDNI = async (req, res) => {
                 },
                 asignacion: {
                     include: {
-                        estado: true
+                        asesor: true
                     }
-                }
+                },
+                monto_pagado: {
+                    select: {
+                        monto_pagado: true,
+                        fecha_pago: true
+                    }
+                },
+                asignacion_secundaria: {
+                    include: {
+                        asesor: true
+                    }
+                },
             }
         });
 
@@ -682,11 +695,54 @@ export const obtenerUsuariosConServicios = async (req, res) => {
         });
 
         // Calcular y actualizar monto_restante para cada usuario
+        // for (const usuario of usuarios) {
+        //     const montosPagados = usuario.monto_pagado.map((pago) => pago.monto_pagado);
+        //     const montoRestante = usuario.monto_total - (montosPagados.reduce((a, b) => a + b, 0) || 0);
+        //     usuario.monto_restante = montoRestante;
+        // }
+        // for (const usuario of usuarios) {
+        //     const montosPagados = usuario.monto_pagado.map((pago) => pago.monto_pagado);
+        //     const montoRestante = usuario.monto_total - (montosPagados.reduce((a, b) => a + b, 0) || 0);
+
+        //     // Actualizar el monto_restante en la base de datos
+        //     await prisma.usuario.update({
+        //         where: {
+        //             id: usuario.id,
+        //         },
+        //         data: {
+        //             monto_restante: montoRestante,
+        //         },
+        //     });
+
+        //     // Actualizar el objeto de usuario con el nuevo monto_restante
+        //     usuario.monto_restante = montoRestante;
+        // }
         for (const usuario of usuarios) {
             const montosPagados = usuario.monto_pagado.map((pago) => pago.monto_pagado);
             const montoRestante = usuario.monto_total - (montosPagados.reduce((a, b) => a + b, 0) || 0);
+            console.log(montosPagados)
+            if (montoRestante < 0) {
+                // Monto restante es negativo, manejar el error aquí
+                console.error(`El monto restante para el usuario ${usuario.id} es negativo.`);
+                // Puedes lanzar una excepción, retornar un mensaje de error, o realizar cualquier otra acción necesaria.
+                // En este ejemplo, se lanzará una excepción.
+                throw new Error("El monto restante no puede ser negativo.");
+            }
+
+            // Actualizar el monto_restante en la base de datos
+            await prisma.usuario.update({
+                where: {
+                    id: usuario.id,
+                },
+                data: {
+                    monto_restante: montoRestante,
+                },
+            });
+
+            // Actualizar el objeto de usuario con el nuevo monto_restante
             usuario.monto_restante = montoRestante;
         }
+
 
         res.json({ content: usuarios });
     } catch (error) {

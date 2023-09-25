@@ -604,12 +604,12 @@ export const obtenerAsesoresConAsignados = async (req, res) => {
                                 dni: true,
                             },
                         },
-                        estado: {
-                            select: {
-                                id: true,
-                                estado: true,
-                            }
-                        }
+                        // estado: {
+                        //     select: {
+                        //         id: true,
+                        //         estado: true,
+                        //     }
+                        // }
                     },
                 },
                 asesor_especialidad: {
