@@ -77,7 +77,6 @@ export const crearAsignaciones = async (req, res) => {
             data: {
                 id_asesor: parseInt(id_asesor), // Parsea el valor a entero si es necesario
                 id_usuarios: parseInt(id_usuarios), // Parsea el valor a entero si es necesario
-                id_estado: 1,
             },
         });
 
@@ -229,18 +228,36 @@ export const editarAsignacionesUsuariosSec = async (req, res) => {
             return res.status(400).json({ msg: "No existe una asignación previa" });
         }
 
+        // for (let i = 0; i < asignacionExistente.length; i++) {
+        //     const posicion = i; // Usar el índice actual para identificar la asignación
+        //     const valor = id_asesor.hasOwnProperty(posicion.toString()) ? id_asesor[posicion.toString()] : id_asesor['0']; // Obtener el valor correspondiente según la posición
+
+        //     await prisma.asignacion_secundaria.update({
+        //         where: {
+        //             id: asignacionExistente[i].id, // Usar la posición actual para identificar la asignación
+        //         },
+        //         data: {
+        //             id_asesor: Number(valor), // Convertir el valor a número
+        //         },
+        //     });
+        // }
+
         for (let i = 0; i < asignacionExistente.length; i++) {
             const posicion = i; // Usar el índice actual para identificar la asignación
-            const valor = id_asesor.hasOwnProperty(posicion.toString()) ? id_asesor[posicion.toString()] : id_asesor['0']; // Obtener el valor correspondiente según la posición
 
-            await prisma.asignacion_secundaria.update({
-                where: {
-                    id: asignacionExistente[i].id, // Usar la posición actual para identificar la asignación
-                },
-                data: {
-                    id_asesor: Number(valor), // Convertir el valor a número
-                },
-            });
+            // Check if id_asesor for the current position exists in the request
+            if (id_asesor.hasOwnProperty(posicion.toString())) {
+                const valor = id_asesor[posicion.toString()];
+
+                await prisma.asignacion_secundaria.update({
+                    where: {
+                        id: asignacionExistente[i].id, // Use the current position to identify the assignment
+                    },
+                    data: {
+                        id_asesor: Number(valor), // Convert the value to a number
+                    },
+                });
+            }
         }
 
         return res.json({ msg: "Asignaciones de usuario actualizadas correctamente" });
@@ -251,11 +268,11 @@ export const editarAsignacionesUsuariosSec = async (req, res) => {
 };
 
 export const editarAsignacionEstado = async (req, res) => {
-    
+
     try {
         const { id } = req.params;
         const { estado } = req.body;
-        console.log("elll",id,estado);
+        console.log("elll", id, estado);
         const usuarioEncontado = await prisma.asignacion.findFirst({
             where: {
                 id_usuarios: Number(id),
@@ -276,7 +293,7 @@ export const editarAsignacionEstado = async (req, res) => {
             }
         })
 
-        return res.json({ msg: "Se cambió el estado correctamente"})
+        return res.json({ msg: "Se cambió el estado correctamente" })
     } catch (err) {
         return res.status(500).json({
             message: "Error en el servidor",
@@ -334,3 +351,53 @@ export const eliminarAsignacionesSec = async (req, res) => {
     }
 };
 
+export const asesoresDisponibles = async (req, res) => {
+    console.log("ingreso aqui");
+    console.log("ingreso aqui");
+    console.log("ingreso aqui");
+    console.log("ingreso aqui");
+    const { id } = req.params;
+    console.log(id);
+    try {
+        const usuario = await prisma.usuario.findFirst({
+            where: {
+                id: Number(id)
+            }
+        })
+
+        console.log(usuario);
+
+        if (!usuario) {
+            return res.status(404).json({ msg: 'Usuario no encontrado' })
+        }
+
+        const asePrincipal = await prisma.asignacion.findFirst({
+            where: {
+                id_usuarios: Number(id),
+            }
+        })
+
+        const aseSecundario = await prisma.asignacion_secundaria.findMany({
+            where: {
+                id_usuarios: Number(id),
+            }
+        })
+
+        const asesores = await prisma.asesor.findMany();
+
+        const advisorsDisponibles = asesores.filter((advisor) => {
+            const advisorId = advisor.id;
+            return (
+                !asePrincipal || asePrincipal.id_asesor !== advisorId
+            ) && !aseSecundario.some((secundario) => secundario.id_asesor === advisorId);
+        });
+
+        res.status(200).json({ advisorsDisponibles });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: error.message,
+        });
+    }
+};

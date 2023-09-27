@@ -515,6 +515,7 @@ export const actualizarUsuario = async (req, res) => {
                 apeMat: data.apeMat,
                 apePat: data.apePat,
                 dni: data.dni,
+                estado: data.estado,
                 celular: data.celular,
                 departamento: data.departamento,
                 carrera: data.carrera,
@@ -662,6 +663,7 @@ export const obtenerUsuariosConServicios = async (req, res) => {
                 fecha_estimada: true,
                 institucion_educativa: true,
                 id_amddi: true,
+                estado: true,
                 pdf_url: {
                     select: {
                         id: true,

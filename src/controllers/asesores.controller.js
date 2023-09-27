@@ -131,7 +131,30 @@ export const traerAsesorPorToken = async (req, res) => {
                                 email: true,
                                 dni: true,
                                 rol: true,
-                            }
+                                tema: true,
+                                id_amddi: true,
+                                estado: true,
+                                link_reunion: true,
+                                fecha_estimada: true,
+                                usuario_servicio: {
+                                    include: {
+                                        servicio: true
+                                    }
+                                },
+                                monto_pagado: {
+                                    select: {
+                                        fecha_pago: true
+                                    }
+                                },
+                                pdf_url: {
+                                    select: {
+                                        id: true,
+                                        pdf_url: true,
+                                        fecha_pdf_url: true,
+                                        usuarioId: true
+                                    }
+                                },
+                            },
                         }
                     },
                 },
@@ -147,8 +170,28 @@ export const traerAsesorPorToken = async (req, res) => {
                                 dni: true,
                                 rol: true,
                                 tema: true,
+                                id_amddi: true,
+                                estado: true,
                                 link_reunion: true,
                                 fecha_estimada: true,
+                                usuario_servicio: {
+                                    include: {
+                                        servicio: true
+                                    }
+                                },
+                                monto_pagado: {
+                                    select: {
+                                        fecha_pago: true
+                                    }
+                                },
+                                pdf_url: {
+                                    select: {
+                                        id: true,
+                                        pdf_url: true,
+                                        fecha_pdf_url: true,
+                                        usuarioId: true
+                                    }
+                                },
                             }
                         }
                     }

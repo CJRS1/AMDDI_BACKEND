@@ -11,7 +11,7 @@ export const crearEstado = async (req, res) => {
         // const fechaActual = new Date();
         // const fechaFormateada = format(fechaActual, 'dd/MM/yyyy');
 
-        const existingEstado = await prisma.estado.findFirst({
+        const existingEstado = await prisma.estadoTesis.findFirst({
             where: {
                 estado: nombre_estado,
             },
@@ -23,7 +23,7 @@ export const crearEstado = async (req, res) => {
         }
 
         // Crear la servicio
-        const nuevoEstado = await prisma.estado.create({
+        const nuevoEstado = await prisma.estadoTesis.create({
             data: {
                 estado: nombre_estado,
                 // fecha_servicio: fechaFormateada,
@@ -41,7 +41,7 @@ export const crearEstado = async (req, res) => {
 
 export const listarEstados = async (req, res) => {
     try {
-        const estados = await prisma.estado.findMany();
+        const estados = await prisma.estadoTesis.findMany();
         return res.status(200).json({
             message: "estados encontrados",
             content: estados,
@@ -83,7 +83,7 @@ export const actualizarEstado = async (req, res) => {
     const { id } = req.params;
     const data = req.body;
     try {
-        const updatedEstado = await prisma.estado.update({
+        const updatedEstado = await prisma.estadoTesis.update({
             where: {
                 id: Number(id),
             },
@@ -104,11 +104,10 @@ export const actualizarEstado = async (req, res) => {
     }
 };
 
-
 export const eliminarEstado = async (req, res) => {
     const { id } = req.params;
     try {
-        const findEstado = await prisma.estado.findUnique({
+        const findEstado = await prisma.estadoTesis.findUnique({
             where: {
                 id: Number(id),
             },
@@ -119,7 +118,7 @@ export const eliminarEstado = async (req, res) => {
             });
         }
 
-        await prisma.estado.delete({
+        await prisma.estadoTesis.delete({
             where: {
                 id: Number(id),
             },

@@ -14,7 +14,8 @@ import { usuariosserviciosRouter } from "./routes/usuarios_servicios.routes.js"
 import { asignacionesRouter } from "./routes/asignaciones.routes.js";
 import { montoRouter } from "./routes/monto.routes.js";
 import { pdf_urlRouter } from "./routes/pdf_url.routes.js";
-import { estadoRouter} from "./routes/estado.routes.js";
+import { estadoTesisRouter} from "./routes/estado_tesis.routes.js";
+import { estadoObservacionRouter} from "./routes/estado_observacion.routes.js";
 
 const server = express();
 
@@ -67,7 +68,8 @@ server.use(asesoresespecialidadesRouter);
 server.use(usuariosserviciosRouter);
 server.use(asignacionesRouter);
 server.use(montoRouter);
-server.use(estadoRouter);
+server.use(estadoTesisRouter);
+server.use(estadoObservacionRouter);
 server.use(pdf_urlRouter);
 
 
