@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+import nodemailer from 'nodemailer';
+
 import { format, addMinutes } from 'date-fns';
 const revokedTokens = new Set();
 const prisma = new PrismaClient();
@@ -16,7 +18,7 @@ const tiempoExpiracionCodigo = 15; // 15 minutos
 export const crearUsuario = async (req, res) => {
     try {
         console.log(req.body);
-        const { email, pwd_hash, nombre, apeMat, apePat, dni, celular, departamento, carrera } = req.body;
+        const { email, pwd_hash, nombre, apeMat, apePat, pais, dni, celular, departamento, carrera } = req.body;
 
         const usuarioExistente = await prisma.usuario.findUnique({
             where: {
@@ -42,6 +44,15 @@ export const crearUsuario = async (req, res) => {
             });
         }
 
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.titan.email',
+            port: 465,
+            auth: {
+                user: process.env.EMAIL, // Tu dirección de correo temporal de Ethereal
+                pass: process.env.PASS, // Tu contraseña temporal de Ethereal
+            },
+        });
+
         const fechaActual = new Date();
         const fechaFormateada = format(fechaActual, 'dd/MM/yyyy');
 
@@ -58,6 +69,7 @@ export const crearUsuario = async (req, res) => {
                 apeMat,
                 apePat,
                 dni,
+                pais,
                 celular,
                 departamento,
                 carrera,
@@ -65,6 +77,26 @@ export const crearUsuario = async (req, res) => {
                 createdAt: fechaFormateada,
                 fecha_expiracion: fechaExpiracion,
             },
+        });
+
+        const mensaje = `Hola ${usuarioTemporal.nombre} ${usuarioTemporal.apePat}. Te saluda AMDDI, tú código de verificación es: ${usuarioTemporal.verification_code} \n\n ¡Que tenga un buen día!\n\n Saludos cordiales, \n AMDDI`
+
+        const mailOptions = {
+            from: process.env.EMAIL,
+            to: usuarioTemporal.email,
+            subject: 'Código de verificación AMDDI',
+            text: mensaje,
+        };
+
+        console.log(mailOptions);
+
+        // Aquí puedes enviar el correo electrónico correspondiente
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error al enviar correo:', error);
+            } else {
+                console.log('Correo enviado:', info.response);
+            }
         });
 
         // Respuesta exitosa con el código de verificación
@@ -77,22 +109,25 @@ export const crearUsuario = async (req, res) => {
 
 export const verificationCode = async (req, res) => {
     try {
-        const { email, codigoVerificacion } = req.body;
-        console.log(email, codigoVerificacion)
-        console.log(email, codigoVerificacion)
-        console.log(email, codigoVerificacion)
-        console.log(email, codigoVerificacion)
+        const { email, verificationCode } = req.body;
+        console.log(req.body);
+        console.log(email, verificationCode)
+        console.log(email, verificationCode)
+        console.log(email, verificationCode)
+        console.log(email, verificationCode)
         const fechaActual = new Date();
 
         const usuarioTemporal = await prisma.usuarioTemporal.findUnique({
             where: {
                 email,
-                verification_code: codigoVerificacion,
+                verification_code: verificationCode,
                 fecha_expiracion: {
                     gte: fechaActual, // Verificar que el código no haya expirado
                 },
             },
         });
+
+        console.log(usuarioTemporal);
 
         if (!usuarioTemporal) {
             await prisma.usuarioTemporal.delete({
@@ -218,11 +253,20 @@ export const traerUsuarioPorToken = async (req, res) => {
                 email: true,
                 dni: true,
                 rol: true,
+                fecha_estimada: true,
+                monto_restante: true,
+                estado: true,
                 usuario_servicio: {
                     include: {
                         servicio: true,
                     },
                 },
+                pdf_url: {
+                    select: {
+                        id: true,
+                        pdf_url: true,
+                    }
+                }
                 // asignacion: {
                 //     include: {
                 //         usuario: {
@@ -259,21 +303,40 @@ export const traerUsuarioPorToken = async (req, res) => {
             },
         });
 
+        let estados = [];
+
+        console.log("Valor de usuario.usuario_servicio[0].servicio.id:", usuario.usuario_servicio[0].servicio.id);
+
+        if (
+            usuario.usuario_servicio[0].servicio.id === 1 ||
+            usuario.usuario_servicio[0].servicio.id === 2 ||
+            usuario.usuario_servicio[0].servicio.id === 3
+        ) {
+            console.log("Entró al primer if");
+            estados = await prisma.estadoTesis.findMany({ orderBy: { id: 'asc' } });
+        } else if (usuario.usuario_servicio[0].servicio.id === 4 || usuario.usuario_servicio[0].servicio.id === 5) {
+            console.log("Entró al segundo if");
+            estados = await prisma.estadoObservacion.findMany({ orderBy: { id: 'asc' } });
+        }
 
         console.log("usuario", usuario);
-        if (!usuario) {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
-        }
+        console.log("estados", estados);
+
 
         res.status(200).json({
             message: "Usuario encontrado",
-            content: usuario,
+            content: {
+                usuario: usuario,
+                estados: estados
+            }
         });
     } catch (error) {
         console.error(error);
         res.status(401).json({ message: 'Token no válido' });
     }
 };
+
+
 
 
 
