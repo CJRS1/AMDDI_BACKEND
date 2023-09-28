@@ -303,9 +303,9 @@ export const traerUsuarioPorToken = async (req, res) => {
             },
         });
 
-        let estados = [];
-
+        
         console.log("Valor de usuario.usuario_servicio[0].servicio.id:", usuario.usuario_servicio[0].servicio.id);
+        let estados = [];
 
         if (
             usuario.usuario_servicio[0].servicio.id === 1 ||

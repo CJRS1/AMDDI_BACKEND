@@ -199,6 +199,26 @@ export const traerAsesorPorToken = async (req, res) => {
             },
         });
 
+        let estados = [];
+
+        // Asumiendo que asesor.asignacion es un arreglo
+        // for (let i = 0; i < asesor.asignacion.length; i++) {
+        //     const servicioId = asesor.asignacion[i].usuario.usuario_servicio[0].servicio.id;
+        //     console.log(`Asignación ${i + 1}: Servicio ID = ${servicioId}`);
+        //     if (
+        //         usuario.usuario_servicio[0].servicio.id === 1 ||
+        //         usuario.usuario_servicio[0].servicio.id === 2 ||
+        //         usuario.usuario_servicio[0].servicio.id === 3
+        //     ) {
+        //         console.log("Entró al primer if");
+        //         estados = await prisma.estadoTesis.findMany({ orderBy: { id: 'asc' } });
+        //     } else if (usuario.usuario_servicio[0].servicio.id === 4 || usuario.usuario_servicio[0].servicio.id === 5) {
+        //         console.log("Entró al segundo if");
+        //         estados = await prisma.estadoObservacion.findMany({ orderBy: { id: 'asc' } });
+        //     }
+        // }
+
+        console.log("estados", estados);
 
         // console.log("asesor", asesor);
         // Verifica si se encontraron los datos del asesor
@@ -209,7 +229,10 @@ export const traerAsesorPorToken = async (req, res) => {
         // Devuelve los datos del asesor en la respuesta
         res.status(200).json({
             message: "Asesor encontrado",
-            content: asesor,
+            content: {
+                asesor: asesor,
+                estados: estados
+            }
         });
     } catch (error) {
         console.error(error);
