@@ -35,7 +35,7 @@ export const loginA = async (req, res) => {
             if (!(await bcrypt.compare(password, admin.pwd_hash))) {
                 console.log(password);
                 console.log(admin.pwd_hash);
-                return res.status(401).json({ msg: 'Admin: Correo electrónico o contraseña incorrectos.' });
+                return res.status(401).json({ msg: 'Accesso no autorizado' });
             }
 
             // Genera un token JWT con el correo electrónico y rol en el payload
@@ -63,7 +63,7 @@ export const loginA = async (req, res) => {
             console.log(password);
             console.log(asesor.pwd_hash);
             console.log(asesor.pwd_hash);
-            return res.status(401).json({ msg: 'Asesor: Correo electrónico o contraseña incorrectos.' });
+            return res.status(401).json({ msg: 'Acceso no autorizado' });
         }
 
         const secretKey = process.env.SESSION_SECRET_A;
@@ -201,22 +201,24 @@ export const traerAsesorPorToken = async (req, res) => {
 
         let estados = [];
 
+        
+
         // Asumiendo que asesor.asignacion es un arreglo
-        // for (let i = 0; i < asesor.asignacion.length; i++) {
-        //     const servicioId = asesor.asignacion[i].usuario.usuario_servicio[0].servicio.id;
-        //     console.log(`Asignación ${i + 1}: Servicio ID = ${servicioId}`);
-        //     if (
-        //         usuario.usuario_servicio[0].servicio.id === 1 ||
-        //         usuario.usuario_servicio[0].servicio.id === 2 ||
-        //         usuario.usuario_servicio[0].servicio.id === 3
-        //     ) {
-        //         console.log("Entró al primer if");
-        //         estados = await prisma.estadoTesis.findMany({ orderBy: { id: 'asc' } });
-        //     } else if (usuario.usuario_servicio[0].servicio.id === 4 || usuario.usuario_servicio[0].servicio.id === 5) {
-        //         console.log("Entró al segundo if");
-        //         estados = await prisma.estadoObservacion.findMany({ orderBy: { id: 'asc' } });
-        //     }
-        // }
+        for (let i = 0; i < asesor.asignacion.length; i++) {
+            const servicioId = asesor.asignacion[i].usuario.usuario_servicio[0].servicio.id;
+            console.log(`Asignación ${i + 1}: Servicio ID = ${servicioId}`);
+            if (
+                servicioId === 1 ||
+                servicioId === 2 ||
+                servicioId === 3
+            ) {
+                console.log("Entró al primer if");
+                estados = await prisma.estadoTesis.findMany({ orderBy: { id: 'asc' } });
+            } else if (servicioId === 4 || servicioId === 5) {
+                console.log("Entró al segundo if");
+                estados = await prisma.estadoObservacion.findMany({ orderBy: { id: 'asc' } });
+            }
+        }
 
         console.log("estados", estados);
 
@@ -235,8 +237,8 @@ export const traerAsesorPorToken = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error(error);
-        res.status(401).json({ message: 'Token no válido' });
+        // console.error(error);
+        // res.status(401).json({ message: 'Token no válido' });
     }
 };
 

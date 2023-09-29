@@ -90,8 +90,8 @@ export const traerAdminPorToken = async (req, res) => {
             content: admin,
         });
     } catch (error) {
-        console.error(error);
-        res.status(401).json({ message: 'Token no válido' });
+        // console.error(error);
+        // res.status(401).json({ message: 'Token no válido' });
     }
 };
 
