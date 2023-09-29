@@ -116,6 +116,7 @@ export const crearMontoPagado = async (req, res) => {
 
         const montoPagadoFloat = parseFloat(monto_pagado);
         const montoTotalFloat = parseFloat(monto_total);
+        console.log(montoTotalFloat);
 
         const usuarioExiste = await prisma.usuario.findUnique({
             where: {
@@ -136,9 +137,10 @@ export const crearMontoPagado = async (req, res) => {
             return total + record.monto_pagado;
         }, 0);
 
-        console.log(sumaMontosPagados);
-        console.log(montoPagadoFloat);
-        console.log(montoPagadoFloat + sumaMontosPagados);
+        console.log("usuario existe", usuarioExiste);
+        console.log("suma", sumaMontosPagados);
+        console.log("total", montoPagadoFloat);
+        console.log("suma_total", montoPagadoFloat + sumaMontosPagados);
         console.log(usuarioExiste.monto_total);
 
         // Verifica si agregar el nuevo monto superaría el monto total permitido
@@ -170,6 +172,19 @@ export const crearMontoPagado = async (req, res) => {
             })
         }
         let usuarioTema = null;
+
+        const montoRestante = usuarioExiste.monto_total - (sumaMontosPagados + montoPagadoFloat);
+        console.log("restante", montoRestante);
+
+        const usuarioActualizado = await prisma.usuario.update({
+            where: {
+                id: id_usuarios,
+            },
+            data: {
+                monto_restante: montoRestante,
+            }
+        })
+
         if (tema) {
             const usuarioTema = await prisma.usuario.update({
                 where: {
@@ -178,7 +193,8 @@ export const crearMontoPagado = async (req, res) => {
                 data: {
                     tema: tema,
                     monto_total: montoTotalFloat,
-                    fecha_estimada: fechaEntregaFormateada
+                    fecha_estimada: fechaEntregaFormateada,
+                    monto_restante: montoRestante
                 }
             })
         }

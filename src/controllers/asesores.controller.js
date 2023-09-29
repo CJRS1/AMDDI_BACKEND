@@ -670,14 +670,9 @@ export const obtenerAsesoresConAsignados = async (req, res) => {
                                 apeMat: true,
                                 apePat: true,
                                 dni: true,
+                                estado: true,
                             },
                         },
-                        // estado: {
-                        //     select: {
-                        //         id: true,
-                        //         estado: true,
-                        //     }
-                        // }
                     },
                 },
                 asesor_especialidad: {
@@ -706,6 +701,7 @@ export const obtenerAsesoresConAsignados = async (req, res) => {
                                 apePat: true,
                                 dni: true,
                                 tema: true,
+                                estado: true,
                                 link_reunion: true,
                                 fecha_estimada: true,
                             },
