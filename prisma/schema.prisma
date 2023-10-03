@@ -11,29 +11,29 @@ datasource db {
 }
 
 model usuario {
-  id                   Int     @id @default(autoincrement())
-  pwd_hash             String  @db.VarChar(100)
-  email                String  @unique @db.VarChar(191)
-  nombre               String  @db.VarChar(50)
-  apeMat               String  @map("apellido_paterno") @db.VarChar(50)
-  apePat               String  @map("apellido_materno") @db.VarChar(50)
-  dni                  String  @unique @db.VarChar(8)
-  celular              String? @unique @db.VarChar(18)
-  pais                 String? 
-  departamento         String  @db.VarChar(50)
-  carrera              String  @db.VarChar(30)
-  tema                 String? @db.VarChar(255)
-  rol                  String  @default("usuario")
-  verification_code    String? @db.VarChar(4)
-  link_reunion         String? @db.VarChar(255)
+  id                    Int     @id @default(autoincrement())
+  pwd_hash              String  @db.VarChar(100)
+  email                 String  @unique @db.VarChar(191)
+  nombre                String  @db.VarChar(50)
+  apeMat                String  @map("apellido_paterno") @db.VarChar(50)
+  apePat                String  @map("apellido_materno") @db.VarChar(50)
+  dni                   String  @unique @db.VarChar(8)
+  celular               String? @unique @db.VarChar(18)
+  pais                  String?
+  departamento          String  @db.VarChar(50)
+  carrera               String  @db.VarChar(30)
+  tema                  String? @db.VarChar(255)
+  rol                   String  @default("usuario")
+  verification_code     String? @db.VarChar(4)
+  link_reunion          String? @db.VarChar(255)
   institucion_educativa String? @db.VarChar(255)
-  id_amddi             String?
-  monto_restante       Float? @default(0)
-  monto_total          Float?  @default(0)
-  estado               String?
-  fecha_estimada       String?
-  asesor_ventas        String?
-  createdAt            String  @map("created_at")
+  id_amddi              String?
+  monto_restante        Float?  @default(0)
+  monto_total           Float?  @default(0)
+  estado                String?
+  fecha_estimada        String?
+  asesor_ventas         String?
+  createdAt             String  @map("created_at")
 
   monto_pagado          monto_pagado[]
   pdf_url               pdf_url[]
@@ -105,7 +105,7 @@ model servicio {
   id              Int    @id @default(autoincrement())
   nombre_servicio String @unique @db.VarChar(200)
   // fecha_servicio String? @map("fecha_servicio")
-  
+
   usuario_servicio usuario_servicio[]
 
   @@map("servicios")
@@ -152,6 +152,70 @@ model estadoObservacion {
   @@map("estado_observacion")
 }
 
+model estadoParafraseo {
+  id     Int    @id @default(autoincrement())
+  estado String
+
+  // asignacion asignacion[]
+  @@map("estado_parafraseo")
+}
+
+model estadoTrabajoSuficiencia {
+  id     Int    @id @default(autoincrement())
+  estado String
+
+  // asignacion asignacion[]
+  @@map("estado_trabajo_suficiencia")
+}
+
+model estadoTrabajoSuficiencia {
+  id     Int    @id @default(autoincrement())
+  estado String
+
+  // asignacion asignacion[]
+  @@map("estado_trabajo_suficiencia")
+}
+
+model estadoMonografia {
+  id     Int    @id @default(autoincrement())
+  estado String
+
+  // asignacion asignacion[]
+  @@map("estado_monografia")
+}
+
+model estadoPlanDeNegocio {
+  id     Int    @id @default(autoincrement())
+  estado String
+
+  // asignacion asignacion[]
+  @@map("estado_plan_de_negocio")
+}
+
+model estadoInformePracticas {
+  id     Int    @id @default(autoincrement())
+  estado String
+
+  // asignacion asignacion[]
+  @@map("estado_informe_de_practicas")
+}
+
+model estadoTesinas {
+  id     Int    @id @default(autoincrement())
+  estado String
+
+  // asignacion asignacion[]
+  @@map("estado_tesinas")
+}
+
+model estadoDiapositivas {
+  id     Int    @id @default(autoincrement())
+  estado String
+
+  // asignacion asignacion[]
+  @@map("estado_diapositivas")
+}
+
 model admin {
   id        Int      @id @default(autoincrement())
   pwd_hash  String   @db.VarChar(100)
@@ -181,7 +245,7 @@ model monto_pagado {
   id           Int     @id @default(autoincrement())
   monto_pagado Float?  @default(0)
   fecha_pago   String?
-  usuarioId    Int     
+  usuarioId    Int
 
   usuario usuario @relation(fields: [usuarioId], references: [id])
 
@@ -192,7 +256,7 @@ model pdf_url {
   id            Int     @id @default(autoincrement())
   pdf_url       String? @db.VarChar(255)
   fecha_pdf_url String
-  usuarioId     Int      
+  usuarioId     Int
 
   usuario usuario @relation(fields: [usuarioId], references: [id])
 

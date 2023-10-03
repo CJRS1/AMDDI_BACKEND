@@ -505,12 +505,12 @@ export const traerUsuarioPorDNI = async (req, res) => {
 
 export const traerUsuarioPorIdAmddi = async (req, res) => {
     const { id_amddi } = req.params;
-    const idAmddiInt = parseInt(id_amddi); 
+    // const id_amddi = parseInt(id_amddi); 
     console.log(id_amddi);
     try {
         const usuario = await prisma.usuario.findFirst({
             where: {
-                id_amddi: idAmddiInt,
+                id_amddi: id_amddi,
             },
             select: {
                 id: true,
@@ -522,6 +522,7 @@ export const traerUsuarioPorIdAmddi = async (req, res) => {
                 celular: true,
                 carrera: true,
                 tema: true,
+                id_amddi: true,
                 monto_total: true,
                 monto_restante: true,
                 pdf_url: {
