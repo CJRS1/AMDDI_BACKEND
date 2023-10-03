@@ -183,6 +183,7 @@ export const verificationCode = async (req, res) => {
 };
 
 export const loginUser = async (req, res) => {
+    console.log("hola")
     try {
         const { email, password } = req.body;
         console.log(email, password);
@@ -445,6 +446,7 @@ export const traerUsuarioPorDNI = async (req, res) => {
             },
             select: {
                 id: true,
+                id_amddi: true,
                 nombre: true,
                 apeMat: true,
                 apePat: true,
@@ -483,6 +485,76 @@ export const traerUsuarioPorDNI = async (req, res) => {
                 },
             }
         });
+
+        if (!usuario) {
+            return res.status(404).json({
+                message: "Usuario no encontrado",
+            });
+        }
+        return res.status(200).json({
+            message: "Usuario encontrado",
+            content: usuario,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error en el servidor",
+            error: error.message,
+        });
+    }
+};
+
+export const traerUsuarioPorIdAmddi = async (req, res) => {
+    const { id_amddi } = req.params;
+    const idAmddiInt = parseInt(id_amddi); 
+    console.log(id_amddi);
+    try {
+        const usuario = await prisma.usuario.findFirst({
+            where: {
+                id_amddi: idAmddiInt,
+            },
+            select: {
+                id: true,
+                id_amddi: true,
+                nombre: true,
+                apeMat: true,
+                apePat: true,
+                dni: true,
+                celular: true,
+                carrera: true,
+                tema: true,
+                monto_total: true,
+                monto_restante: true,
+                pdf_url: {
+                    select: {
+                        pdf_url: true,
+                        fecha_pdf_url: true
+                    }
+                },
+                usuario_servicio: {
+                    include: {
+                        servicio: true
+                    }
+                },
+                asignacion: {
+                    include: {
+                        asesor: true
+                    }
+                },
+                monto_pagado: {
+                    select: {
+                        monto_pagado: true,
+                        fecha_pago: true
+                    }
+                },
+                asignacion_secundaria: {
+                    include: {
+                        asesor: true
+                    }
+                },
+            }
+        });
+
+        console.log(usuario);
 
         if (!usuario) {
             return res.status(404).json({

@@ -107,7 +107,7 @@ export const crearMontoPagado = async (req, res) => {
         const { monto_pagado, id_usuarios, id_servicio, tema, monto_total } = req.body;
 
         console.log(monto_pagado, id_usuarios, id_servicio, tema, monto_total);
-
+        console.log(req.body)
         console.log("monto", monto_pagado);
         console.log("usu", id_usuarios);
         console.log("serv", id_servicio);

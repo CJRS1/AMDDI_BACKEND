@@ -14,7 +14,8 @@ import {
     sendVerificationCode,
     verificationCodeCC,
     actualizarUsuarioCC,
-    traerUsuarioPorToken
+    traerUsuarioPorToken,
+    traerUsuarioPorIdAmddi
 
 } from "../controllers/usuarios.controller.js";
 
@@ -28,6 +29,7 @@ usuariosRouter.post("/verificar_code/:email", verificationCodeCC);
 
 usuariosRouter.get("/usuarios", listarUsuarios);
 usuariosRouter.get("/usuarios/:dni", traerUsuarioPorDNI);
+usuariosRouter.get("/usuariosa/:id_amddi", traerUsuarioPorIdAmddi);
 usuariosRouter.get("/usuario_por_email/:email", traerUsuarioPorEmail);
 usuariosRouter.get("/servicio_por_email/:email", obtenerServicioPorEmail);
 usuariosRouter.get("/usuarios_con_servicio", obtenerUsuariosConServicios);
