@@ -615,8 +615,10 @@ export const traerUsuarioPorEmail = async (req, res) => {
 export const actualizarUsuario = async (req, res) => {
     const { id } = req.params;
     const data = req.body;
+    console.log("hola")
     console.log(id);
     console.log(data);
+    console.log(data.asesor_ventas);
     try {
         const findUsuario = await prisma.usuario.findUnique({
             where: {
@@ -639,8 +641,7 @@ export const actualizarUsuario = async (req, res) => {
             data.monto_total = parseFloat(data.monto_total);
         }
 
-
-
+    
         const usuario = await prisma.usuario.update({
             where: {
                 id: Number(id),
@@ -652,13 +653,14 @@ export const actualizarUsuario = async (req, res) => {
                 apeMat: data.apeMat,
                 apePat: data.apePat,
                 dni: data.dni,
+                asesor_ventas: data.asesor_ventas,
                 estado: data.estado,
                 celular: data.celular,
                 departamento: data.departamento,
                 carrera: data.carrera,
                 tema: data.tema,
                 pais: data.pais,
-                id_amddi: parseInt(data.id_amddi),
+                id_amddi: data.id_amddi,
                 fecha_estimada: data.fecha_estimada,
                 institucion_educativa: data.institucion_educativa,
                 // pdf_url: data.pdf_url,
@@ -673,6 +675,7 @@ export const actualizarUsuario = async (req, res) => {
                 ...(data.apeMat && { apeMat: true }),
                 ...(data.apePat && { apePat: true }),
                 ...(data.dni && { dni: true }),
+                ...(data.asesor_ventas && { asesor_ventas: true }),
                 ...(data.pais && { pais: true }),
                 ...(data.id_amddi && { id_amddi: true }),
                 ...(data.celular && { celular: true }),
@@ -795,6 +798,7 @@ export const obtenerUsuariosConServicios = async (req, res) => {
                 departamento: true,
                 carrera: true,
                 tema: true,
+                asesor_ventas: true,
                 monto_total: true,
                 monto_restante: true,
                 fecha_estimada: true,

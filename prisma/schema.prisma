@@ -27,11 +27,12 @@ model usuario {
   verification_code    String? @db.VarChar(4)
   link_reunion         String? @db.VarChar(255)
   institucion_educativa String? @db.VarChar(255)
-  id_amddi             Int?
+  id_amddi             String?
   monto_restante       Float? @default(0)
   monto_total          Float?  @default(0)
   estado               String?
   fecha_estimada       String?
+  asesor_ventas        String?
   createdAt            String  @map("created_at")
 
   monto_pagado          monto_pagado[]
