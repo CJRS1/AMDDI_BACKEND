@@ -27,8 +27,9 @@ server.use(setCSPHeader);
 
 
 // Después de server.use(cors());
+//origin: ['http://localhost:3000', 'http://localhost:3001']
 server.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001'], // Reemplaza con el origen correcto de tu aplicación de frontend
+  origin: ['https://amddi.com', 'https://www.amddi.com'], // Reemplaza con el origen correcto de tu aplicación de frontend
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 }));
 
@@ -58,7 +59,7 @@ server.use(
 );
 
 
-const PORT = process.env.PORT ?? 5000;
+const PORT = process.env.PORT ?? process.env.PORT2;
 
 server.use(usuariosRouter);
 server.use(adminsRouter);
@@ -76,13 +77,6 @@ server.use(emailRouter);
 
 
 server.listen(PORT, () => {
-  console.log(`Servidor ${PORT}`);
+  console.log(`Servidor HTTPS en el puerto: ${PORT}`);
 })
-
-// server.route('/')
-//         .get( (req, res) => {
-//             res.status(200).json({
-//                 message:'Se contectó correctamente'
-//             });
-//         })
 

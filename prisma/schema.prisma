@@ -168,12 +168,12 @@ model estadoTrabajoSuficiencia {
   @@map("estado_trabajo_suficiencia")
 }
 
-model estadoTrabajoSuficiencia {
+model estadoArticulo {
   id     Int    @id @default(autoincrement())
   estado String
 
   // asignacion asignacion[]
-  @@map("estado_trabajo_suficiencia")
+  @@map("estado_articulo")
 }
 
 model estadoMonografia {
