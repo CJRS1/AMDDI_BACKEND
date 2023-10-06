@@ -11,7 +11,7 @@ export const crearEstado = async (req, res) => {
         // const fechaActual = new Date();
         // const fechaFormateada = format(fechaActual, 'dd/MM/yyyy');
 
-        const existingEstado = await prisma.estadoTesis.findFirst({
+        const existingEstado = await prisma.estadoInformePracticas.findFirst({
             where: {
                 estado: nombre_estado,
             },
@@ -23,7 +23,7 @@ export const crearEstado = async (req, res) => {
         }
 
         // Crear la servicio
-        const nuevoEstado = await prisma.estadoTesis.create({
+        const nuevoEstado = await prisma.estadoInformePracticas.create({
             data: {
                 estado: nombre_estado,
                 // fecha_servicio: fechaFormateada,
@@ -41,7 +41,7 @@ export const crearEstado = async (req, res) => {
 
 export const listarEstados = async (req, res) => {
     try {
-        const estados = await prisma.estadoTesis.findMany();
+        const estados = await prisma.estadoInformePracticas.findMany();
         return res.status(200).json({
             message: "estados encontrados",
             content: estados,
@@ -58,7 +58,7 @@ export const actualizarEstado = async (req, res) => {
     const { id } = req.params;
     const data = req.body;
     try {
-        const updatedEstado = await prisma.estadoTesis.update({
+        const updatedEstado = await prisma.estadoInformePracticas.update({
             where: {
                 id: Number(id),
             },
@@ -82,7 +82,7 @@ export const actualizarEstado = async (req, res) => {
 export const eliminarEstado = async (req, res) => {
     const { id } = req.params;
     try {
-        const findEstado = await prisma.estadoTesis.findUnique({
+        const findEstado = await prisma.estadoInformePracticas.findUnique({
             where: {
                 id: Number(id),
             },
@@ -93,7 +93,7 @@ export const eliminarEstado = async (req, res) => {
             });
         }
 
-        await prisma.estadoTesis.delete({
+        await prisma.estadoInformePracticas.delete({
             where: {
                 id: Number(id),
             },

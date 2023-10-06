@@ -54,31 +54,6 @@ export const listarEstados = async (req, res) => {
     }
 };
 
-export const traerServicioPorId = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const servicio = await prisma.servicio.findUnique({
-            where: {
-                id: Number(id),
-            },
-        });
-        if (!servicio) {
-            return res.status(404).json({
-                message: "servicio no encontrado",
-            });
-        }
-        return res.status(200).json({
-            message: "servicio encontrado",
-            content: servicio,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            message: "Error en el servidor",
-            error: error.message,
-        });
-    }
-};
-
 export const actualizarEstado = async (req, res) => {
     const { id } = req.params;
     const data = req.body;

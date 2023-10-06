@@ -18,6 +18,7 @@ import { estadoTesisRouter } from "./routes/estado_tesis.routes.js";
 import { estadoObservacionRouter } from "./routes/estado_observacion.routes.js";
 import { emailRouter } from "./routes/email.routes.js";
 
+
 const server = express();
 
 server.use(json());
@@ -59,7 +60,8 @@ server.use(
 );
 
 
-const PORT = process.env.PORT ?? process.env.PORT2;
+// const PORT = process.env.PORT ?? process.env.PORT2;
+const PORT = process.env.PORT ?? 5000;
 
 server.use(usuariosRouter);
 server.use(adminsRouter);

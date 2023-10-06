@@ -151,5 +151,4 @@ async function enviarNotificaciones() {
 }
 
 // Ejecutar la función cada día
-// setInterval(enviarNotificaciones, 24 * 60 * 60 * 1000);
-// enviarNotificaciones();
+setInterval(enviarNotificaciones, 24 * 60 * 60 * 1000);
