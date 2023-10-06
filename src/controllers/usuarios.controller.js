@@ -306,7 +306,7 @@ export const traerUsuarioPorToken = async (req, res) => {
             },
         });
 
-        
+
         console.log("Valor de usuario.usuario_servicio[0].servicio.id:", usuario.usuario_servicio[0].servicio.id);
         let estados = [];
 
@@ -317,9 +317,36 @@ export const traerUsuarioPorToken = async (req, res) => {
         ) {
             console.log("Entró al primer if");
             estados = await prisma.estadoTesis.findMany({ orderBy: { id: 'asc' } });
-        } else if (usuario.usuario_servicio[0].servicio.id === 4 || usuario.usuario_servicio[0].servicio.id === 5) {
+        } else if (usuario.usuario_servicio[0].servicio.id === 4 ||
+            usuario.usuario_servicio[0].servicio.id === 5) {
             console.log("Entró al segundo if");
             estados = await prisma.estadoObservacion.findMany({ orderBy: { id: 'asc' } });
+        } else if (usuario.usuario_servicio[0].servicio.id === 6) {
+            console.log("Entró al segundo if");
+            estados = await prisma.estadoParafraseo.findMany({ orderBy: { id: 'asc' } });
+        } else if (usuario.usuario_servicio[0].servicio.id === 7) {
+            console.log("Entró al segundo if");
+            estados = await prisma.estadoTrabajoSuficiencia.findMany({ orderBy: { id: 'asc' } });
+        } else if (usuario.usuario_servicio[0].servicio.id === 8 ||
+            usuario.usuario_servicio[0].servicio.id === 9 ||
+            usuario.usuario_servicio[0].servicio.id === 10) {
+            console.log("Entró al segundo if");
+            estados = await prisma.estadoArticulo.findMany({ orderBy: { id: 'asc' } });
+        } else if (usuario.usuario_servicio[0].servicio.id === 11) {
+            console.log("Entró al segundo if");
+            estados = await prisma.estadoMonografia.findMany({ orderBy: { id: 'asc' } });
+        } else if (usuario.usuario_servicio[0].servicio.id === 12) {
+            console.log("Entró al segundo if");
+            estados = await prisma.estadoPlanDeNegocio.findMany({ orderBy: { id: 'asc' } });
+        } else if (usuario.usuario_servicio[0].servicio.id === 13) {
+            console.log("Entró al segundo if");
+            estados = await prisma.estadoInformePracticas.findMany({ orderBy: { id: 'asc' } });
+        } else if (usuario.usuario_servicio[0].servicio.id === 14) {
+            console.log("Entró al segundo if");
+            estados = await prisma.estadoTesinas.findMany({ orderBy: { id: 'asc' } });
+        } else if (usuario.usuario_servicio[0].servicio.id === 15) {
+            console.log("Entró al segundo if");
+            estados = await prisma.estadoDiapositivas.findMany({ orderBy: { id: 'asc' } });
         }
 
         console.log("usuario", usuario);
@@ -642,7 +669,7 @@ export const actualizarUsuario = async (req, res) => {
             data.monto_total = parseFloat(data.monto_total);
         }
 
-    
+
         const usuario = await prisma.usuario.update({
             where: {
                 id: Number(id),

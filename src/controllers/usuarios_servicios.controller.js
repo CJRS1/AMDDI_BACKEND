@@ -149,6 +149,54 @@ export const crearEstadoUsuario = async (req, res) => {
             if (estadoObservacion) {
                 nuevoEstadoUsuario = estadoObservacion.estado;
             }
+        } else if (idServicio === '6') {
+            // Si id_servicio es 4 o 5, toma el estado de estadoObservacion
+            const estadoParafraseo = await prisma.estadoParafraseo.findFirst({ orderBy: { id: 'asc' } });
+            if (estadoParafraseo) {
+                nuevoEstadoUsuario = estadoParafraseo.estado;
+            }
+        } else if (idServicio === '7') {
+            // Si id_servicio es 4 o 5, toma el estado de estadoObservacion
+            const estadoTrabajoSuficiencia = await prisma.estadoTrabajoSuficiencia.findFirst({ orderBy: { id: 'asc' } });
+            if (estadoTrabajoSuficiencia) {
+                nuevoEstadoUsuario = estadoTrabajoSuficiencia.estado;
+            }
+        } else if (idServicio === '8' || idServicio === '9' || idServicio === '10') {
+            // Si id_servicio es 4 o 5, toma el estado de estadoObservacion
+            const estadoArticulo = await prisma.estadoArticulo.findFirst({ orderBy: { id: 'asc' } });
+            if (estadoArticulo) {
+                nuevoEstadoUsuario = estadoArticulo.estado;
+            }
+        }else if (idServicio === '11') {
+            // Si id_servicio es 4 o 5, toma el estado de estadoObservacion
+            const estadoMonografia = await prisma.estadoMonografia.findFirst({ orderBy: { id: 'asc' } });
+            if (estadoMonografia) {
+                nuevoEstadoUsuario = estadoMonografia.estado;
+            }
+        }else if (idServicio === '12') {
+            // Si id_servicio es 4 o 5, toma el estado de estadoObservacion
+            const estadoPlanDeNegocio = await prisma.estadoPlanDeNegocio.findFirst({ orderBy: { id: 'asc' } });
+            if (estadoPlanDeNegocio) {
+                nuevoEstadoUsuario = estadoPlanDeNegocio.estado;
+            }
+        }else if (idServicio === '13') {
+            // Si id_servicio es 4 o 5, toma el estado de estadoObservacion
+            const estadoInformePracticas = await prisma.estadoInformePracticas.findFirst({ orderBy: { id: 'asc' } });
+            if (estadoInformePracticas) {
+                nuevoEstadoUsuario = estadoInformePracticas.estado;
+            }
+        }else if (idServicio === '14') {
+            // Si id_servicio es 4 o 5, toma el estado de estadoObservacion
+            const estadoTesinas = await prisma.estadoTesinas.findFirst({ orderBy: { id: 'asc' } });
+            if (estadoTesinas) {
+                nuevoEstadoUsuario = estadoTesinas.estado;
+            }
+        }else if (idServicio === '15') {
+            // Si id_servicio es 4 o 5, toma el estado de estadoObservacion
+            const estadoDiapositivas = await prisma.estadoDiapositivas.findFirst({ orderBy: { id: 'asc' } });
+            if (estadoDiapositivas) {
+                nuevoEstadoUsuario = estadoDiapositivas.estado;
+            }
         }
 
         if (nuevoEstadoUsuario) {
@@ -162,7 +210,7 @@ export const crearEstadoUsuario = async (req, res) => {
             return res.status(400).json({ error: 'No se pudo determinar un nuevo estado para el usuario.' });
         }
 
-        
+
     } catch (error) {
         return res.status(500).json({ error: 'Error interno del servidor' });
     }
