@@ -17,7 +17,13 @@ import { pdf_urlRouter } from "./routes/pdf_url.routes.js";
 import { estadoTesisRouter } from "./routes/estado_tesis.routes.js";
 import { estadoObservacionRouter } from "./routes/estado_observacion.routes.js";
 import { emailRouter } from "./routes/email.routes.js";
-
+import { estadoArticuloRouter } from "./routes/estado_articulo.routes.js";
+import { estadoTesinasRouter } from "./routes/estado_tesinas.routes.js";
+import { estadoTrabajoSuficienciaRouter } from "./routes/estado_trabajo_suficiencia.routes.js";
+import { estadoPlanNegocioRouter } from "./routes/estado_plan_de_negocio.routes.js";
+import { estadoMonografiaRouter } from "./routes/estado_monografia.routes.js";
+import { estadoInformePracticasRouter } from "./routes/estado_informe_de_practicas.routes.js";
+import { estadoDiapositivasRouter } from "./routes/estado_diapositivas.routes.js";
 
 const server = express();
 
@@ -76,6 +82,13 @@ server.use(estadoTesisRouter);
 server.use(estadoObservacionRouter);
 server.use(pdf_urlRouter);
 server.use(emailRouter);
+server.use(estadoArticuloRouter);
+server.use(estadoTesinasRouter);
+server.use(estadoTrabajoSuficienciaRouter);
+server.use(estadoPlanNegocioRouter);
+server.use(estadoMonografiaRouter);
+server.use(estadoInformePracticasRouter);
+server.use(estadoDiapositivasRouter);
 
 
 server.listen(PORT, () => {
