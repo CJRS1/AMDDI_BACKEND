@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-
 import multer from 'multer';
+import slugify from 'slugify';
+import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs/promises';
 
@@ -15,6 +16,30 @@ function getSaveDirectory() {
         ? railwayVolumeMountPath
         : path.join(import.meta.url, 'files');
 }
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const saveDirectory = getSaveDirectory();
+        cb(null, saveDirectory);
+    },
+    filename: function (req, file, cb) {
+        const filenameParsed = path.parse(file.originalname);
+        newFilename =
+            slugify(filenameParsed.name) + '-' + random(6) + filenameParsed.ext;
+        cb(null, newFilename);
+    },
+});
+
+
+function random(n) {
+    return crypto.randomBytes(n / 2).toString('hex');
+}
+
+
+
+const upload = multer({
+    storage: storage,
+}) 
 
 export const uploadFile = async (req, res) => {
     console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
@@ -50,13 +75,14 @@ export const uploadFile = async (req, res) => {
                 res.status(400).end('No se cargaron archivos');
                 return;
             }
-            if (req.files) {
-                console.log("Archivos subidos:");
-                console.log(req.files[0]);
-                req.files.forEach((file) => {
-                    console.log(file.filename);
-                });
-            }
+            const originalFilename = req.file.originalname;
+
+            // Nombre generado por Multer
+            const generatedFilename = req.file.filename;
+    
+            // Aquí puedes usar originalFilename o generatedFilename según tus necesidades
+            console.log("Nombre original del archivo:", originalFilename);
+            console.log("Nombre generado por Multer:", generatedFilename);
             // res.end('Archivos guardados');
         });
 
