@@ -30,8 +30,11 @@ export const uploadFile = async (req, res) => {
             return res.status(400).json({ msg: "No existe el usuario" });
         }
 
-        console.log("encontrò usuario")
+        console.log("encontrò usuario");
 
+        const upload = multer.single('file');
+        console.log(upload);
+        console.log(upload);
         upload(req, res, function (err) {
             if (err instanceof multer.MulterError) {
                 console.error(err);
