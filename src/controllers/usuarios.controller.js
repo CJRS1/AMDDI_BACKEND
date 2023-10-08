@@ -270,46 +270,14 @@ export const traerUsuarioPorToken = async (req, res) => {
                         pdf_url: true,
                     }
                 }
-                // asignacion: {
-                //     include: {
-                //         usuario: {
-                //             select: {
-                //                 id: true,
-                //                 nombre: true,
-                //                 apeMat: true,
-                //                 apePat: true,
-                //                 email: true,
-                //                 dni: true,
-                //                 rol: true,
-                //             }
-                //         }
-                //     },
-                // },
-                // asignacion_secundaria: {
-                //     include: {
-                //         usuario: {
-                //             select: {
-                //                 id: true,
-                //                 nombre: true,
-                //                 apeMat: true,
-                //                 apePat: true,
-                //                 email: true,
-                //                 dni: true,
-                //                 rol: true,
-                //                 tema: true,
-                //                 link_reunion: true,
-                //                 fecha_estimada: true,
-                //             }
-                //         }
-                //     }
-                // }
             },
         });
 
+        console.log("hola");
+        let estados = [];
 
-        if (usuario.usuario_servicio) {
+        if (usuario.usuario_servicio && Array.isArray(usuario.usuario_servicio) && usuario.usuario_servicio.length > 0) {
             console.log("Valor de usuario.usuario_servicio[0].servicio.id:", usuario.usuario_servicio[0].servicio.id);
-            let estados = [];
 
             if (
                 usuario.usuario_servicio[0].servicio.id === 1 ||
