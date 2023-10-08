@@ -1,17 +1,15 @@
+import { PrismaClient } from "@prisma/client";
 import slugify from 'slugify';
 import crypto from 'crypto';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs/promises';
 
+const prisma = new PrismaClient();
 
 function random(n) {
     return crypto.randomBytes(n / 2).toString('hex');
 }
-
-
-// Usar express.static para servir archivos estáticos en la ruta /files
-
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -35,8 +33,6 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-
-
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
@@ -51,28 +47,87 @@ function getSaveDirectory() {
         : path.join(import.meta.url, 'files');
 }
 
-export const uploadFile = (req, res) => {
+export const uploadFile = async (req, res) => {
 
     console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
+    try {
+        const { id } = req.params;
 
-    upload(req, res, function (err) {
-        if (err instanceof multer.MulterError) {
-            console.error(err);
-            res.status(500).end('Error de Multer');
-            return;
-        } else if (err) {
-            console.error(err);
-            res.status(500).end('Error desconocido');
-            return;
+        const usuarioExiste = await prisma.usuario.findUnique({
+            where: {
+                id: parseInt(id),
+            },
+        });
+
+        if (!usuarioExiste) {
+            return res.status(400).json({ msg: "No existe el usuario" });
         }
 
-        if (!req.files) {
-            res.status(400).end('No se cargaron archivos');
-            return;
+        console.log("encontrò usuario")
+
+        upload(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                console.error(err);
+                res.status(500).end('Error de Multer');
+                return;
+            } else if (err) {
+                console.error(err);
+                res.status(500).end('Error desconocido');
+                return;
+            }
+    
+            if (!req.files) {
+                res.status(400).end('No se cargaron archivos');
+                return;
+            }
+    
+            res.end('Archivos guardados');
+        });
+
+        console.log("se subio")
+
+        const fecha_pago = new Date();
+        console.log(fecha_pago);
+        console.log(fecha_pago);
+        console.log(fecha_pago);
+        fecha_pago.setHours(fecha_pago.getHours() - 5);
+
+        const fechaPagoFormateada = `${fecha_pago.getDate()}/${fecha_pago.getMonth() + 1}/${fecha_pago.getFullYear()}`;
+
+        // Obtén el nombre único del archivo subido desde req.file.filename
+        const archivoSubido = req.files[0];
+
+        if (!archivoSubido) {
+            return res.status(400).json({ msg: "Debes subir un archivo PDF" });
         }
 
-        res.end('Archivos guardados');
-    });
+        console.log(archivoSubido.filename);
+
+        // Genera una URL basada en el nombre único del archivo
+        const pdfUrl = `https://amddibackend-production-2880.up.railway.app/files/${archivoSubido.filename}`;
+
+        // Crea un registro en la base de datos con la URL del archivo
+        const usuarioPDFURL = await prisma.pdf_url.create({
+            data: {
+                fecha_pdf_url: fechaPagoFormateada,
+                usuarioId: parseInt(id),
+                pdf_url: pdfUrl, // Almacena la URL en el campo pdf_url
+            },
+        });
+
+        // Cambia la respuesta para que incluya un enlace de descarga
+        res.json({
+            msg: "PDF subido y URL generada correctamente",
+            usuarioPDFURL,
+            pdfUrl,
+            downloadLink: `${req.protocol}://${req.get("host")}${pdfUrl}`, // Genera un enlace de descarga absoluto
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error al subir el PDF y generar la URL" });
+    }
+
+
 };
 
 
