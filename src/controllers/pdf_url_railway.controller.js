@@ -1,24 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import slugify from 'slugify';
-import crypto from 'crypto';
-import multer from 'multer';
-import path from 'path';
 import fs from 'fs/promises';
 
 const prisma = new PrismaClient();
-
-function random(n) {
-    return crypto.randomBytes(n / 2).toString('hex');
-}
-
-
-const fileFilter = (req, file, cb) => {
-    if (file.mimetype === 'application/pdf') {
-        cb(null, true); // Acepta el archivo
-    } else {
-        cb(new Error('El archivo debe ser un PDF.'), false); // Rechaza el archivo
-    }
-};
 
 
 function getSaveDirectory() {
@@ -35,32 +18,6 @@ export const uploadFile = async (req, res) => {
     try {
 
         const { id } = req.params;
-        let newFilename;
-        const storage = multer.diskStorage({
-            destination: function (req, file, cb) {
-                const saveDirectory = getSaveDirectory();
-                cb(null, saveDirectory);
-            },
-            filename: function (req, file, cb) {
-                const filenameParsed = path.parse(file.originalname);
-                newFilename =
-                    slugify(filenameParsed.name) + '-' + random(6) + filenameParsed.ext;
-                console.log(newFilename);
-                console.log(newFilename);
-                console.log(newFilename);
-                console.log(newFilename);
-                console.log("hola")
-                cb(null, newFilename);
-            },
-        });
-
-        const upload = multer({
-            storage: storage,
-            fileFilter: fileFilter,
-        }).array('file'); // 'file' debe coincidir con el nombre del campo del formulario
-
-        
-
         const usuarioExiste = await prisma.usuario.findUnique({
             where: {
                 id: parseInt(id),
@@ -98,21 +55,9 @@ export const uploadFile = async (req, res) => {
             }
             // res.end('Archivos guardados');
         });
-
-        console.log("se subio")
-        console.log("se subio");
-        console.log(newFilename);
-        console.log(newFilename);
-        console.log(newFilename);
-
-        // if (req.files) {
-        //     console.log("Archivos subidos:");
-        //     req.files.forEach((file) => {
-        //         console.log("Nombre del archivo generado:", file.filename);
-        //     });
-        // } else {
-        //     console.log("No se cargaron archivos.");
-        // }
+        console.log("hola")
+        console.log(req.files[0].filename);
+        console.log(req.file.filename);
 
         console.log("hizo los ifs")
         const fecha_pago = new Date();
@@ -124,7 +69,7 @@ export const uploadFile = async (req, res) => {
 
         // Genera una URL basada en el nombre único del archivo
         // const pdfUrl = `/files/${newFilename}`;
-        const pdfUrl = `/files/${newFilename}`;
+        const pdfUrl = `/files/`;
         console.log(pdfUrl);
 
         // Crea un registro en la base de datos con la URL del archivo
