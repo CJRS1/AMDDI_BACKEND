@@ -112,9 +112,7 @@ export const verificationCode = async (req, res) => {
         const { email, verificationCode } = req.body;
         console.log(req.body);
         console.log(email, verificationCode)
-        console.log(email, verificationCode)
-        console.log(email, verificationCode)
-        console.log(email, verificationCode)
+
         const fechaActual = new Date();
 
         const usuarioTemporal = await prisma.usuarioTemporal.findUnique({
@@ -130,11 +128,6 @@ export const verificationCode = async (req, res) => {
         console.log(usuarioTemporal);
 
         if (!usuarioTemporal) {
-            await prisma.usuarioTemporal.delete({
-                where: {
-                    email,
-                },
-            });
             return res.status(400).json({ msg: "Código de verificación no válido o ha expirado." });
         }
 
