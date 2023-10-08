@@ -1,8 +1,37 @@
 import { PrismaClient } from "@prisma/client";
+import slugify from 'slugify';
+import crypto from 'crypto';
+import multer from 'multer';
+import path from 'path';
 import fs from 'fs/promises';
 
 const prisma = new PrismaClient();
 
+function random(n) {
+    return crypto.randomBytes(n / 2).toString('hex');
+}
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const saveDirectory = getSaveDirectory();
+        cb(null, saveDirectory);
+    },
+    filename: function (req, file, cb) {
+        const filenameParsed = path.parse(file.originalname);
+        newFilename =
+            slugify(filenameParsed.name) + '-' + random(6) + filenameParsed.ext;
+        console.log(newFilename);
+        console.log(newFilename);
+        console.log(newFilename);
+        console.log(newFilename);
+        console.log("hola")
+        cb(null, newFilename);
+    },
+});
+
+const upload = multer({
+    storage: storage,
+}) // 'file' debe coincidir con el nombre del campo del formulario
 
 function getSaveDirectory() {
     const railwayVolumeMountPath = process.env.RAILWAY_VOLUME_MOUNT_PATH;
@@ -16,8 +45,9 @@ function getSaveDirectory() {
 export const uploadFile = async (req, res) => {
     console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
     try {
-
+        console.log(req.file.name);
         const { id } = req.params;
+
         const usuarioExiste = await prisma.usuario.findUnique({
             where: {
                 id: parseInt(id),
@@ -55,9 +85,21 @@ export const uploadFile = async (req, res) => {
             }
             // res.end('Archivos guardados');
         });
-        console.log("hola")
-        console.log(req.files[0].filename);
-        console.log(req.file.filename);
+
+        console.log("se subio")
+        console.log("se subio");
+        console.log(newFilename);
+        console.log(newFilename);
+        console.log(newFilename);
+
+        // if (req.files) {
+        //     console.log("Archivos subidos:");
+        //     req.files.forEach((file) => {
+        //         console.log("Nombre del archivo generado:", file.filename);
+        //     });
+        // } else {
+        //     console.log("No se cargaron archivos.");
+        // }
 
         console.log("hizo los ifs")
         const fecha_pago = new Date();
