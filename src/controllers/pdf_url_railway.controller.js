@@ -52,7 +52,7 @@ function getSaveDirectory() {
 export const uploadFile = async (req, res) => {
     console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
     try {
-        const fileName ='';
+        const fileName = '';
         const { id } = req.params;
 
         const usuarioExiste = await prisma.usuario.findUnique({
@@ -66,7 +66,7 @@ export const uploadFile = async (req, res) => {
         }
 
         console.log("encontrò usuario")
-        
+
 
         upload(req, res, function (err) {
             if (err instanceof multer.MulterError) {
@@ -78,7 +78,7 @@ export const uploadFile = async (req, res) => {
                 res.status(500).end('Error desconocido');
                 return;
             }
-    
+
             if (!req.files) {
                 res.status(400).end('No se cargaron archivos');
                 return;
@@ -95,17 +95,14 @@ export const uploadFile = async (req, res) => {
 
         console.log("se subio")
 
-        if (req.file) {
-            console.log("Archivos subidos2:");
-            console.log(req.files[0].filename);
-        }
+        if (req.files && req.files.length > 0) {
+            const fileName = req.files[0].filename;
+            console.log("Nombre del archivo subido:", fileName);
 
-        if (req.files) {
-            console.log("Archivos subidos1:");
-            console.log(req.files[0].filename);
-            req.files.forEach((file) => {
-                console.log(file.filename);
-            });
+            // Resto del código para guardar la información en la base de datos y generar una URL, etc.
+        } else {
+            res.status(400).end('No se cargaron archivos');
+            return;
         }
 
         console.log("hizo los ifs")
