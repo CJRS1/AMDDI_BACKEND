@@ -27,11 +27,6 @@ const storage = multer.diskStorage({
     },
 });
 
-console.log(newFilename);
-console.log(newFilename);
-console.log(newFilename);
-console.log(newFilename);
-console.log(newFilename);
 
 const fileFilter = (req, file, cb) => {
     if (file.mimetype === 'application/pdf') {
@@ -56,7 +51,15 @@ function getSaveDirectory() {
 }
 
 export const uploadFile = async (req, res) => {
+    console.log("hola",newFilename);
+    console.log("hola",newFilename);
+    console.log("hola",newFilename);
+    console.log("hola",newFilename);
+    console.log("hola",newFilename);
 
+    console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
+    console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
+    console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
     console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
     try {
         const { id } = req.params;
