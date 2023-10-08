@@ -95,19 +95,20 @@ export const uploadFile = async (req, res) => {
 
         console.log("se subio")
 
+        if (req.file) {
+            console.log("Archivos subidos2:");
+            console.log(req.files[0].filename);
+        }
+
         if (req.files) {
             console.log("Archivos subidos1:");
-            console.log(req.files[0]);
+            console.log(req.files[0].filename);
             req.files.forEach((file) => {
                 console.log(file.filename);
             });
         }
 
-        if (req.file) {
-            console.log("Archivos subidos2:");
-            console.log(req.files[0]);
-        }
-
+        console.log("hizo los ifs")
         const fecha_pago = new Date();
         fecha_pago.setHours(fecha_pago.getHours() - 5);
 
