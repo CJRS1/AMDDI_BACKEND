@@ -360,7 +360,7 @@ export const sendVerificationCode = async (req, res) => {
         const codigoVerificacion = Math.floor(1000 + Math.random() * 9000);
 
         // Guardar el código de verificación en la base de datos asociado al correo electrónico
-        await prisma.usuario.update({
+        const usuario = await prisma.usuario.update({
             where: {
                 email: email,
             },
@@ -369,11 +369,22 @@ export const sendVerificationCode = async (req, res) => {
             },
         });
 
-        const mensaje = `Hola ${usuarioTemporal.nombre} ${usuarioTemporal.apePat}. Te saluda AMDDI, tú código de verificación es: ${usuarioTemporal.verification_code} \n\n ¡Que tenga un buen día!\n\n Saludos cordiales, \n AMDDI`
+        console.log(usuario);
+
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.titan.email',
+            port: 465,
+            auth: {
+                user: process.env.EMAIL, // Tu dirección de correo temporal de Ethereal
+                pass: process.env.PASS, // Tu contraseña temporal de Ethereal
+            },
+        });
+
+        const mensaje = `Hola ${usuario.nombre} ${usuario.apePat}. Te saluda AMDDI, tú código de verificación es: ${usuario.verification_code} \n\n ¡Que tenga un buen día!\n\n Saludos cordiales, \n AMDDI`
 
         const mailOptions = {
             from: process.env.EMAIL,
-            to: usuarioTemporal.email,
+            to: usuario.email,
             subject: 'Código de verificación AMDDI',
             text: mensaje,
         };
