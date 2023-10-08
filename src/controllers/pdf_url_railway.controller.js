@@ -104,7 +104,7 @@ export const uploadFile = async (req, res) => {
         console.log(archivoSubido.filename);
 
         // Genera una URL basada en el nombre único del archivo
-        const pdfUrl = `https://amddibackend-production-2880.up.railway.app/files/${archivoSubido.filename}`;
+        const pdfUrl = `/files/${archivoSubido.filename}`;
 
         // Crea un registro en la base de datos con la URL del archivo
         const usuarioPDFURL = await prisma.pdf_url.create({
