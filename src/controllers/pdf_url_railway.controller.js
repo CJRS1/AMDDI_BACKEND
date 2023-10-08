@@ -20,15 +20,13 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         const filenameParsed = path.parse(file.originalname);
-        newFilename =
+        const newFilename =
             slugify(filenameParsed.name) + '-' + random(6) + filenameParsed.ext;
 
         cb(null, newFilename);
     },
 });
 
-console.log("xd",newFilename);
-console.log("xd",newFilename);
 
 const fileFilter = (req, file, cb) => {
     if (file.mimetype === 'application/pdf') {
@@ -98,9 +96,12 @@ export const uploadFile = async (req, res) => {
 
         console.log("se subio")
 
-        console.log(newFilename);
-        console.log(newFilename);
-        console.log(newFilename);
+        const newFilename = req.files[0].filename;
+        console.log("Nombre del archivo generado:", newFilename);
+        console.log("Nombre del archivo generado:", newFilename);
+        console.log("Nombre del archivo generado:", newFilename);
+        console.log("Nombre del archivo generado:", newFilename);
+
         console.log("hizo los ifs")
         const fecha_pago = new Date();
         fecha_pago.setHours(fecha_pago.getHours() - 5);
