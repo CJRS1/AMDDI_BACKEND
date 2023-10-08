@@ -32,9 +32,6 @@ export const uploadFile = async (req, res) => {
 
         console.log("encontrò usuario");
 
-        const upload = multer.single('file');
-        console.log(upload);
-        console.log(upload);
         // upload(req, res, function (err) {
         //     if (err instanceof multer.MulterError) {
         //         console.error(err);
