@@ -1,14 +1,14 @@
 import { Router } from "express";
+import express from "express";
+import multer from 'multer'; // Importar multer antes de su uso
+import slugify from 'slugify';
+import path from 'path';
+import crypto from 'crypto';
 import {
     uploadFile,
     listFiles,
     deleteFile
 } from "../controllers/pdf_url_railway.controller.js";
-import express from "express";
-import multer from 'multer';
-import slugify from 'slugify';
-import path from 'path'; // Agrega esta línea
-import crypto from 'crypto';
 
 function getSaveDirectory() {
     const railwayVolumeMountPath = process.env.RAILWAY_VOLUME_MOUNT_PATH;
@@ -42,10 +42,10 @@ const upload = multer({
     storage: storage,
 })
 
-console.log("aquí entró prinero")
 
 export const fileRouter = Router();
 
+console.log("aquí entró prinero");
 fileRouter.post("/upload/:id",upload.single('file'),uploadFile);
 fileRouter.get("/list", listFiles);
 fileRouter.delete("/delete", deleteFile);

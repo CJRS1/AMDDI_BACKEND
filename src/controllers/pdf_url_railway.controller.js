@@ -32,7 +32,6 @@ export const uploadFile = async (req, res) => {
 
         console.log("encontrò usuario")
 
-
         upload(req, res, function (err) {
             if (err instanceof multer.MulterError) {
                 console.error(err);
@@ -50,7 +49,6 @@ export const uploadFile = async (req, res) => {
             }
             // res.end('Archivos guardados');
         });
-
 
         console.log("hoal",req.file.filename)
 
