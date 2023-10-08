@@ -11,6 +11,7 @@ function random(n) {
     return crypto.randomBytes(n / 2).toString('hex');
 }
 
+const newFilename = '';
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -19,13 +20,15 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         const filenameParsed = path.parse(file.originalname);
-        const newFilename =
+        newFilename =
             slugify(filenameParsed.name) + '-' + random(6) + filenameParsed.ext;
 
         cb(null, newFilename);
     },
 });
 
+console.log("xd",newFilename);
+console.log("xd",newFilename);
 
 const fileFilter = (req, file, cb) => {
     if (file.mimetype === 'application/pdf') {
@@ -95,9 +98,9 @@ export const uploadFile = async (req, res) => {
 
         console.log("se subio")
 
-        console.log(req.files[0].filename);
-        console.log(req.file.filename);
-
+        console.log(newFilename);
+        console.log(newFilename);
+        console.log(newFilename);
         console.log("hizo los ifs")
         const fecha_pago = new Date();
         fecha_pago.setHours(fecha_pago.getHours() - 5);
