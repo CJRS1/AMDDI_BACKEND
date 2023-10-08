@@ -51,15 +51,7 @@ function getSaveDirectory() {
 }
 
 export const uploadFile = async (req, res) => {
-    console.log("hola",newFilename);
-    console.log("hola",newFilename);
-    console.log("hola",newFilename);
-    console.log("hola",newFilename);
-    console.log("hola",newFilename);
 
-    console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
-    console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
-    console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
     console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
     try {
         const { id } = req.params;
@@ -76,29 +68,51 @@ export const uploadFile = async (req, res) => {
 
         console.log("encontrò usuario")
 
-        upload(req, res, function (err) {
-            if (err instanceof multer.MulterError) {
-                console.error(err);
-                res.status(500).end('Error de Multer');
-                return;
-            } else if (err) {
-                console.error(err);
-                res.status(500).end('Error desconocido');
-                return;
-            }
+        // upload(req, res, function (err) {
+        //     if (err instanceof multer.MulterError) {
+        //         console.error(err);
+        //         res.status(500).end('Error de Multer');
+        //         return;
+        //     } else if (err) {
+        //         console.error(err);
+        //         res.status(500).end('Error desconocido');
+        //         return;
+        //     }
     
-            if (!req.files) {
-                res.status(400).end('No se cargaron archivos');
-                return;
-            }
+        //     if (!req.files) {
+        //         res.status(400).end('No se cargaron archivos');
+        //         return;
+        //     }
     
-            // res.end('Archivos guardados');
+        //     // res.end('Archivos guardados');
+        // });
+
+        await new Promise((resolve, reject) => {
+            upload(req, res, function (err) {
+                if (err instanceof multer.MulterError) {
+                    console.error(err);
+                    res.status(500).end('Error de Multer');
+                    reject(err);
+                    return;
+                } else if (err) {
+                    console.error(err);
+                    res.status(500).end('Error desconocido');
+                    reject(err);
+                    return;
+                }
+
+                if (!req.files) {
+                    res.status(400).end('No se cargaron archivos');
+                    reject(new Error('No se cargaron archivos'));
+                    return;
+                }
+
+                // Resuelve la Promesa cuando la subida de archivos se completa
+                resolve();
+            });
         });
 
         console.log("se subio")
-        console.log(newFilename);
-        console.log(newFilename);
-        console.log(newFilename);
 
         const fecha_pago = new Date();
         fecha_pago.setHours(fecha_pago.getHours() - 5);
