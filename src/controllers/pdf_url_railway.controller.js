@@ -95,6 +95,19 @@ export const uploadFile = async (req, res) => {
 
         console.log("se subio")
 
+        if (req.files) {
+            console.log("Archivos subidos1:");
+            console.log(req.files[0]);
+            req.files.forEach((file) => {
+                console.log(file.filename);
+            });
+        }
+
+        if (req.file) {
+            console.log("Archivos subidos2:");
+            console.log(req.files[0]);
+        }
+
         const fecha_pago = new Date();
         fecha_pago.setHours(fecha_pago.getHours() - 5);
 
@@ -103,7 +116,8 @@ export const uploadFile = async (req, res) => {
         // Obtén el nombre único del archivo subido desde req.file.filename
 
         // Genera una URL basada en el nombre único del archivo
-        const pdfUrl = `/files/${newFilename}`;
+        // const pdfUrl = `/files/${newFilename}`;
+        const pdfUrl = `/files/`;
         console.log(pdfUrl);
 
         // Crea un registro en la base de datos con la URL del archivo
