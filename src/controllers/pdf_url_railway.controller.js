@@ -39,12 +39,12 @@ function random(n) {
 
 const upload = multer({
     storage: storage,
-}) 
+})
 
 export const uploadFile = async (req, res) => {
     console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
     try {
-        console.log(req.file.filename);
+
         const { id } = req.params;
 
         const usuarioExiste = await prisma.usuario.findUnique({
@@ -79,7 +79,7 @@ export const uploadFile = async (req, res) => {
 
             // Nombre generado por Multer
             const generatedFilename = req.file.filename;
-    
+
             // Aquí puedes usar originalFilename o generatedFilename según tus necesidades
             console.log("Nombre original del archivo:", originalFilename);
             console.log("Nombre generado por Multer:", generatedFilename);
