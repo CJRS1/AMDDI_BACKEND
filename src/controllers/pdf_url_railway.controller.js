@@ -49,12 +49,7 @@ export const uploadFile = async (req, res) => {
         //     }
         //     // res.end('Archivos guardados');
         // });
-        if (err instanceof Error) {
-            // Aquí puedes manejar el error de forma genérica, ya que cualquier error será una instancia de Error
-            console.error(err);
-            res.status(500).end('Error desconocido');
-            return;
-        }
+
         
         // Verifica si req.file no está definido
         if (!req.file) {
@@ -62,7 +57,6 @@ export const uploadFile = async (req, res) => {
             return;
         }
         
-
         console.log("hoal", req.file.filename);
 
         const fecha_pago = new Date();
