@@ -8,6 +8,9 @@ function random(n) {
     return crypto.randomBytes(n / 2).toString('hex');
 }
 
+const saveDirectory = getSaveDirectory();
+console.log("using storage location: " + saveDirectory);
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const saveDirectory = getSaveDirectory();
@@ -63,9 +66,9 @@ export const uploadFile = (req, res) => {
     });
 };
 
+
 export const listFiles = async (req, res) => {
     const saveDirectory = getSaveDirectory();
-
     try {
         const files = await fs.readdir(saveDirectory);
 
