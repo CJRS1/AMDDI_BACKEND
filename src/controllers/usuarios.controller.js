@@ -307,9 +307,6 @@ export const traerUsuarioPorToken = async (req, res) => {
         });
 
 
-        console.log("Valor de usuario.usuario_servicio[0].servicio.id:", usuario.usuario_servicio[0].servicio.id);
-        let estados = [];
-
         if (usuario.usuario_servicio) {
             console.log("Valor de usuario.usuario_servicio[0].servicio.id:", usuario.usuario_servicio[0].servicio.id);
             let estados = [];
