@@ -93,10 +93,10 @@ export const uploadFile = async (req, res) => {
         fecha_pago.setHours(fecha_pago.getHours() - 5);
 
         const fechaPagoFormateada = `${fecha_pago.getDate()}/${fecha_pago.getMonth() + 1}/${fecha_pago.getFullYear()}`;
-
+        console.log(fechaPagoFormateada);
         // Obtén el nombre único del archivo subido desde req.file.filename
         const archivoSubido = req.file;
-
+        console.log("leyó el archivo")
         if (!archivoSubido) {
             return res.status(400).json({ msg: "Debes subir un archivo PDF" });
         }
