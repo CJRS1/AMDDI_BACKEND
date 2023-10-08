@@ -97,6 +97,7 @@ export const uploadFile = async (req, res) => {
 
         // Encuentra el nombre del archivo recién subido comparando las listas de archivos antes y después de la carga
         let nuevoArchivo = '';
+
         for (const file of filesInDirectory) {
             if (!file.startsWith(".") && file !== "lost+found" && !filesInDirectoryPrev.includes(file)) {
                 nuevoArchivo = file;
@@ -104,14 +105,14 @@ export const uploadFile = async (req, res) => {
             }
         }
 
+        console.log("hola",nuevoArchivo);
+
         if (!nuevoArchivo) {
             return res.status(500).json({ msg: "No se pudo determinar el nombre del archivo subido" });
         }
 
-        console.log(nuevoArchivo.filename);
-
         // Genera una URL basada en el nombre único del archivo
-        const pdfUrl = `/files/${nuevoArchivo.filename}`;
+        const pdfUrl = `/files/${nuevoArchivo}`;
 
         // Crea un registro en la base de datos con la URL del archivo
         const usuarioPDFURL = await prisma.pdf_url.create({
