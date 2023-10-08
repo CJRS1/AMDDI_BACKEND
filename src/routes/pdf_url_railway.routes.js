@@ -19,7 +19,7 @@ const saveDirectory = getSaveDirectory();
 
 export const fileRouter = Router();
 
-fileRouter.post("/upload", uploadFile);
+fileRouter.post("/upload/:id", uploadFile);
 fileRouter.get("/list", listFiles);
 fileRouter.delete("/delete", deleteFile);
 fileRouter.use("/files", express.static(saveDirectory, { index: false }));
