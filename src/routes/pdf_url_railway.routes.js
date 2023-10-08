@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 import { Router } from "express";
 import {
     uploadFile,
@@ -6,17 +6,8 @@ import {
     deleteFile
 } from "../controllers/pdf_url_railway.controller.js";
 
-console.log("Aquí es la ruta", process.env.RAILWAY_VOLUME_MOUNT_PATH);
-
-export const fileRouter = Router();
-
-fileRouter.post("/upload", uploadFile);
-fileRouter.get("/list", listFiles);
-fileRouter.delete("/delete", deleteFile);
-
 
 const saveDirectory = getSaveDirectory();
-// Reemplaza esto con la ubicación de tus archivos estáticos.
 
 function getSaveDirectory() {
     const railwayVolumeMountPath = process.env.RAILWAY_VOLUME_MOUNT_PATH;
@@ -27,6 +18,11 @@ function getSaveDirectory() {
         : path.join(import.meta.url, 'files');
 }
 
+export const fileRouter = Router();
 
-// Usar express.static para servir archivos estáticos en la ruta /files
+fileRouter.post("/upload", uploadFile);
+fileRouter.get("/list", listFiles);
+fileRouter.delete("/delete", deleteFile);
 fileRouter.use("/files", express.static(saveDirectory, { index: false }));
+console.log("Usando el storage: " + saveDirectory);
+

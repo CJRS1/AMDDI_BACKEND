@@ -4,13 +4,14 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs/promises';
 
+
 function random(n) {
     return crypto.randomBytes(n / 2).toString('hex');
 }
 
-const saveDirectory = getSaveDirectory();
 
-console.log("using storage location: " + saveDirectory);
+// Usar express.static para servir archivos estáticos en la ruta /files
+
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -34,6 +35,8 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
+
+
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
@@ -41,7 +44,7 @@ const upload = multer({
 
 function getSaveDirectory() {
     const railwayVolumeMountPath = process.env.RAILWAY_VOLUME_MOUNT_PATH;
-    console.log("Está realizando el getSaveDirectory",railwayVolumeMountPath);
+    console.log("Está realizando el getSaveDirectory", railwayVolumeMountPath);
 
     return railwayVolumeMountPath
         ? railwayVolumeMountPath
@@ -49,6 +52,9 @@ function getSaveDirectory() {
 }
 
 export const uploadFile = (req, res) => {
+
+    console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
+
     upload(req, res, function (err) {
         if (err instanceof multer.MulterError) {
             console.error(err);
