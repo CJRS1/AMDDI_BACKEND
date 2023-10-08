@@ -63,4 +63,43 @@ export const uploadFile = (req, res) => {
     });
 };
 
+export const listFiles = async (req, res) => {
+    const saveDirectory = getSaveDirectory();
+
+    try {
+        const files = await fs.readdir(saveDirectory);
+
+        for (const file of files) {
+            if (file.startsWith(".") || file === "lost+found") {
+                continue;
+            }
+
+            res.write(file + "\n");
+        }
+
+        res.end();
+    } catch (err) {
+        console.error('Unable to scan directory: ' + err);
+        res.end("Unable to scan directory");
+    }
+};
+
 // Resto de tu código para listar y eliminar archivos...
+export const deleteFile = async (req, res) => {
+    const file = req.query.file;
+
+    if (!file) {
+        res.status(400).send("no file query parameter found");
+        return;
+    }
+
+    const filepath = path.join(getSaveDirectory(), file);
+
+    try {
+        await fs.unlink(filepath);
+        res.send("File removed");
+    } catch (err) {
+        console.error("Unable to remove file: " + file + "\n" + err);
+        res.status(500).send("Unable to remove file");
+    }
+};
