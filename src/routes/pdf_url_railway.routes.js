@@ -7,7 +7,8 @@ import crypto from 'crypto';
 import {
     uploadFile,
     listFiles,
-    deleteFile
+    deleteFile,
+    updateFile
 } from "../controllers/pdf_url_railway.controller.js";
 
 function getSaveDirectory() {
@@ -45,8 +46,8 @@ const upload = multer({
 
 export const fileRouter = Router();
 
-console.log("aquí entró prinero");
 fileRouter.post("/upload/:id",upload.single('file'),uploadFile);
+fileRouter.post("/update/:id",upload.single('file'),updateFile);
 fileRouter.get("/list", listFiles);
 fileRouter.delete("/delete", deleteFile);
 fileRouter.use("/files", express.static(saveDirectory, { index: false }));

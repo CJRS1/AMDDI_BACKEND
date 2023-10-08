@@ -32,31 +32,12 @@ export const uploadFile = async (req, res) => {
 
         console.log("encontrò usuario");
 
-        // upload(req, res, function (err) {
-        //     if (err instanceof multer.MulterError) {
-        //         console.error(err);
-        //         res.status(500).end('Error de Multer');
-        //         return;
-        //     } else if (err) {
-        //         console.error(err);
-        //         res.status(500).end('Error desconocido');
-        //         return;
-        //     }
-
-        //     if (!req.files) {
-        //         res.status(400).end('No se cargaron archivos');
-        //         return;
-        //     }
-        //     // res.end('Archivos guardados');
-        // });
-
-        
         // Verifica si req.file no está definido
         if (!req.file) {
             res.status(400).end('No se cargó un archivo');
             return;
         }
-        
+
         console.log("hoal", req.file.filename);
         const fileName = req.file.filename;
 
@@ -85,8 +66,8 @@ export const uploadFile = async (req, res) => {
         res.json({
             msg: "PDF subido y URL generada correctamente",
             usuarioPDFURL,
-            // pdfUrl,
-            // downloadLink: `${req.protocol}://${req.get("host")}${pdfUrl}`, // Genera un enlace de descarga absoluto
+            pdfUrl,
+            downloadLink: `${req.protocol}://${req.get("host")}${pdfUrl}`, // Genera un enlace de descarga absoluto
         });
     } catch (error) {
         console.error(error);
@@ -134,3 +115,64 @@ export const deleteFile = async (req, res) => {
         res.status(500).send("Unable to remove file");
     }
 };
+
+export const updateFile = async (req, res) => {
+    console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
+    try {
+
+        const { id } = req.params;
+
+        const usuarioExiste = await prisma.usuario.findUnique({
+            where: {
+                id: parseInt(id),
+            },
+        });
+
+        if (!usuarioExiste) {
+            return res.status(400).json({ msg: "No existe el usuario" });
+        }
+
+        console.log("encontrò usuario");
+
+        // Verifica si req.file no está definido
+        if (!req.file) {
+            res.status(400).end('No se cargó un archivo');
+            return;
+        }
+
+        console.log("hoal", req.file.filename);
+        const fileName = req.file.filename;
+
+        const fecha_pago = new Date();
+        fecha_pago.setHours(fecha_pago.getHours() - 5);
+
+        const fechaPagoFormateada = `${fecha_pago.getDate()}/${fecha_pago.getMonth() + 1}/${fecha_pago.getFullYear()}`;
+        console.log(fechaPagoFormateada);
+        // Obtén el nombre único del archivo subido desde req.file.filename
+
+        // Genera una URL basada en el nombre único del archivo
+        // const pdfUrl = `/files/${newFilename}`;
+        const pdfUrl = `/files/${fileName}`;
+        console.log(pdfUrl);
+
+        // Crea un registro en la base de datos con la URL del archivo
+        const usuarioPDFURL = await prisma.pdf_url.update({
+            data: {
+                fecha_pdf_url: fechaPagoFormateada,
+                usuarioId: parseInt(id),
+                pdf_url: pdfUrl, // Almacena la URL en el campo pdf_url
+            },
+        });
+
+        // Cambia la respuesta para que incluya un enlace de descarga
+        res.json({
+            msg: "PDF subido y URL actualizadas",
+            usuarioPDFURL,
+            pdfUrl,
+            downloadLink: `${req.protocol}://${req.get("host")}${pdfUrl}`, // Genera un enlace de descarga absoluto
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error al subir el PDF y generar la URL" });
+    }
+}
