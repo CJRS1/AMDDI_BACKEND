@@ -248,6 +248,7 @@ export const traerUsuarioPorToken = async (req, res) => {
                 dni: true,
                 rol: true,
                 pais: true,
+                carrera: true,
                 departamento: true,
                 fecha_estimada: true,
                 monto_restante: true,
