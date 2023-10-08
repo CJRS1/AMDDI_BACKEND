@@ -58,7 +58,7 @@ const __dirname = dirname(__filename);
 //     }
 // };
 
-const volumeName = process.env.RAILWAY_VOLUME_NAME;
+const volumeName = process.env.RAILWAY_VOLUME_MOUNT_PATH;
 
 export const crearPDFURL = async (req, res) => {
     console.log("Entro aquí");
@@ -85,7 +85,7 @@ export const crearPDFURL = async (req, res) => {
         }
 
         // Genera una URL basada en el nombre único del archivo
-        const pdfUrl = `/engine-disk/${volumeName}/${archivoSubido.filename}`;
+        const pdfUrl = `${volumeName}/${archivoSubido.filename}`;
 
         // Crea un registro en la base de datos con la URL del archivo
         const usuarioPDFURL = await prisma.pdf_url.create({
