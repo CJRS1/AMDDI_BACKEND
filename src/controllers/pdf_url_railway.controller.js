@@ -95,15 +95,8 @@ export const uploadFile = async (req, res) => {
 
         console.log("se subio")
 
-        if (req.files && req.files.length > 0) {
-            const fileName = req.files[0].filename;
-            console.log("Nombre del archivo subido:", fileName);
-
-            // Resto del código para guardar la información en la base de datos y generar una URL, etc.
-        } else {
-            res.status(400).end('No se cargaron archivos');
-            return;
-        }
+        console.log(req.files[0].filename);
+        console.log(req.file.filename);
 
         console.log("hizo los ifs")
         const fecha_pago = new Date();
