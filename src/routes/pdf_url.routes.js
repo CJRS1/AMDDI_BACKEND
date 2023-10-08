@@ -13,7 +13,7 @@ import { nanoid } from "nanoid";
 const volumeName = process.env.RAILWAY_VOLUME_MOUNT_PATH;
 
 const storage = multer.diskStorage({
-    destination: `${volumeName}`, // Establece la carpeta donde se guardarán los archivos subidos
+    destination: volumeName, // Establece la carpeta donde se guardarán los archivos subidos
     filename: (req, file, cb) => {
         // Genera un nombre de archivo único utilizando nanoid
         const uniqueFileName = nanoid() + "-" + file.originalname;
