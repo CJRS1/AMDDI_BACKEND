@@ -45,7 +45,7 @@ function getSaveDirectory() {
 export const uploadFile = async (req, res) => {
     console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
     try {
-        console.log(req.file.name);
+        console.log(req.file.filename);
         const { id } = req.params;
 
         const usuarioExiste = await prisma.usuario.findUnique({
@@ -86,20 +86,6 @@ export const uploadFile = async (req, res) => {
             // res.end('Archivos guardados');
         });
 
-        console.log("se subio")
-        console.log("se subio");
-        console.log(newFilename);
-        console.log(newFilename);
-        console.log(newFilename);
-
-        // if (req.files) {
-        //     console.log("Archivos subidos:");
-        //     req.files.forEach((file) => {
-        //         console.log("Nombre del archivo generado:", file.filename);
-        //     });
-        // } else {
-        //     console.log("No se cargaron archivos.");
-        // }
 
         console.log("hizo los ifs")
         const fecha_pago = new Date();
