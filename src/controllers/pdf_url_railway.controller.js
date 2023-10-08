@@ -35,25 +35,38 @@ export const uploadFile = async (req, res) => {
         const upload = multer.single('file');
         console.log(upload);
         console.log(upload);
-        upload(req, res, function (err) {
-            if (err instanceof multer.MulterError) {
-                console.error(err);
-                res.status(500).end('Error de Multer');
-                return;
-            } else if (err) {
-                console.error(err);
-                res.status(500).end('Error desconocido');
-                return;
-            }
+        // upload(req, res, function (err) {
+        //     if (err instanceof multer.MulterError) {
+        //         console.error(err);
+        //         res.status(500).end('Error de Multer');
+        //         return;
+        //     } else if (err) {
+        //         console.error(err);
+        //         res.status(500).end('Error desconocido');
+        //         return;
+        //     }
 
-            if (!req.files) {
-                res.status(400).end('No se cargaron archivos');
-                return;
-            }
-            // res.end('Archivos guardados');
-        });
+        //     if (!req.files) {
+        //         res.status(400).end('No se cargaron archivos');
+        //         return;
+        //     }
+        //     // res.end('Archivos guardados');
+        // });
+        if (err instanceof Error) {
+            // Aquí puedes manejar el error de forma genérica, ya que cualquier error será una instancia de Error
+            console.error(err);
+            res.status(500).end('Error desconocido');
+            return;
+        }
+        
+        // Verifica si req.file no está definido
+        if (!req.file) {
+            res.status(400).end('No se cargó un archivo');
+            return;
+        }
+        
 
-        console.log("hoal",req.file.filename)
+        console.log("hoal", req.file.filename);
 
         const fecha_pago = new Date();
         fecha_pago.setHours(fecha_pago.getHours() - 5);
