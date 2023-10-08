@@ -9,6 +9,7 @@ function random(n) {
 }
 
 const saveDirectory = getSaveDirectory();
+
 console.log("using storage location: " + saveDirectory);
 
 const storage = multer.diskStorage({
@@ -40,6 +41,8 @@ const upload = multer({
 
 function getSaveDirectory() {
     const railwayVolumeMountPath = process.env.RAILWAY_VOLUME_MOUNT_PATH;
+    console.log("Está realizando el getSaveDirectory",railwayVolumeMountPath);
+
     return railwayVolumeMountPath
         ? railwayVolumeMountPath
         : path.join(import.meta.url, 'files');
