@@ -11,7 +11,6 @@ function random(n) {
     return crypto.randomBytes(n / 2).toString('hex');
 }
 
-const newFilename = '';
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -20,6 +19,10 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         const filenameParsed = path.parse(file.originalname);
+        console.log("subio",filenameParsed);
+        console.log("subio",filenameParsed);
+        console.log("subio",filenameParsed);
+        console.log("subio",filenameParsed);
         const newFilename =
             slugify(filenameParsed.name) + '-' + random(6) + filenameParsed.ext;
 
@@ -53,7 +56,7 @@ function getSaveDirectory() {
 export const uploadFile = async (req, res) => {
     console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
     try {
-        const fileName = '';
+
         const { id } = req.params;
 
         const usuarioExiste = await prisma.usuario.findUnique({
@@ -95,7 +98,17 @@ export const uploadFile = async (req, res) => {
         });
 
         console.log("se subio")
+        console.log("se subio");
 
+        if (req.files) {
+            console.log("Archivos subidos:");
+            req.files.forEach((file) => {
+                console.log("Nombre del archivo generado:", file.filename);
+            });
+        } else {
+            console.log("No se cargaron archivos.");
+        }
+        
         const newFilename = req.files[0].filename;
         console.log("Nombre del archivo generado:", newFilename);
         console.log("Nombre del archivo generado:", newFilename);
