@@ -35,7 +35,7 @@ export const uploadFile = async (req, res) => {
     try {
 
         const { id } = req.params;
-
+        let newFilename;
         const storage = multer.diskStorage({
             destination: function (req, file, cb) {
                 const saveDirectory = getSaveDirectory();
@@ -43,9 +43,13 @@ export const uploadFile = async (req, res) => {
             },
             filename: function (req, file, cb) {
                 const filenameParsed = path.parse(file.originalname);
-                const newFilename =
+                newFilename =
                     slugify(filenameParsed.name) + '-' + random(6) + filenameParsed.ext;
-
+                console.log(newFilename);
+                console.log(newFilename);
+                console.log(newFilename);
+                console.log(newFilename);
+                console.log("hola")
                 cb(null, newFilename);
             },
         });
@@ -97,21 +101,18 @@ export const uploadFile = async (req, res) => {
 
         console.log("se subio")
         console.log("se subio");
+        console.log(newFilename);
+        console.log(newFilename);
+        console.log(newFilename);
 
-        if (req.files) {
-            console.log("Archivos subidos:");
-            req.files.forEach((file) => {
-                console.log("Nombre del archivo generado:", file.filename);
-            });
-        } else {
-            console.log("No se cargaron archivos.");
-        }
-
-        const newFilename = req.files[0].filename;
-        console.log("Nombre del archivo generado:", newFilename);
-        console.log("Nombre del archivo generado:", newFilename);
-        console.log("Nombre del archivo generado:", newFilename);
-        console.log("Nombre del archivo generado:", newFilename);
+        // if (req.files) {
+        //     console.log("Archivos subidos:");
+        //     req.files.forEach((file) => {
+        //         console.log("Nombre del archivo generado:", file.filename);
+        //     });
+        // } else {
+        //     console.log("No se cargaron archivos.");
+        // }
 
         console.log("hizo los ifs")
         const fecha_pago = new Date();
@@ -123,7 +124,7 @@ export const uploadFile = async (req, res) => {
 
         // Genera una URL basada en el nombre único del archivo
         // const pdfUrl = `/files/${newFilename}`;
-        const pdfUrl = `/files/`;
+        const pdfUrl = `/files/${newFilename}`;
         console.log(pdfUrl);
 
         // Crea un registro en la base de datos con la URL del archivo
