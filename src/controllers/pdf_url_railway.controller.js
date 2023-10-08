@@ -11,7 +11,6 @@ function random(n) {
     return crypto.randomBytes(n / 2).toString('hex');
 }
 
-let newFilename;
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -20,7 +19,7 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         const filenameParsed = path.parse(file.originalname);
-        newFilename =
+        const newFilename =
             slugify(filenameParsed.name) + '-' + random(6) + filenameParsed.ext;
 
         cb(null, newFilename);
@@ -51,9 +50,9 @@ function getSaveDirectory() {
 }
 
 export const uploadFile = async (req, res) => {
-
     console.log("Aquí esta en upload", process.env.RAILWAY_VOLUME_MOUNT_PATH);
     try {
+        const fileName ='';
         const { id } = req.params;
 
         const usuarioExiste = await prisma.usuario.findUnique({
@@ -67,49 +66,31 @@ export const uploadFile = async (req, res) => {
         }
 
         console.log("encontrò usuario")
+        
 
-        // upload(req, res, function (err) {
-        //     if (err instanceof multer.MulterError) {
-        //         console.error(err);
-        //         res.status(500).end('Error de Multer');
-        //         return;
-        //     } else if (err) {
-        //         console.error(err);
-        //         res.status(500).end('Error desconocido');
-        //         return;
-        //     }
+        upload(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                console.error(err);
+                res.status(500).end('Error de Multer');
+                return;
+            } else if (err) {
+                console.error(err);
+                res.status(500).end('Error desconocido');
+                return;
+            }
     
-        //     if (!req.files) {
-        //         res.status(400).end('No se cargaron archivos');
-        //         return;
-        //     }
-    
-        //     // res.end('Archivos guardados');
-        // });
-
-        await new Promise((resolve, reject) => {
-            upload(req, res, function (err) {
-                if (err instanceof multer.MulterError) {
-                    console.error(err);
-                    res.status(500).end('Error de Multer');
-                    reject(err);
-                    return;
-                } else if (err) {
-                    console.error(err);
-                    res.status(500).end('Error desconocido');
-                    reject(err);
-                    return;
-                }
-
-                if (!req.files) {
-                    res.status(400).end('No se cargaron archivos');
-                    reject(new Error('No se cargaron archivos'));
-                    return;
-                }
-
-                // Resuelve la Promesa cuando la subida de archivos se completa
-                resolve();
-            });
+            if (!req.files) {
+                res.status(400).end('No se cargaron archivos');
+                return;
+            }
+            if (req.files) {
+                console.log("Archivos subidos:");
+                console.log(req.files[0]);
+                req.files.forEach((file) => {
+                    console.log(file.filename);
+                });
+            }
+            // res.end('Archivos guardados');
         });
 
         console.log("se subio")
@@ -133,20 +114,18 @@ export const uploadFile = async (req, res) => {
                 pdf_url: pdfUrl, // Almacena la URL en el campo pdf_url
             },
         });
-        console.log(usuarioPDFURL);
+
         // Cambia la respuesta para que incluya un enlace de descarga
         res.json({
             msg: "PDF subido y URL generada correctamente",
             usuarioPDFURL,
-            pdfUrl,
-            downloadLink: `${req.protocol}://${req.get("host")}${pdfUrl}`, // Genera un enlace de descarga absoluto
+            // pdfUrl,
+            // downloadLink: `${req.protocol}://${req.get("host")}${pdfUrl}`, // Genera un enlace de descarga absoluto
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: "Error al subir el PDF y generar la URL" });
     }
-
-
 };
 
 
