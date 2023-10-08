@@ -12,25 +12,6 @@ function random(n) {
 }
 
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const saveDirectory = getSaveDirectory();
-        cb(null, saveDirectory);
-    },
-    filename: function (req, file, cb) {
-        const filenameParsed = path.parse(file.originalname);
-        console.log("subio",filenameParsed);
-        console.log("subio",filenameParsed);
-        console.log("subio",filenameParsed);
-        console.log("subio",filenameParsed);
-        const newFilename =
-            slugify(filenameParsed.name) + '-' + random(6) + filenameParsed.ext;
-
-        cb(null, newFilename);
-    },
-});
-
-
 const fileFilter = (req, file, cb) => {
     if (file.mimetype === 'application/pdf') {
         cb(null, true); // Acepta el archivo
@@ -39,10 +20,6 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-const upload = multer({
-    storage: storage,
-    fileFilter: fileFilter,
-}).array('file'); // 'file' debe coincidir con el nombre del campo del formulario
 
 function getSaveDirectory() {
     const railwayVolumeMountPath = process.env.RAILWAY_VOLUME_MOUNT_PATH;
@@ -58,6 +35,27 @@ export const uploadFile = async (req, res) => {
     try {
 
         const { id } = req.params;
+
+        const storage = multer.diskStorage({
+            destination: function (req, file, cb) {
+                const saveDirectory = getSaveDirectory();
+                cb(null, saveDirectory);
+            },
+            filename: function (req, file, cb) {
+                const filenameParsed = path.parse(file.originalname);
+                const newFilename =
+                    slugify(filenameParsed.name) + '-' + random(6) + filenameParsed.ext;
+
+                cb(null, newFilename);
+            },
+        });
+
+        const upload = multer({
+            storage: storage,
+            fileFilter: fileFilter,
+        }).array('file'); // 'file' debe coincidir con el nombre del campo del formulario
+
+        
 
         const usuarioExiste = await prisma.usuario.findUnique({
             where: {
@@ -108,7 +106,7 @@ export const uploadFile = async (req, res) => {
         } else {
             console.log("No se cargaron archivos.");
         }
-        
+
         const newFilename = req.files[0].filename;
         console.log("Nombre del archivo generado:", newFilename);
         console.log("Nombre del archivo generado:", newFilename);
