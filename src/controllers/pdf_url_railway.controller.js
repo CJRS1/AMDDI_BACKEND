@@ -83,10 +83,13 @@ export const uploadFile = async (req, res) => {
                 return;
             }
     
-            res.end('Archivos guardados');
+            // res.end('Archivos guardados');
         });
 
         console.log("se subio")
+        console.log(newFilename);
+        console.log(newFilename);
+        console.log(newFilename);
 
         const fecha_pago = new Date();
         fecha_pago.setHours(fecha_pago.getHours() - 5);
