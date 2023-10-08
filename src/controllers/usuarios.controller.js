@@ -330,10 +330,6 @@ export const traerUsuarioPorToken = async (req, res) => {
     }
 };
 
-
-
-
-
 export const logoutUser = (req, res) => {
     try {
         // Si estás utilizando tokens JWT, puedes invalidar el token aquí
@@ -371,6 +367,26 @@ export const sendVerificationCode = async (req, res) => {
             data: {
                 verification_code: codigoVerificacion.toString(),
             },
+        });
+
+        const mensaje = `Hola ${usuarioTemporal.nombre} ${usuarioTemporal.apePat}. Te saluda AMDDI, tú código de verificación es: ${usuarioTemporal.verification_code} \n\n ¡Que tenga un buen día!\n\n Saludos cordiales, \n AMDDI`
+
+        const mailOptions = {
+            from: process.env.EMAIL,
+            to: usuarioTemporal.email,
+            subject: 'Código de verificación AMDDI',
+            text: mensaje,
+        };
+
+        console.log(mailOptions);
+
+        // Aquí puedes enviar el correo electrónico correspondiente
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error al enviar correo:', error);
+            } else {
+                console.log('Correo enviado:', info.response);
+            }
         });
 
         res.json({ msg: "Código de verificación generado exitosamente." });
