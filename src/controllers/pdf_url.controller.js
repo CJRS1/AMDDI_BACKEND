@@ -9,57 +9,6 @@ const prisma = new PrismaClient();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// export const crearPDFURL = async (req, res) => {
-//     console.log("Entro aquí");
-//     try {
-//         const { id } = req.params;
-
-//         const usuarioExiste = await prisma.usuario.findUnique({
-//             where: {
-//                 id: parseInt(id),
-//             },
-//         });
-
-//         if (!usuarioExiste) {
-//             return res.status(400).json({ msg: "No existe el usuario" });
-//         }
-
-//         const fecha_pago = new Date();
-//         const fechaPagoFormateada = `${fecha_pago.getDate() - 1}/${fecha_pago.getMonth() + 1}/${fecha_pago.getFullYear()}`;
-
-//         // Obtén el nombre único del archivo subido desde req.file.filename
-//         const archivoSubido = req.file;
-//         if (!archivoSubido) {
-//             return res.status(400).json({ msg: "Debes subir un archivo PDF" });
-//         }
-
-//         // Genera una URL basada en el nombre único del archivo
-//         const pdfUrl = `/uploads/pdfs/${archivoSubido.filename}`;
-
-//         // Crea un registro en la base de datos con la URL del archivo
-//         const usuarioPDFURL = await prisma.pdf_url.create({
-//             data: {
-//                 fecha_pdf_url: fechaPagoFormateada,
-//                 usuarioId: parseInt(id),
-//                 pdf_url: pdfUrl, // Almacena la URL en el campo pdf_url
-//             },
-//         });
-
-//         // Cambia la respuesta para que incluya un enlace de descarga
-//         res.json({
-//             msg: "PDF subido y URL generada correctamente",
-//             usuarioPDFURL,
-//             pdfUrl,
-//             downloadLink: `${req.protocol}://${req.get("host")}${pdfUrl}`, // Genera un enlace de descarga absoluto
-//         });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ msg: "Error al subir el PDF y generar la URL" });
-//     }
-// };
-
-const volumeName = process.env.RAILWAY_VOLUME_MOUNT_PATH;
-
 export const crearPDFURL = async (req, res) => {
     console.log("Entro aquí");
     try {
@@ -85,7 +34,7 @@ export const crearPDFURL = async (req, res) => {
         }
 
         // Genera una URL basada en el nombre único del archivo
-        const pdfUrl = `${volumeName}/${archivoSubido.filename}`;
+        const pdfUrl = `/uploads/pdfs/${archivoSubido.filename}`;
 
         // Crea un registro en la base de datos con la URL del archivo
         const usuarioPDFURL = await prisma.pdf_url.create({
@@ -101,13 +50,14 @@ export const crearPDFURL = async (req, res) => {
             msg: "PDF subido y URL generada correctamente",
             usuarioPDFURL,
             pdfUrl,
-            downloadLink: pdfUrl, // Genera un enlace de descarga absoluto
+            downloadLink: `${req.protocol}://${req.get("host")}${pdfUrl}`, // Genera un enlace de descarga absoluto
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: "Error al subir el PDF y generar la URL" });
     }
 };
+
 
 export const actualizarPDFURL = async (req, res) => {
     console.log("Entro aquí");

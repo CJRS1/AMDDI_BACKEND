@@ -24,6 +24,7 @@ import { estadoPlanNegocioRouter } from "./routes/estado_plan_de_negocio.routes.
 import { estadoMonografiaRouter } from "./routes/estado_monografia.routes.js";
 import { estadoInformePracticasRouter } from "./routes/estado_informe_de_practicas.routes.js";
 import { estadoDiapositivasRouter } from "./routes/estado_diapositivas.routes.js";
+import { fileRouter } from "./routes/pdf_url_railway.routes.js"
 
 const server = express();
 
@@ -89,6 +90,7 @@ server.use(estadoPlanNegocioRouter);
 server.use(estadoMonografiaRouter);
 server.use(estadoInformePracticasRouter);
 server.use(estadoDiapositivasRouter);
+server.use(fileRouter);
 
 
 server.listen(PORT, () => {

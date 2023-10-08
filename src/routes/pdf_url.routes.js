@@ -10,10 +10,8 @@ import multer from "multer";
 import { nanoid } from "nanoid";
 
 // Configura multer para manejar la subida de archivos PDF
-const volumeName = process.env.RAILWAY_VOLUME_MOUNT_PATH;
-
 const storage = multer.diskStorage({
-    destination: volumeName, // Establece la carpeta donde se guardarán los archivos subidos
+    destination: "uploads/pdfs", // Establece la carpeta donde se guardarán los archivos subidos
     filename: (req, file, cb) => {
         // Genera un nombre de archivo único utilizando nanoid
         const uniqueFileName = nanoid() + "-" + file.originalname;
