@@ -107,7 +107,7 @@ export const uploadFile = async (req, res) => {
                 pdf_url: pdfUrl, // Almacena la URL en el campo pdf_url
             },
         });
-
+        console.log(usuarioPDFURL);
         // Cambia la respuesta para que incluya un enlace de descarga
         res.json({
             msg: "PDF subido y URL generada correctamente",
