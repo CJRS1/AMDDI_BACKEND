@@ -58,6 +58,7 @@ export const uploadFile = async (req, res) => {
         }
         
         console.log("hoal", req.file.filename);
+        const fileName = req.file.filename;
 
         const fecha_pago = new Date();
         fecha_pago.setHours(fecha_pago.getHours() - 5);
@@ -68,7 +69,7 @@ export const uploadFile = async (req, res) => {
 
         // Genera una URL basada en el nombre único del archivo
         // const pdfUrl = `/files/${newFilename}`;
-        const pdfUrl = `/files/`;
+        const pdfUrl = `/files/${fileName}`;
         console.log(pdfUrl);
 
         // Crea un registro en la base de datos con la URL del archivo
