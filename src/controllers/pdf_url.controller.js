@@ -25,6 +25,9 @@ export const crearPDFURL = async (req, res) => {
         }
 
         const fecha_pago = new Date();
+        console.log(fecha_pago);
+        console.log(fecha_pago);
+        console.log(fecha_pago);
         const fechaPagoFormateada = `${fecha_pago.getDate() - 1}/${fecha_pago.getMonth() + 1}/${fecha_pago.getFullYear()}`;
 
         // Obtén el nombre único del archivo subido desde req.file.filename
