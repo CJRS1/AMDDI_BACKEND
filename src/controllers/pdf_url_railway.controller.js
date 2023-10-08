@@ -1,37 +1,11 @@
 import { PrismaClient } from "@prisma/client";
-import slugify from 'slugify';
-import crypto from 'crypto';
+
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs/promises';
 
 const prisma = new PrismaClient();
 
-function random(n) {
-    return crypto.randomBytes(n / 2).toString('hex');
-}
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const saveDirectory = getSaveDirectory();
-        cb(null, saveDirectory);
-    },
-    filename: function (req, file, cb) {
-        const filenameParsed = path.parse(file.originalname);
-        newFilename =
-            slugify(filenameParsed.name) + '-' + random(6) + filenameParsed.ext;
-        console.log(newFilename);
-        console.log(newFilename);
-        console.log(newFilename);
-        console.log(newFilename);
-        console.log("hola")
-        cb(null, newFilename);
-    },
-});
-
-const upload = multer({
-    storage: storage,
-}) // 'file' debe coincidir con el nombre del campo del formulario
 
 function getSaveDirectory() {
     const railwayVolumeMountPath = process.env.RAILWAY_VOLUME_MOUNT_PATH;
