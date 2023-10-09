@@ -157,10 +157,11 @@ export const updateFile = async (req, res) => {
 
         // Crea un registro en la base de datos con la URL del archivo
         const usuarioPDFURL = await prisma.pdf_url.update({
+            where: {
+                id: Number(id),
+            },
             data: {
-                fecha_pdf_url: fechaPagoFormateada,
-                usuarioId: parseInt(id),
-                pdf_url: pdfUrl, // Almacena la URL en el campo pdf_url
+                pdf_url: pdfUrl, // Actualiza la URL en el campo pdf_url
             },
         });
 
