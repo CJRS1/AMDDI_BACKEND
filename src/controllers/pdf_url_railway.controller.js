@@ -122,18 +122,6 @@ export const updateFile = async (req, res) => {
 
         const { id } = req.params;
 
-        const usuarioExiste = await prisma.usuario.findUnique({
-            where: {
-                id: parseInt(id),
-            },
-        });
-
-        if (!usuarioExiste) {
-            return res.status(400).json({ msg: "No existe el usuario" });
-        }
-
-        console.log("encontrò usuario");
-
         // Verifica si req.file no está definido
         if (!req.file) {
             res.status(400).end('No se cargó un archivo');

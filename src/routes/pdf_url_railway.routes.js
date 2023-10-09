@@ -46,8 +46,8 @@ const upload = multer({
 
 export const fileRouter = Router();
 
-fileRouter.post("/upload/:id",upload.single('file'),uploadFile);
-fileRouter.put("/update/:id",upload.single('file'),updateFile);
+fileRouter.post("/upload/:id", upload.single('file'), uploadFile);
+fileRouter.put("/update/:id", upload.single('file'), updateFile);
 fileRouter.get("/list", listFiles);
 fileRouter.delete("/delete", deleteFile);
 fileRouter.use("/files", express.static(saveDirectory, { index: false }));
