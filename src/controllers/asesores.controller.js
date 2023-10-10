@@ -208,15 +208,42 @@ export const traerAsesorPorToken = async (req, res) => {
             const servicioId = asesor.asignacion[i].usuario.usuario_servicio[0].servicio.id;
             console.log(`Asignación ${i + 1}: Servicio ID = ${servicioId}`);
             if (
-                servicioId === 1 ||
-                servicioId === 2 ||
-                servicioId === 3
+                usuario.usuario_servicio[0].servicio.id === 1 ||
+                usuario.usuario_servicio[0].servicio.id === 2 ||
+                usuario.usuario_servicio[0].servicio.id === 3
             ) {
                 console.log("Entró al primer if");
                 estados = await prisma.estadoTesis.findMany({ orderBy: { id: 'asc' } });
-            } else if (servicioId === 4 || servicioId === 5) {
+            } else if (usuario.usuario_servicio[0].servicio.id === 4 ||
+                usuario.usuario_servicio[0].servicio.id === 5) {
                 console.log("Entró al segundo if");
                 estados = await prisma.estadoObservacion.findMany({ orderBy: { id: 'asc' } });
+            } else if (usuario.usuario_servicio[0].servicio.id === 6) {
+                console.log("Entró al segundo if");
+                estados = await prisma.estadoParafraseo.findMany({ orderBy: { id: 'asc' } });
+            } else if (usuario.usuario_servicio[0].servicio.id === 7) {
+                console.log("Entró al segundo if");
+                estados = await prisma.estadoTrabajoSuficiencia.findMany({ orderBy: { id: 'asc' } });
+            } else if (usuario.usuario_servicio[0].servicio.id === 8 ||
+                usuario.usuario_servicio[0].servicio.id === 9 ||
+                usuario.usuario_servicio[0].servicio.id === 10) {
+                console.log("Entró al segundo if");
+                estados = await prisma.estadoArticulo.findMany({ orderBy: { id: 'asc' } });
+            } else if (usuario.usuario_servicio[0].servicio.id === 11) {
+                console.log("Entró al segundo if");
+                estados = await prisma.estadoMonografia.findMany({ orderBy: { id: 'asc' } });
+            } else if (usuario.usuario_servicio[0].servicio.id === 12) {
+                console.log("Entró al segundo if");
+                estados = await prisma.estadoPlanDeNegocio.findMany({ orderBy: { id: 'asc' } });
+            } else if (usuario.usuario_servicio[0].servicio.id === 13) {
+                console.log("Entró al segundo if");
+                estados = await prisma.estadoInformePracticas.findMany({ orderBy: { id: 'asc' } });
+            } else if (usuario.usuario_servicio[0].servicio.id === 14) {
+                console.log("Entró al segundo if");
+                estados = await prisma.estadoTesinas.findMany({ orderBy: { id: 'asc' } });
+            } else if (usuario.usuario_servicio[0].servicio.id === 15) {
+                console.log("Entró al segundo if");
+                estados = await prisma.estadoDiapositivas.findMany({ orderBy: { id: 'asc' } });
             }
         }
 
