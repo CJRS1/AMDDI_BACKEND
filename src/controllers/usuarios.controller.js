@@ -645,7 +645,7 @@ export const actualizarUsuario = async (req, res) => {
                 id: Number(id),
             },
         });
-        
+
         console.log("usuario encontrado", findUsuario);
         console.log("usuario encontrado", findUsuario);
         console.log("usuario encontrado", findUsuario);
@@ -687,8 +687,8 @@ export const actualizarUsuario = async (req, res) => {
                 id_amddi: data.id_amddi,
                 fecha_estimada: data.fecha_estimada,
                 institucion_educativa: data.institucion_educativa,
-                // pdf_url: data.pdf_url,
-                // monto_pagado: data.monto_pagado,
+                pdf_url: data.pdf_url,
+                monto_pagado: data.monto_pagado,
                 monto_total: data.monto_total,
             },
             select: {

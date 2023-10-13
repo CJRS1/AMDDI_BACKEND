@@ -23,7 +23,6 @@ model usuario {
   departamento          String  @db.VarChar(50)
   carrera               String  @db.VarChar(30)
   tema                  String? @db.VarChar(255)
-  categoria String? @default("bronce")
   rol                   String  @default("usuario")
   verification_code     String? @db.VarChar(4)
   link_reunion          String? @db.VarChar(255)
