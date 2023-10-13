@@ -201,6 +201,9 @@ export const traerAsesorPorToken = async (req, res) => {
 
         console.log("asesor",asesor);
 
+        if (!asesor) {
+            return res.status(404).json({ message: 'Asesor no encontrado' });
+        }
 
 
         let estadosAsesores = {};
@@ -266,15 +269,11 @@ export const traerAsesorPorToken = async (req, res) => {
 
             estadosAsesores[asesorId] = estadosAsesores[asesorId].concat(estadosServicio);
         }
-        
-        console.log("estados", estados);
-        console.log("estados", estados);
 
-        // console.log("asesor", asesor);
-        // Verifica si se encontraron los datos del asesor
-        if (!asesor) {
-            return res.status(404).json({ message: 'Asesor no encontrado' });
-        }
+        console.log("estadosAsesores", estadosAsesores);
+
+        asesor.estados = estadosAsesores[asesor.id];
+        console.log("asesor ahora", asesor)
 
         // Devuelve los datos del asesor en la respuesta
         res.status(200).json({
