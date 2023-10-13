@@ -199,9 +199,9 @@ export const traerAsesorPorToken = async (req, res) => {
             },
         });
 
-        let estados = [];
+        console.log("asesor",asesor);
 
-        
+        let estados = [];
 
         // Asumiendo que asesor.asignacion es un arreglo
         for (let i = 0; i < asesor.asignacion.length; i++) {
