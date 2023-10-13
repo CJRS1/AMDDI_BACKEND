@@ -638,14 +638,18 @@ export const actualizarUsuario = async (req, res) => {
     console.log("hola")
     console.log(id);
     console.log(data);
-    console.log(data.asesor_ventas);
+    console.log(data.estado);
     try {
         const findUsuario = await prisma.usuario.findUnique({
             where: {
                 id: Number(id),
             },
         });
+        
         console.log("usuario encontrado", findUsuario);
+        console.log("usuario encontrado", findUsuario);
+        console.log("usuario encontrado", findUsuario);
+
         if (!findUsuario) {
             return res.status(404).json({
                 message: "Usuario no encontrado",
