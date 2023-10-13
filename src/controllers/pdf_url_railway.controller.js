@@ -64,14 +64,14 @@ export const uploadFile = async (req, res) => {
 
         // Cambia la respuesta para que incluya un enlace de descarga
         res.json({
-            msg: "PDF subido y URL generada correctamente",
+            msg: "Archivo subido y URL generada correctamente",
             usuarioPDFURL,
             pdfUrl,
             downloadLink: `${req.protocol}://${req.get("host")}${pdfUrl}`, // Genera un enlace de descarga absoluto
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error al subir el PDF y generar la URL" });
+        res.status(500).json({ msg: "Error al subir el Archivo y generar la URL" });
     }
 };
 
@@ -155,13 +155,13 @@ export const updateFile = async (req, res) => {
 
         // Cambia la respuesta para que incluya un enlace de descarga
         res.json({
-            msg: "PDF subido y URL actualizadas",
+            msg: "Archivo subido y URL actualizada",
             usuarioPDFURL,
             pdfUrl,
             downloadLink: `${req.protocol}://${req.get("host")}${pdfUrl}`, // Genera un enlace de descarga absoluto
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error al subir el PDF y generar la URL" });
+        res.status(500).json({ msg: "Error al subir el Archivo y generar la URL" });
     }
 }
