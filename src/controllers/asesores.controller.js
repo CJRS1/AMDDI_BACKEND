@@ -201,7 +201,7 @@ export const traerAsesorPorToken = async (req, res) => {
 
         console.log("asesor",asesor);
 
-        let estados = [];
+
 
         // Asumiendo que asesor.asignacion es un arreglo
         // for (let i = 0; i < asesor.asignacion.length; i++) {
@@ -246,63 +246,64 @@ export const traerAsesorPorToken = async (req, res) => {
         //         estados = await prisma.estadoDiapositivas.findMany({ orderBy: { id: 'asc' } });
         //     }
         // }
-
+        let estados = [];
         for (let i = 0; i < asesor.asignacion.length; i++) {
             const servicioId = asesor.asignacion[i].usuario.usuario_servicio[0].servicio.id;
             console.log(`Asignación ${i + 1}: Servicio ID = ${servicioId}`);
-            let estados = [];
+            let estadosServicio = [];
             switch (servicioId) {
                 case 1:
                 case 2:
                 case 3:
                     console.log("Entró al primer if");
-                    estados = await prisma.estadoTesis.findMany({ orderBy: { id: 'asc' } });
+                    estadosServicio = await prisma.estadoTesis.findMany({ orderBy: { id: 'asc' } });
                     break;
                 case 4:
                 case 5:
                     console.log("Entró al segundo if");
-                    estados = await prisma.estadoObservacion.findMany({ orderBy: { id: 'asc' } });
+                    estadosServicio = await prisma.estadoObservacion.findMany({ orderBy: { id: 'asc' } });
                     break;
                 case 6:
                     console.log("Entró al tercer if");
-                    estados = await prisma.estadoParafraseo.findMany({ orderBy: { id: 'asc' } });
+                    estadosServicio = await prisma.estadoParafraseo.findMany({ orderBy: { id: 'asc' } });
                     break;
                 case 7:
                     console.log("Entró al cuarto if");
-                    estados = await prisma.estadoTrabajoSuficiencia.findMany({ orderBy: { id: 'asc' } });
+                    estadosServicio = await prisma.estadoTrabajoSuficiencia.findMany({ orderBy: { id: 'asc' } });
                     break;
                 case 8:
                 case 9:
                 case 10:
                     console.log("Entró al quinto if");
-                    estados = await prisma.estadoArticulo.findMany({ orderBy: { id: 'asc' } });
+                    estadosServicio = await prisma.estadoArticulo.findMany({ orderBy: { id: 'asc' } });
                     break;
                 case 11:
                     console.log("Entró al sexto if");
-                    estados = await prisma.estadoMonografia.findMany({ orderBy: { id: 'asc' } });
+                    estadosServicio = await prisma.estadoMonografia.findMany({ orderBy: { id: 'asc' } });
                     break;
                 case 12:
                     console.log("Entró al séptimo if");
-                    estados = await prisma.estadoPlanDeNegocio.findMany({ orderBy: { id: 'asc' } });
+                    estadosServicio = await prisma.estadoPlanDeNegocio.findMany({ orderBy: { id: 'asc' } });
                     break;
                 case 13:
                     console.log("Entró al octavo if");
-                    estados = await prisma.estadoInformePracticas.findMany({ orderBy: { id: 'asc' } });
+                    estadosServicio = await prisma.estadoInformePracticas.findMany({ orderBy: { id: 'asc' } });
                     break;
                 case 14:
                     console.log("Entró al noveno if");
-                    estados = await prisma.estadoTesinas.findMany({ orderBy: { id: 'asc' } });
+                    estadosServicio = await prisma.estadoTesinas.findMany({ orderBy: { id: 'asc' } });
                     break;
                 case 15:
                     console.log("Entró al décimo if");
-                    estados = await prisma.estadoDiapositivas.findMany({ orderBy: { id: 'asc' } });
+                    estadosServicio = await prisma.estadoDiapositivas.findMany({ orderBy: { id: 'asc' } });
                     break;
                 default:
                     console.log("Servicio no reconocido");
             }
+            estados = estados.concat(estadosServicio);
         }
         
-
+        console.log("estados", estados);
         console.log("estados", estados);
 
         // console.log("asesor", asesor);
