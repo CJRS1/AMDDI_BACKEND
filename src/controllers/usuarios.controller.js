@@ -695,6 +695,7 @@ export const actualizarUsuario = async (req, res) => {
                 ...(data.apeMat && { apeMat: true }),
                 ...(data.apePat && { apePat: true }),
                 ...(data.dni && { dni: true }),
+                ...(data.estado && { estado: true }),
                 ...(data.asesor_ventas && { asesor_ventas: true }),
                 ...(data.pais && { pais: true }),
                 ...(data.id_amddi && { id_amddi: true }),
