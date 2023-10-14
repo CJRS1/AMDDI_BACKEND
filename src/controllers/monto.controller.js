@@ -123,9 +123,31 @@ export const crearMontoPagado = async (req, res) => {
                 id: parseInt(id_usuarios), // Parsea el valor a entero si es necesario
             },
         });
+
         if (!usuarioExiste) {
             return res.status(400).json({ msg: "No existe el usuario" });
         }
+
+        if (montoPagadoFloat === montoTotalFloat) {
+            const usuCate = await prisma.usuario.update({
+                where:{
+                    id: Number(id_usuarios)
+                },
+                data:{
+                    categoria: "Premium"
+                }
+            })
+        } else {
+            const usuCate = await prisma.usuario.update({
+                where:{
+                    id: Number(id_usuarios)
+                },
+                data:{
+                    categoria: "Normal"
+                }
+            })
+        }
+        console.log(usuCate.categoria);
 
         // Calcula la suma actual de los montos pagados
         const montoPagadoRecords = await prisma.monto_pagado.findMany({
