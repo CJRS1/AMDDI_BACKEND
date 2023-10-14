@@ -137,6 +137,7 @@ export const crearMontoPagado = async (req, res) => {
                     categoria: "Premium"
                 }
             })
+            console.log(usuCate.categoria);
         } else {
             const usuCate = await prisma.usuario.update({
                 where:{
@@ -146,8 +147,9 @@ export const crearMontoPagado = async (req, res) => {
                     categoria: "Normal"
                 }
             })
+            console.log(usuCate.categoria);
         }
-        console.log(usuCate.categoria);
+        
 
         // Calcula la suma actual de los montos pagados
         const montoPagadoRecords = await prisma.monto_pagado.findMany({
