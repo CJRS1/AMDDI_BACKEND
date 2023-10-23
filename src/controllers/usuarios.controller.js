@@ -971,7 +971,7 @@ export const creatVariosUsuarios = async (req, res) => {
         console.log(usuarios);
         // Iterar sobre el array de usuarios para crear cada uno
         for (const usuario of usuarios) {
-            const { email, pwd_hash, nombre, apeMat, apePat, pais, dni, celular, departamento, carrera, tema, institucion_educativa, categoria, asesor_ventas } = usuario;
+            const { email, pwd_hash, nombre, apeMat, apePat, pais, dni, celular, departamento, carrera, tema, institucion_educativa, categoria, asesor_ventas, id_amddi } = usuario;
 
             const usuarioExistente = await prisma.usuario.findUnique({
                 where: {
@@ -997,6 +997,7 @@ export const creatVariosUsuarios = async (req, res) => {
                     nombre,
                     apeMat,
                     apePat,
+                    id_amddi,
                     dni,
                     pais,
                     celular,
