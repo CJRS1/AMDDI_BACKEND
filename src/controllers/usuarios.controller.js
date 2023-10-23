@@ -1010,7 +1010,6 @@ export const creatVariosUsuarios = async (req, res) => {
                 },
             });
         }
-        // Envía una respuesta exitosa después de crear todos los usuarios
         res.json({ msg: "Usuarios creados exitosamente." });
     } catch (error) {
         console.error(error);
