@@ -968,10 +968,10 @@ export const obtenerServicioPorEmail = async (req, res) => {
 export const creatVariosUsuarios = async (req, res) => {
     try {
         const { usuarios } = req.body; // Array de usuarios
-
+        console.log(usuarios);
         // Iterar sobre el array de usuarios para crear cada uno
         for (const usuario of usuarios) {
-            const { email, password, nombre, apeMat, apePat, pais, dni, celular, departamento, carrera } = usuario;
+            const { email, pwd_hash, nombre, apeMat, apePat, pais, dni, celular, departamento, carrera } = usuario;
 
             const usuarioExistente = await prisma.usuario.findUnique({
                 where: {
@@ -983,7 +983,7 @@ export const creatVariosUsuarios = async (req, res) => {
                 return res.status(400).json({ msg: `El correo electrónico ${email} ya está registrado.` });
             }
 
-            const hashedPassword = await bcrypt.hash(password, 10); // Hash de la contraseña
+            const hashedPassword = await bcrypt.hash(pwd_hash, 10); // Hash de la contraseña
 
             // Calcular la fecha actual y formatearla
             const fechaActual = new Date();
