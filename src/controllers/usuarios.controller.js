@@ -253,6 +253,7 @@ export const traerUsuarioPorToken = async (req, res) => {
                 departamento: true,
                 fecha_estimada: true,
                 monto_restante: true,
+                link_reunion: true,
                 estado: true,
                 usuario_servicio: {
                     include: {
@@ -433,7 +434,6 @@ export const verificationCodeCC = async (req, res) => {
     }
 };
 
-
 export const listarUsuarios = async (req, res) => {
     try {
         console.log("Antes de obtener usuarios");
@@ -474,6 +474,7 @@ export const traerUsuarioPorDNI = async (req, res) => {
                 celular: true,
                 carrera: true,
                 categoria: true,
+                link_reunion: true,
                 tema: true,
                 monto_total: true,
                 monto_restante: true,
@@ -544,6 +545,7 @@ export const traerUsuarioPorIdAmddi = async (req, res) => {
                 carrera: true,
                 categoria: true,
                 tema: true,
+                link_reunion: true,
                 id_amddi: true,
                 monto_total: true,
                 monto_restante: true,
@@ -614,6 +616,7 @@ export const traerUsuarioPorEmail = async (req, res) => {
                 dni: true,
                 carrera: true,
                 categoria: true,
+                link_reunion: true,
                 departamento: true,
                 pais: true,
             },
@@ -634,7 +637,6 @@ export const traerUsuarioPorEmail = async (req, res) => {
         });
     }
 };
-
 
 export const actualizarUsuario = async (req, res) => {
     const { id } = req.params;
@@ -689,6 +691,7 @@ export const actualizarUsuario = async (req, res) => {
                 tema: data.tema,
                 categoria: data.categoria,
                 pais: data.pais,
+                link_reunion: data.link_reunion,
                 id_amddi: data.id_amddi,
                 fecha_estimada: data.fecha_estimada,
                 institucion_educativa: data.institucion_educativa,
@@ -708,6 +711,7 @@ export const actualizarUsuario = async (req, res) => {
                 ...(data.estado && { estado: true }),
                 ...(data.asesor_ventas && { asesor_ventas: true }),
                 ...(data.pais && { pais: true }),
+                ...(data.link_reunion && { link_reunion: true }),
                 ...(data.id_amddi && { id_amddi: true }),
                 ...(data.celular && { celular: true }),
                 ...(data.institucion_educativa && { institucion_educativa: true }),
@@ -779,7 +783,6 @@ export const actualizarUsuarioCC = async (req, res) => {
     }
 };
 
-
 export const eliminarUsuario = async (req, res) => {
     const { id } = req.params;
     console.log(id);
@@ -830,6 +833,7 @@ export const obtenerUsuariosConServicios = async (req, res) => {
                 departamento: true,
                 carrera: true,
                 tema: true,
+                link_reunion: true,
                 asesor_ventas: true,
                 monto_total: true,
                 monto_restante: true,
@@ -926,7 +930,6 @@ export const obtenerUsuariosConServicios = async (req, res) => {
     }
 };
 
-
 export const obtenerServicioPorEmail = async (req, res) => {
     const { email } = req.params;
 
@@ -962,3 +965,55 @@ export const obtenerServicioPorEmail = async (req, res) => {
     }
 };
 
+export const creatVariosUsuarios = async (req, res) => {
+    try {
+        const { usuarios } = req.body; // Array de usuarios
+
+        // Iterar sobre el array de usuarios para crear cada uno
+        for (const usuario of usuarios) {
+            const { email, password, nombre, apeMat, apePat, pais, dni, celular, departamento, carrera } = usuario;
+
+            const usuarioExistente = await prisma.usuario.findUnique({
+                where: {
+                    email,
+                },
+            });
+
+            if (usuarioExistente) {
+                return res.status(400).json({ msg: `El correo electrónico ${email} ya está registrado.` });
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 10); // Hash de la contraseña
+
+            // Calcular la fecha actual y formatearla
+            const fechaActual = new Date();
+            const fechaFormateada = fechaActual.toISOString();
+
+            // Resto de la lógica para crear cada usuario en la base de datos
+            await prisma.usuario.create({
+                data: {
+                    email,
+                    pwd_hash: hashedPassword,
+                    nombre,
+                    apeMat,
+                    apePat,
+                    dni,
+                    pais,
+                    celular,
+                    departamento,
+                    carrera,
+                    tema,
+                    categoria,
+                    institucion_educativa,
+                    asesor_ventas,
+                    createdAt: fechaFormateada,
+                },
+            });
+        }
+        // Envía una respuesta exitosa después de crear todos los usuarios
+        res.json({ msg: "Usuarios creados exitosamente." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error en el servidor." });
+    }
+}

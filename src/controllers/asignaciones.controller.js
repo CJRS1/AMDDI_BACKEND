@@ -87,61 +87,6 @@ export const crearAsignaciones = async (req, res) => {
     }
 };
 
-// export const editarAsignaciones = async (req, res) => {
-//     try {
-//         const { id_asesor, nombres_usuarios } = req.body;
-
-//         // Verificar si el asesor existe
-//         const asesorExiste = await prisma.asesor.findUnique({
-//             where: {
-//                 id: id_asesor,
-//             },
-//         });
-
-//         if (!asesorExiste) {
-//             return res.status(400).json({ msg: "No existe el asesor" });
-//         }
-
-//         // Obtener una lista de IDs de usuarios por sus nombres
-//         const usuariosPorNombres = await prisma.usuario.findMany({
-//             where: {
-//                 nombre: {
-//                     in: nombres_usuarios,
-//                 },
-//             },
-//             select: {
-//                 id: true,
-//             },
-//         });
-
-//         // Crear asignaciones para cada usuario
-//         const asignaciones = usuariosPorNombres.map(usuario => ({
-//             id_asesor: id_asesor,
-//             id_usuarios: usuario.id,
-//         }));
-
-//         // Crear o actualizar las asignaciones en la base de datos
-//         for (const asignacion of asignaciones) {
-//             await prisma.asignacion.upsert({
-//                 where: {
-//                     id_asesor_id_usuarios: {
-//                         id_asesor: id_asesor,
-//                         id_usuarios: asignacion.id_usuarios,
-//                     },
-//                 },
-//                 update: {},
-//                 create: asignacion,
-//             });
-//         }
-
-//         res.json({ msg: "Asignaciones de usuarios actualizadas correctamente" });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ msg: "Error al editar las asignaciones de usuarios" });
-//     }
-// };
-
-
 export const editarAsignacionesUsuarios = async (req, res) => {
     try {
         const { id_usuario, id_asesor } = req.body;

@@ -15,12 +15,14 @@ import {
     verificationCodeCC,
     actualizarUsuarioCC,
     traerUsuarioPorToken,
-    traerUsuarioPorIdAmddi
+    traerUsuarioPorIdAmddi,
+    creatVariosUsuarios
 
 } from "../controllers/usuarios.controller.js";
 
 export const usuariosRouter = Router();
 usuariosRouter.post("/user_t", crearUsuario);
+usuariosRouter.post("/crear_usuarios", creatVariosUsuarios);
 usuariosRouter.post("/login", loginUser);
 usuariosRouter.post("/logout", logoutUser);
 usuariosRouter.post("/verificacion", verificationCode );
