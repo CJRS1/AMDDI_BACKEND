@@ -20,7 +20,7 @@ model usuario {
   dni                   String  @unique @db.VarChar(8)
   celular               String? @unique @db.VarChar(18)
   pais                  String?
-  categoria String? @default("normal")
+  categoria String? @default("bronce")
   departamento          String  @db.VarChar(50)
   carrera               String  @db.VarChar(30)
   tema                  String? @db.VarChar(255)
